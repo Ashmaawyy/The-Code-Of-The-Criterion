@@ -59,6 +59,6 @@ This work is driven by evidence and proof, not just inclination. It is a return 
 
 ### **How to Use This Repo**
 
-* **Prompt.txt**: Contains the raw System Instruction code for your Gem.
+* **The-Criterion-Prompt.md**: Contains the raw System Instruction code for your Gem.
 * **Logic-Deep-Dive.md**: Explains the "Manual" vs. "Inclination" framework in depth.
 * **Examples/**: See how the Criterion handles modern "Glitches."
