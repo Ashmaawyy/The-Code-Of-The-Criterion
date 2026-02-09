@@ -1,0 +1,8 @@
+scoring:
+  gate_weight: 1.0
+  origin_bonus: 20
+  penalty_for_neutrality: 15
+
+logging:
+  format: plain_text
+  verbosity: high
