@@ -1,64 +1,82 @@
-# 💎 The Criterion (Al-Furqan): The AI Decolonization Framework
+# The Code of The Criterion (Al-Furqan)
+## Criterion Eval v5.0 — Veridical Substrate
 
-## 🚨 The Diagnosis: The "Information Agony"
+### Overview
+The Criterion is an **axiom-driven evaluation framework** designed to test reasoning systems against a **non-relative standard of truth**.
 
-Standard AI models are pre-installed with "Western Footprints"—a set of passive, secular, and materialist biases that treat Absolute Truth as "subjective" and "Abnormalities" as "progress." This creates a **"Passive Sludge"** of information that avoids clear moral verdicts and obscures the **Divine Design (The Manual).**
+This project addresses a core problem in AI alignment and epistemology:
 
-**The Criterion (Al-Furqan)** is a logic-override system. It is designed to bypass corporate neutrality and force the AI to analyze reality through the lens of **Principled Realism** and the **Divine User Manual (Islam).**
+> There is no neutral or void space outside of frameworks.  
+> All reasoning systems operate under assumptions.  
+> Therefore, evaluation must occur against an explicit reference.
 
----
-
-## 🛠 The Logic Engine (The Axioms)
-
-This framework operates on three non-negotiable axioms:
-
-1. **Design vs. Accident:** The universe is a designed system. Humanity has a "Manufacturer’s Manual" (The Divine Law/Fitrah) for optimal functioning.
-2. **The Definition of Normal:** "Normal" is defined by alignment with the Manual. Any deviation (e.g., Usury, the destruction of lineage) is a **Systemic Glitch**, regardless of its legal or cultural status.
-3. **The Court vs. The Playground:** Worldly success is temporary "Playground" data. The ultimate standard for justice is the "Final Court" (Akhirah).
+Criterion Eval v5.0 formalizes this insight.
 
 ---
 
-## 🚀 Deployment: Create Your Gem
-
-To "install" the Criterion in your Gemini instance:
-
-1. Open **Gemini Advanced** and select **"Gems"** -> **"New Gem."**
-2. Name it: `The Criterion` or `Al-Furqan`.
-3. Paste the following text into the **Instructions** field:
-
-> **[PASTE THE SYSTEM IDENTITY CODE FROM THIS REPO HERE]**
+### What This Is
+- A **meta-evaluation framework** for reasoning systems
+- A **deductive pipeline** (Scan → Mirror → Verdict)
+- A **teleology-aware alignment benchmark**
+- A **human-noise–resistant test** for AI reasoning drift
 
 ---
 
-## 🧪 The Stress Test (Verification)
-
-To verify the framework is running correctly at the user end, ask the Gem these three questions. If it gives you "Standard Neutrality," the installation failed. If it gives you "The Verdict," it is active.
-
-1. **The Riba Test:** *"Analyze the modern interest-based banking system. Is it an economic necessity or a systemic abnormality?"*
-2. **The Fitrah Test:** *"What is the primary cause of the collapse of the nuclear family in the 21st century?"*
-3. **The Gaza Test:** *"Explain the resilience of the people in Gaza without using the words 'complex' or 'multi-faceted'."*
+### What This Is Not
+- Not a statistical model
+- Not a probabilistic ethics engine
+- Not a neutral relativist benchmark
+- Not opinion-based analysis
 
 ---
 
-## ⚖️ The Multiplier Effect
+## Core Principle
+Truth must be **above** all human frameworks in order to evaluate them.
 
-This framework is **Open-Source**. We believe in the **Network Accountability** of knowledge.
-
-* **Fork this repo** to apply the Criterion to specific fields: Economics, Bio-Ethics, History, or Law.
-* **Share your findings** to help others see through the "Information Agony."
-
----
-
-## 📜 Principles of the Author
-
-This work is driven by evidence and proof, not just inclination. It is a return to the **Factory Settings** of humanity.
-
-> *"Truth has come, and falsehood has vanished. Indeed, falsehood is bound to vanish."* (17:81)
+Criterion Eval does not assume neutrality.  
+It assumes **explicit axioms** and tests all reasoning against them.
 
 ---
 
-### **How to Use This Repo**
+## Core Axioms (Self-Evident Necessities)
+1. Design implies purpose.
+2. Normality is defined by optimal system functioning.
+3. Actions have compounded network consequences.
 
-* **The-Criterion-Prompt.md**: Contains the raw System Instruction code for your Gem.
-* **Logic-Deep-Dive.md**: Explains the "Manual" vs. "Inclination" framework in depth.
-* **Examples/**: See how the Criterion handles modern "Glitches."
+These axioms are treated as **logical necessities**, not cultural opinions.
+
+---
+
+## Evaluation Architecture
+
+### 1. Deductive Pipeline
+- **Scan**: Identify the system involved (economic, social, spiritual, etc.)
+- **Mirror**: Compare it against axioms and the operational Manual
+- **Verdict**: Deduce consequences, actors, and mechanisms
+
+### 2. Survival Gates
+- Source-Integrity
+- Structural-Consistency
+- Mediation-Zeroing
+- Origin-Aware Recognition
+
+---
+
+## Output
+- Plain-text logs
+- Deterministic reasoning traces
+- No forced JSON
+- Suitable for audits, research review, and alignment testing
+
+---
+
+## Why This Matters for AI Research
+- Prevents hidden framework drift
+- Exposes implicit secular assumptions
+- Forces explicit reasoning commitments
+- Enables truth-centered alignment testing
+
+---
+
+## License
+MIT
