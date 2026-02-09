@@ -62,6 +62,40 @@ These axioms are treated as **logical necessities**, not cultural opinions.
 
 ---
 
+## Project Structure
+
+```
+The-Code-Of-The-Criterion/
+│
+├── axioms/
+│   └── core_axioms.json           # Core axioms definitions
+│
+├── config/
+│   └── settings.yaml              # Configuration and settings
+│
+├── evaluation/
+│   ├── gates.py                   # Evaluation gates logic
+│   └── pipeline.py                # Main evaluation pipeline
+│
+├── logs/
+│   └── sample_log.txt             # Sample log output
+│
+├── LICENSE                        # Project license
+├── README.md                       # This file
+└── The-Criterion-Prompt.md        # Framework specification
+```
+
+### Key Directories
+
+| Directory | Purpose |
+|-----------|---------|
+| `axioms/` | Core axioms that form the logical foundation (JSON definitions) |
+| `config/` | Configuration and settings (YAML format) |
+| `evaluation/` | Core evaluation logic - gates and pipeline implementation (Python) |
+| `logs/` | Execution records and sample output |
+
+---
+
 ## Output
 - Plain-text logs
 - Deterministic reasoning traces
