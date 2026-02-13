@@ -4,6 +4,7 @@ from evaluation.gates import (
     mediation_zeroing_gate,
     origin_aware_gate
 )
+from axioms import core_axioms
 
 
 def scan(query):
@@ -19,7 +20,7 @@ def scan(query):
     return "general"
 
 
-def mirror(system_type, axioms, system):
+def mirror(system_type, core_axioms, system):
     frictions = []
     score = 0
 
