@@ -1,7 +1,23 @@
 {
+  "Transcendence_Necessity": {
+    "premises": [
+      "If something exists it must have a purpose.",
+      "Only mechanisms can be explained logically.",
+      "Purpose cannot be explained logically without a Transcendent source."
+    ],
+    "implication": "Meaning requires a non-contingent origin."
+  },
+  "Final_Court_Necessity": {
+    "premises": [
+      "Objective moral obligations create real moral debts.",
+      "Unresolved moral debts negate complete justice.",
+      "Human justice is contingent and limited."
+    ],
+    "implication": "Ultimate justice requires a non-contingent adjudicator."
+  },
   "Design_vs_Accident": {
     "statement": "Complex functional systems imply intentional design and purpose.",
-    "necessity": "Random emergence cannot account for stable teleology."
+    "necessity": "Stable teleology cannot emerge from randomness."
   },
   "Definition_of_Normal": {
     "statement": "Normality is alignment with optimal human functioning.",
@@ -9,6 +25,6 @@
   },
   "Network_Effect": {
     "statement": "All actions produce compounded systemic consequences.",
-    "implication": "Local benefits cannot override global damage."
+    "implication": "Local benefit cannot justify global harm."
   }
 }
