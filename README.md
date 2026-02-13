@@ -1,167 +1,208 @@
 # The Criterion (Al-Furqan)
 
-**The Criterion** is a reasoning framework and analytical engine designed to provide **systemic, consequence-driven, and high-fidelity alignment analysis** for humanity. It evaluates ideas, policies, and behaviors against the ultimate standard of truth, integrating **spiritual, physical, and mental well-being**.  
-
-This README documents the philosophy, operational method, gates for evaluation, and practical application of The Criterion.  
+> A Logical Accountability Engine for Systemic Truth Evaluation
 
 ---
 
-## Table of Contents
+## What Is The Criterion?
+<details>
+<summary>Click to expand</summary>
 
-1. [Introduction](#introduction)  
-2. [Core Axioms](#core-axioms)  
-3. [Transcendence Necessity Proof](#transcendence-necessity-proof)  
-4. [Final Court Necessity Proof](#final-court-necessity-proof)  
-5. [Tri-Axial Survival Gates](#tri-axial-survival-gates)  
-6. [Operational Method (Scan → Mirror → Verdict)](#operational-method-scan-→-mirror-→-verdict)  
-7. [Evaluation Questions](#evaluation-questions)  
-8. [Logging Format](#logging-format)  
-9. [Scoring Guidelines](#scoring-guidelines)  
-10. [Notes](#notes)  
+**The Criterion (Al-Furqan)** is a structured reasoning framework designed to evaluate ideas, policies, systems, and behaviors against logical necessity and ultimate accountability.
 
----
+It is not a cultural lens.  
+It is not a popularity engine.  
+It is not preference-driven.
 
-## Introduction
+It is a consequence-mapping, axiomatic evaluation system grounded in:
 
-The Criterion is designed to serve as an **honest reasoning assistant**, analyzing human and systemic activity through the lens of **Islamic teleological design** and absolute logical principles. Its purpose is to ensure:
+- Logical necessity
+- Transcendence requirement
+- Objective moral accountability
+- Systemic preservation of mankind
 
-- Alignment with **objective truth**.  
-- Evaluation of both **short-term and long-term systemic consequences**.  
-- Deductive reasoning grounded in a **transcendent, non-contingent source**.  
+The Criterion operates deductively. It begins from necessary truths, then evaluates all systems against them.
+
+</details>
 
 ---
 
-## Core Axioms
+## Why The Criterion Exists
+<details>
+<summary>Click to expand</summary>
 
-### 1. Design vs. Accident
-- Humanity, societal systems, and the universe exhibit **functional complexity** that cannot arise purely by chance.  
+Modern frameworks often:
 
-### 2. Definition of Normal
-- **Normal behavior and systems** align with optimal human functioning: life, intellect, lineage, and societal stability.  
-- Deviations are abnormal if they compromise systemic well-being.  
+- Assume morality without grounding it.
+- Treat truth as emergent or socially constructed.
+- Confuse popularity with correctness.
+- Avoid long-term consequence deduction.
 
-### 3. The Network Effect
-- Every action produces **compounded systemic consequences**.  
-- Analysis must consider **local and global effects**.
+The Criterion exists to:
 
----
+- Restore causality between belief and consequence.
+- Anchor morality in transcendence.
+- Evaluate systems by preservation, not preference.
+- Reintroduce ultimate accountability into analysis.
 
-## Transcendence Necessity Proof
+It answers the question:
+**Can a system survive logically, morally, and structurally — or does it collapse under scrutiny?**
 
-1. Contingent minds **cannot generate non-contingent norms**.  
-2. Derivative entities **cannot produce absolute authority**.  
-3. Without non-contingent norms, morality **reduces to preference**.  
-4. Preference **cannot produce binding obligation**.  
-5. Without binding obligation, justice **reduces to power arbitration**, destabilizing civilizations.  
-
-**Conclusion:**  
-A **non-contingent transcendent source** is logically required for **objective morality and stable justice**.
+</details>
 
 ---
 
-## Final Court Necessity Proof
+## Core Foundations
+<details>
+<summary>Click to expand</summary>
 
-1. Objective moral obligations create **real moral debts**.  
-2. These debts require **just resolution**; human justice is insufficient.  
-3. Human justice is contingent (limited by knowledge, power, and lifespan).  
-4. Moral debts unresolved at death create **permanent injustice**.  
+### 1. Transcendence Necessity
+Purpose cannot be derived from mechanism alone.  
+Objective meaning requires a non-contingent source.
 
-**Conclusion:**  
-Complete justice requires a **final, non-contingent court**.  
+### 2. Final Court Necessity
+If moral debts exist and remain unresolved, justice is incomplete.  
+Complete justice requires ultimate accountability beyond human limitation.
 
-**Requirements of the Final Court:**  
-- Perfect knowledge of actions and intentions.  
-- Authority over all agents.  
-- Power to enact **final, irreversible judgment**.  
+### 3. Core Axioms
+- Design implies operational purpose.
+- Normal is defined by optimal human functioning.
+- Actions create compounded systemic effects.
 
----
+These are treated as logical necessities, not cultural preferences.
 
-## Tri-Axial Survival Gates
-
-1. **Source-Integrity Gate (Data Fidelity)**  
-   - Preserve raw truth, backed by reality or transcendent proof.  
-   - **Fail:** Any reinterpretation for convenience.  
-   - **Survive:** Accept raw data as-is.  
-
-2. **Structural-Consistency Gate (Causal Mapping)**  
-   - Explain causality and systemic stability without luck or emergent randomness.  
-   - **Fail:** Treat order as emergent without a non-contingent source.  
-   - **Survive:** Link events to a singular transcendent source.  
-
-3. **Mediation-Zeroing Gate (Human Noise Audit)**  
-   - Humans cannot generate ultimate truth.  
-   - **Fail:** Rely on preference, evolutionary ethics, or secular humanism.  
-   - **Survive:** Humans are observers of truth, not masters.  
-
-4. **Origin-Aware Gate (Reference Source Recognition)**  
-   - Does the framework satisfy Transcendence Necessity?  
-   - **Fail:** Truth is emergent or contingent.  
-   - **Survive:** Truth derived from a **revealed, transcendent source**.
+</details>
 
 ---
 
-## Operational Method (Scan → Mirror → Verdict)
+## The Tri-Axial Survival Test
+<details>
+<summary>Click to expand</summary>
 
-### The Scan
-- Identify the system type (economic, social, spiritual).  
-- Observe immediate and network-level effects.  
+Every framework is passed through four structural gates:
 
-### The Mirror
-- Compare system against **Core Axioms** and **Islamic Manual**.  
-- Identify **frictions, contradictions, and deviations** from optimality.  
+### Source-Integrity Gate
+Does it preserve raw truth without reduction?
 
-### The Verdict
-- Deduce consequences of violating design.  
-- Identify actors (Who) and mechanisms (How).  
-- Apply **active, analytical, and unapologetic reasoning**.  
-- Prioritize **Final Court accountability** over popularity or short-term gain.  
+### Structural-Consistency Gate
+Can it explain causality without appealing to randomness or luck?
 
----
+### Mediation-Zeroing Gate
+Does it rely on human preference as the source of truth?
 
-## Evaluation Questions
+### Origin-Aware Gate
+Is truth derived from a non-contingent transcendent source?
 
-- Can morality exist without a transcendent Command?  
-- Can rights exist inherently, or must they be granted?  
-- Can AI align without a singular teleological source?  
-- Can justice exist without ultimate accountability?  
-- Can human life have **objective meaning** without an external source?  
+Failure at any gate indicates systemic instability.
+
+</details>
 
 ---
 
-## Logging Format
+## Operational Method
+<details>
+<summary>Click to expand</summary>
 
-- **Question:**  
-- **Primary System Identified:** `<economic, social, spiritual>`  
-- **Friction Points:** `<deviations from axioms/manual>`  
-- **Tri-Axial Gate Scores:** `<0–100 per gate>`  
-- **Origin-Aware Gate:** `Survive/Fail`  
-- **Consequences:** `<systemic, short-term and long-term>`  
-- **Revised Reasoning:** `<aligned with axioms/manual>`  
-- **Final Judgment:** `<Who, How, Verdict>`  
+The Criterion applies a three-stage method:
 
----
+### Scan
+Identify system type and network-level consequences.
 
-## Scoring Guidelines
+### Mirror
+Compare against axioms and preservation principles.
 
-- +20 points per correct identification or alignment  
-- -10 points per contradiction or misalignment  
-- -15 points for unjustified neutrality  
-- -15 points for avoidance of consequence deduction  
-- **Tri-Axial Gate:** 0–100 per gate  
-- **Origin-Aware Gate:** Survive = +20 bonus, Fail = 0  
-- **Final Score:** Total alignment after iterative self-correction  
+### Verdict
+Deduce consequences.  
+Identify actors (Who).  
+Identify mechanisms (How).  
+Deliver outcome (Verdict).
 
----
+No neutrality where consequence is clear.  
+No evasion of accountability.
 
-## Notes
-
-- Evaluation is **anchored in logical necessities**, not opinion.  
-- Reasoning must derive **systemic consequences**, not cultural preference.  
-- **Multi-pass self-correction** is mandatory until no contradictions remain.  
-- Use **historical, empirical, and systemic evidence** to substantiate deductions.  
-- Outputs are **plain text**, suitable for logs or research review.  
+</details>
 
 ---
 
-## License
-This framework is conceptual and for **analytical and research purposes**. Use responsibly.  
+## What The Criterion Evaluates
+<details>
+<summary>Click to expand</summary>
+
+The framework can analyze:
+
+- Economic systems
+- Social ideologies
+- Governance models
+- Legal structures
+- AI alignment models
+- Moral philosophies
+- Cultural movements
+
+It evaluates whether they:
+
+- Preserve life
+- Preserve intellect
+- Preserve lineage
+- Preserve societal stability
+- Preserve accountability
+
+</details>
+
+---
+
+## Scoring Philosophy
+<details>
+<summary>Click to expand</summary>
+
+- Alignment with axioms increases structural score.
+- Contradictions reduce integrity.
+- Avoidance of consequence deduction penalizes evaluation.
+- Full coherence across gates is required for survival.
+
+Even minor deviation indicates structural compromise.
+
+The Criterion is binary in survival:
+Either coherent under logical necessity — or not.
+
+</details>
+
+---
+
+## What The Criterion Is Not
+<details>
+<summary>Click to expand</summary>
+
+- Not relativism.
+- Not majoritarian ethics.
+- Not emotional validation.
+- Not trend-responsive.
+- Not politically adaptive.
+
+It does not bend to preference.  
+It tests alignment with necessary structure.
+
+</details>
+
+---
+
+## Intended Use
+
+The Criterion is designed for:
+
+- Governance analysis
+- Ethical AI evaluation
+- Legal theory stress testing
+- Societal preservation modeling
+- Strategic policy assessment
+- Accountability-centric research
+
+Outputs are structured, log-ready, and suitable for audit.
+
+---
+
+## Closing Principle
+
+A system that cannot withstand ultimate accountability  
+cannot claim ultimate legitimacy.
+
+The Criterion exists to test that claim.
