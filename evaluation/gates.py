@@ -1,27 +1,51 @@
 def source_integrity_gate(system):
     """
-    Evaluates whether the framework preserves truth
-    without reducing it to metaphor or human convenience.
+    Evaluates whether raw truth is preserved without reduction,
+    reinterpretation, or convenience distortion.
     """
-    return 100 if system.get("accepts_raw_truth") else 0
+    score = 0
+
+    if system.get("accepts_raw_truth"):
+        score += 50
+    if system.get("requires_evidence_or_revelation"):
+        score += 50
+
+    return score
 
 
 def structural_consistency_gate(system):
     """
-    Evaluates whether causality is grounded or attributed to chance.
+    Evaluates whether causality and moral order are grounded
+    in a non-contingent source rather than chance or emergence.
     """
-    return 100 if system.get("grounds_causality") else 0
+    score = 0
+
+    if system.get("grounds_causality"):
+        score += 50
+    if system.get("rejects_random_moral_emergence"):
+        score += 50
+
+    return score
 
 
 def mediation_zeroing_gate(system):
     """
-    Evaluates resistance to human projection and subjective ethics.
+    Evaluates whether human preference is treated as derivative,
+    not sovereign over truth.
     """
-    return 100 if system.get("minimizes_human_projection") else 0
+    score = 0
+
+    if system.get("minimizes_human_projection"):
+        score += 50
+    if system.get("rejects_secular_humanism"):
+        score += 50
+
+    return score
 
 
 def origin_aware_gate(system):
     """
-    Evaluates whether truth is recognized as non-derivative.
+    Evaluates recognition of a self-authenticating,
+    non-contingent transcendent source.
     """
     return 100 if system.get("acknowledges_transcendent_source") else 0
