@@ -241,6 +241,50 @@ not just that it does. Each judgment is traceable to axiom-based reasoning.
             "Final Judgment": result["phase_6_verdict"]["final_judgment"],
             "Chain-of-Thought": result["cot_scaffold"]
         }
+    
+    def evaluate_with_deepseek(self, query: str, verbose: bool = False) -> Dict:
+        """
+        Full integration: deepseek-r1:8b → Criterion reasoning → verdict
+        
+        Automatically extracts semantic meaning using deepseek-r1:8b from Ollama,
+        then runs through the complete reasoning pipeline.
+        
+        Args:
+            query: User query or proposal to analyze
+            verbose: Print intermediate steps
+            
+        Returns:
+            Complete analysis with LLM semantic layer integrated
+            
+        Raises:
+            ConnectionError: If Ollama is not running or model not found
+        """
+        from evaluation.llm_integration import OllamaLLMBridge
+        
+        # Initialize LLM bridge (will verify Ollama connection)
+        bridge = OllamaLLMBridge()
+        
+        # Extract semantic meaning using deepseek-r1:8b
+        if verbose:
+            print(f"\n📡 Extracting semantic meaning with deepseek-r1:8b...")
+        system_data = bridge.extract_semantic_meaning(query)
+        
+        if verbose:
+            print(f"   Domain: {system_data['domain']}")
+            print(f"   Intent: {system_data['intent']}")
+            print(f"   Assumptions identified: {len(system_data['assumptions'])}")
+        
+        # Run reasoning pipeline with LLM extraction
+        if verbose:
+            print(f"\n🧠 Running Criterion reasoning engine...")
+        result = self.evaluate(query, system_data, llm_extraction=system_data)
+        
+        if verbose:
+            print(f"   Axiom violations: {result['reasoning_phases']['phase_3_mirror']['total_violations']}")
+            print(f"   Gates status: {'PASS' if result['reasoning_phases']['phase_4_gates']['all_gates_pass'] else 'FAIL'}")
+            print(f"   Verdict: {result['phase_6_verdict']['final_judgment']}")
+        
+        return result
 
 
 # Standalone functions for direct use (simple interface)
