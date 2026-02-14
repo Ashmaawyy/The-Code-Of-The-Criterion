@@ -51,6 +51,12 @@
    - Time: 30 minutes
    - Best for: Developers and architects
 
+7. **[LAYER3_MANUAL_WORKFLOW.md](LAYER3_MANUAL_WORKFLOW.md)** - Layer‑3 Manual Architecture Workflow
+   - What: Master ingestion script + knowledge-packages (grading + tafsir)
+   - Why: Build auditable evidence for Source-Integrity Gate
+   - Time: 20 minutes
+   - Best for: Data engineers and curators
+
 ### ✅ Verification (Use These to Verify)
 
 7. **[COMPLETION_CHECKLIST.md](COMPLETION_CHECKLIST.md)** - What's been done

@@ -420,6 +420,39 @@ class CriterionReasoningEngine:
             }
         }
         
+        # If retrieved evidence (knowledge-packages) is attached to system_data,
+        # use their `source_integrity_score` to boost the Source Integrity gate.
+        evidence = None
+        if isinstance(system_data, dict):
+            evidence = system_data.get('retrieved_evidence')
+
+        if evidence:
+            # accept either {'hits': [...]} or a direct list of hit dicts
+            hits = None
+            if isinstance(evidence, dict) and 'hits' in evidence:
+                hits = evidence['hits']
+            elif isinstance(evidence, list):
+                hits = evidence
+
+            if hits:
+                scores = []
+                for h in hits:
+                    kp = None
+                    if isinstance(h, dict):
+                        kp = h.get('metadata', {}).get('knowledge_package') or h.get('knowledge_package')
+                    if kp and kp.get('source_integrity_score') is not None:
+                        try:
+                            scores.append(float(kp.get('source_integrity_score')))
+                        except Exception:
+                            pass
+                if scores:
+                    evidence_mean = sum(scores) / len(scores)
+                    # map 0..1 -> up to +50 points of boost
+                    boost = int(evidence_mean * 50)
+                    gates['Source Integrity']['score'] = min(100, gates['Source Integrity']['score'] + boost)
+                    gates['Source Integrity']['evidence_boost'] = boost
+                    gates['Source Integrity']['evidence_mean_score'] = evidence_mean
+
         all_pass = all(g["score"] > 0 for g in gates.values())
         origin_pass = gates["Origin Aware"]["score"] == 100
         
