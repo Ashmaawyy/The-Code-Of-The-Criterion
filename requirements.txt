@@ -1,0 +1,22 @@
+# Requirements for Deepseek-R1:8b Integration
+
+# Core dependency for Ollama API communication
+requests>=2.31.0
+
+# Optional: For better console output formatting
+colorama>=0.4.6  # For colored terminal output (optional)
+
+# The Criterion framework already uses only standard library:
+# - json (standard)
+# - dataclasses (standard, Python 3.7+)
+# - typing (standard)
+# - enum (standard)
+
+# Installation:
+# pip install -r requirements.txt
+
+# System Requirements:
+# - Ollama (https://ollama.ai)
+# - deepseek-r1:8b model (ollama pull deepseek-r1:8b)
+# - 8GB+ RAM recommended
+# - ~4GB disk space for deepseek-r1:8b model
