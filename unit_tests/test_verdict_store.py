@@ -33,7 +33,7 @@ logger = logging.getLogger("test_verdict_store")
 # ---------------------------------------------------------------------------
 
 def make_verdict(question: str, score: int = 80, system: SystemType = SystemType.ECONOMIC,
-                 timestamp: float = None) -> Verdict:
+                 timestamp: float = 0) -> Verdict:
     """Create a test verdict with minimal boilerplate."""
     return Verdict(
         question=question,
