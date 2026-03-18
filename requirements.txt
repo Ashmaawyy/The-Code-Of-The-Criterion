@@ -3,6 +3,9 @@ chromadb>=0.4.0
 requests>=2.28.0
 pyyaml>=6.0
 
+# Testing
+pytest>=7.0.0
+
 # Optional: HuggingFace Transformers provider
 # torch>=2.0.0
 # transformers>=4.35.0
