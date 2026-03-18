@@ -10,10 +10,13 @@ Tests:
 - Generate default config template
 """
 
-import json
+import sys
 from pathlib import Path
 
 import pytest
+
+# Ensure project root is on the path so bare module imports resolve
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from config import (
     AppConfig,
