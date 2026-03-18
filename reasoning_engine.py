@@ -85,6 +85,39 @@ class Verdict:
             "timestamp": self.timestamp,
         }
 
+    @classmethod
+    def from_dict(cls, d: dict) -> "Verdict":
+        """Reconstruct a Verdict from a dictionary (e.g., loaded from JSON)."""
+        gate_scores = [
+            GateScore(
+                name=g["name"],
+                score=int(g.get("score", 0)),
+                result=GateResult.SURVIVE if g.get("result") == "Survive" else GateResult.FAIL,
+                reasoning=g.get("reasoning", ""),
+            )
+            for g in d.get("gate_scores", [])
+        ]
+        try:
+            system_type = SystemType(d.get("primary_system", "mixed"))
+        except ValueError:
+            system_type = SystemType.MIXED
+        origin_str = d.get("origin_gate", "Fail")
+        origin_gate = GateResult.SURVIVE if origin_str == "Survive" else GateResult.FAIL
+        return cls(
+            question=d.get("question", ""),
+            primary_system=system_type,
+            friction_points=d.get("friction_points", []),
+            gate_scores=gate_scores,
+            origin_gate=origin_gate,
+            consequences_short_term=d.get("consequences_short_term", []),
+            consequences_long_term=d.get("consequences_long_term", []),
+            revised_reasoning=d.get("revised_reasoning", ""),
+            final_judgment=d.get("final_judgment", ""),
+            total_score=int(d.get("total_score", 0)),
+            passes=int(d.get("passes", 0)),
+            timestamp=d.get("timestamp", 0.0),
+        )
+
     def to_log(self) -> str:
         lines = [
             f"Question: {self.question}",
@@ -414,11 +447,49 @@ class ReasoningEngine:
             gate_data = mirror_result.get(key, {})
             scores.append(GateScore(
                 name=name,
-                score=gate_data.get("score", 0),
+                score=int(gate_data.get("score", 0)),
                 result=GateResult.SURVIVE if gate_data.get("result") == "Survive" else GateResult.FAIL,
                 reasoning=gate_data.get("reasoning", ""),
             ))
         return scores
+
+    def _build_verdict_object(
+        self,
+        question: str,
+        scan_result: dict,
+        mirror_result: dict,
+        verdict_result: dict,
+        passes: int,
+    ) -> Verdict:
+        """
+        Construct a Verdict object from raw phase results.
+
+        Can be called directly when phases are run individually
+        (e.g., for progress display in main.py).
+        """
+        gate_scores = self._build_gate_scores(mirror_result)
+        origin_gate = gate_scores[3] if len(gate_scores) > 3 else None
+        tri_axial_scores = gate_scores[:3]
+
+        primary_system = str(scan_result.get("primary_system", "mixed")).upper()
+        try:
+            system_type = SystemType(primary_system.lower())
+        except ValueError:
+            system_type = SystemType.MIXED
+
+        return Verdict(
+            question=question,
+            primary_system=system_type,
+            friction_points=scan_result.get("friction_points", []),
+            gate_scores=tri_axial_scores,
+            origin_gate=origin_gate.result if origin_gate else GateResult.FAIL,
+            consequences_short_term=verdict_result.get("consequences_short_term", []),
+            consequences_long_term=verdict_result.get("consequences_long_term", []),
+            revised_reasoning=verdict_result.get("revised_reasoning", ""),
+            final_judgment=verdict_result.get("final_judgment", ""),
+            total_score=int(verdict_result.get("total_score", 0)),
+            passes=passes,
+        )
 
     def evaluate(self, question: str, context: str = "") -> Verdict:
         """
@@ -451,28 +522,6 @@ class ReasoningEngine:
             if corrected:
                 verdict_result = corrected
 
-        # Build structured output
-        gate_scores = self._build_gate_scores(mirror_result)
-        origin_gate = gate_scores[3] if len(gate_scores) > 3 else None
-        # Gate scores for tri-axial are the first three
-        tri_axial_scores = gate_scores[:3]
-
-        primary_system = scan_result.get("primary_system", "mixed").upper()
-        try:
-            system_type = SystemType(primary_system.lower())
-        except ValueError:
-            system_type = SystemType.MIXED
-
-        return Verdict(
-            question=question,
-            primary_system=system_type,
-            friction_points=scan_result.get("friction_points", []),
-            gate_scores=tri_axial_scores,
-            origin_gate=origin_gate.result if origin_gate else GateResult.FAIL,
-            consequences_short_term=verdict_result.get("consequences_short_term", []),
-            consequences_long_term=verdict_result.get("consequences_long_term", []),
-            revised_reasoning=verdict_result.get("revised_reasoning", ""),
-            final_judgment=verdict_result.get("final_judgment", ""),
-            total_score=verdict_result.get("total_score", 0),
-            passes=passes,
+        return self._build_verdict_object(
+            question, scan_result, mirror_result, verdict_result, passes
         )

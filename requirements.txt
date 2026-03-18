@@ -1,0 +1,9 @@
+# Core dependencies
+chromadb>=0.4.0
+requests>=2.28.0
+pyyaml>=6.0
+
+# Optional: HuggingFace Transformers provider
+# torch>=2.0.0
+# transformers>=4.35.0
+# bitsandbytes>=0.41.0    # for 4bit/8bit quantization (Linux only)

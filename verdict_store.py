@@ -10,13 +10,11 @@ precedent retrieval for the reasoning engine.
 """
 
 import json
-import os
 import time
 from pathlib import Path
 from typing import Optional
 
 import chromadb
-from chromadb.config import Settings
 
 from reasoning_engine import Verdict, GateResult, SystemType, GateScore
 
@@ -47,7 +45,12 @@ class VerdictStore:
     enabling the reasoning engine to build on precedent.
     """
 
-    def __init__(self, chroma_dir: Optional[Path] = None, verdicts_dir: Optional[Path] = None):
+    def __init__(
+        self,
+        chroma_dir: Optional[Path] = None,
+        verdicts_dir: Optional[Path] = None,
+        collection_name: Optional[str] = None,
+    ):
         self.verdicts_dir = verdicts_dir or VERDICTS_DIR
         self.verdicts_dir.mkdir(parents=True, exist_ok=True)
 
@@ -56,7 +59,7 @@ class VerdictStore:
 
         self.client = chromadb.PersistentClient(path=str(chroma_path))
         self.collection = self.client.get_or_create_collection(
-            name=COLLECTION_NAME,
+            name=collection_name or COLLECTION_NAME,
             metadata={"description": "Al-Furqan Criterion verdicts and reasoning patterns"},
         )
 
@@ -183,7 +186,9 @@ class VerdictStore:
 
         context_parts = []
         for i, r in enumerate(results, 1):
-            context_parts.append(f"--- Prior Verdict {i} (relevance distance: {r['distance']:.4f}) ---")
+            dist = r['distance']
+            dist_str = f"{dist:.4f}" if dist is not None else "N/A"
+            context_parts.append(f"--- Prior Verdict {i} (relevance distance: {dist_str}) ---")
             context_parts.append(r["document"])
             context_parts.append(f"Score: {r['metadata'].get('total_score', 'N/A')}")
             context_parts.append(f"Status: {r['metadata'].get('status', 'N/A')}")
@@ -246,12 +251,30 @@ class VerdictStore:
             except Exception:
                 pass
         else:
-            # Just update status
+            # Update file status
             with open(log_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
             data["status"] = new_status
             with open(log_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
+
+            if new_status in ("approved", "corrected"):
+                # Re-index: reconstruct document and metadata from stored data
+                verdict_obj = Verdict.from_dict(data)
+                document = self._verdict_to_document(verdict_obj)
+                metadata = self._verdict_to_metadata(verdict_obj)
+                metadata["status"] = new_status
+                self.collection.upsert(
+                    ids=[verdict_id],
+                    documents=[document],
+                    metadatas=[metadata],
+                )
+            elif new_status not in ("approved", "corrected"):
+                # Remove from index for any non-indexed status (needs_review, etc.)
+                try:
+                    self.collection.delete(ids=[verdict_id])
+                except Exception:
+                    pass
 
         return True
 
