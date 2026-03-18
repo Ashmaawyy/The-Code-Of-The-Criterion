@@ -3,12 +3,26 @@ Shared fixtures for Al-Furqan unit tests.
 """
 
 import json
+import logging
 import sys
 import time
 from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
+
+
+# ---------------------------------------------------------------------------
+# Logging Configuration
+# ---------------------------------------------------------------------------
+
+LOG_FORMAT = "[%(levelname)s] %(name)s | %(message)s"
+
+def pytest_configure(config):
+    """Set up logging for all tests. Use `pytest --log-cli-level=INFO` to see output."""
+    logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT, force=True)
+
+logger = logging.getLogger("conftest")
 
 # Add project root to path so imports resolve
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -106,10 +120,13 @@ def make_mock_llm(responses: list[str] | None = None):
             MOCK_CORRECTION_SOUND,
         ]
     call_count = {"n": 0}
+    logger.info("Mock LLM created with %d response(s)", len(responses))
 
     def mock_llm(prompt: str) -> str:
         idx = min(call_count["n"], len(responses) - 1)
         call_count["n"] += 1
+        logger.debug("Mock LLM call #%d — prompt length=%d, returning response #%d",
+                      call_count["n"], len(prompt), idx + 1)
         return responses[idx]
 
     return mock_llm
@@ -122,18 +139,21 @@ def make_mock_llm(responses: list[str] | None = None):
 @pytest.fixture
 def mock_llm():
     """Default mock LLM that returns a full Scan→Mirror→Verdict→Correction flow."""
+    logger.info("Creating default mock LLM (Scan→Mirror→Verdict→Correction)")
     return make_mock_llm()
 
 
 @pytest.fixture
 def engine(mock_llm):
     """ReasoningEngine wired to a mock LLM."""
+    logger.info("Creating ReasoningEngine with mock LLM")
     return ReasoningEngine(mock_llm)
 
 
 @pytest.fixture
 def sample_verdict():
     """A fully populated Verdict object for testing."""
+    logger.info("Building sample_verdict fixture (interest-based lending, score=85)")
     return Verdict(
         question="Is interest-based lending just?",
         primary_system=SystemType.ECONOMIC,
@@ -160,6 +180,7 @@ def sample_verdict():
 @pytest.fixture
 def tmp_store(tmp_path):
     """A VerdictStore using temporary directories."""
+    logger.info("Creating tmp VerdictStore at %s", tmp_path)
     return VerdictStore(
         chroma_dir=tmp_path / "chroma",
         verdicts_dir=tmp_path / "verdicts",
