@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Optional
 
 import chromadb
+from chromadb.base_types import Where
 
 from reasoning_engine import Verdict, GateResult, SystemType, GateScore
 
@@ -147,7 +148,7 @@ class VerdictStore:
             List of dicts with 'document', 'metadata', 'distance' keys,
             sorted by relevance (closest first).
         """
-        where_filter = None
+        where_filter: Optional[Where] = None
         if system_filter:
             where_filter = {"primary_system": system_filter.value}
 
@@ -162,12 +163,15 @@ class VerdictStore:
         )
 
         verdicts = []
+        documents = results["documents"]
+        metadatas = results["metadatas"]
+        distances = results["distances"]
         for i in range(len(results["ids"][0])):
             verdicts.append({
                 "id": results["ids"][0][i],
-                "document": results["documents"][0][i],
-                "metadata": results["metadatas"][0][i],
-                "distance": results["distances"][0][i] if results.get("distances") else None,
+                "document": documents[0][i] if documents else None,
+                "metadata": metadatas[0][i] if metadatas else None,
+                "distance": distances[0][i] if distances else None,
             })
 
         return verdicts
