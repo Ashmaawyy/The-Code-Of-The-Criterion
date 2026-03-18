@@ -10,12 +10,14 @@ Tests:
 Note: Interactive CLI functions are tested by mocking builtins.input.
 """
 
-import json
-import time
-from io import StringIO
-from unittest.mock import patch, MagicMock
+import sys
+from pathlib import Path
+from unittest.mock import patch
 
 import pytest
+
+# Ensure project root is on the path so bare module imports resolve
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from reasoning_engine import Verdict, GateScore, GateResult, SystemType
 from verdict_store import VerdictStore

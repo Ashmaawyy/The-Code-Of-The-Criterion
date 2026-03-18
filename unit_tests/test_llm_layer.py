@@ -12,9 +12,14 @@ Note: Actual API calls to Ollama/Transformers/OpenAI are NOT tested here.
 Those require integration tests with running services.
 """
 
+import sys
 import time
+from pathlib import Path
 
 import pytest
+
+# Ensure project root is on the path so bare module imports resolve
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from llm_layer import (
     LLMConfig,
