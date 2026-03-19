@@ -16,11 +16,12 @@ import pytest
 # Logging Configuration
 # ---------------------------------------------------------------------------
 
-LOG_FORMAT = "[%(levelname)s] %(name)s | %(message)s"
+LOG_FORMAT = "🕒 %(asctime)s - 📍 %(name)s - [%(levelname)s]  %(message)s"
+LOG_DATEFMT = "%Y-%m-%d %H:%M:%S"
 
 def pytest_configure(config):
     """Set up logging for all tests. Use `pytest --log-cli-level=INFO` to see output."""
-    logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT, force=True)
+    logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT, datefmt=LOG_DATEFMT, force=True)
 
 logger = logging.getLogger("conftest")
 
