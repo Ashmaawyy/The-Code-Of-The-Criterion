@@ -310,7 +310,17 @@ def main():
     # --evaluate: single question evaluation
     if args.evaluate:
         llm, engine, store, review = build_system(config)
-        run_evaluation(args.evaluate, engine, store, review, config)
+        try:
+            run_evaluation(args.evaluate, engine, store, review, config)
+        except ConnectionError as e:
+            print(f"\n  Connection error: {e}")
+        except TimeoutError as e:
+            print(f"\n  Timeout: {e}")
+            print("  Try increasing timeout in config.yaml or using a smaller/faster model.")
+        except json.JSONDecodeError as e:
+            print(f"\n  Failed to parse LLM response as JSON: {e}")
+        except Exception as e:
+            print(f"\n  Error: {type(e).__name__}: {e}")
         return
 
     # Default: interactive mode

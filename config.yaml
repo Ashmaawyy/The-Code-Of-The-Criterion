@@ -1,0 +1,38 @@
+# =============================================================================
+# Al-Furqan (The Criterion) — Configuration
+# =============================================================================
+
+# --- LLM Provider -----------------------------------------------------------
+# provider: ollama | transformers | openai_compatible
+# For Ollama:    ollama pull <model_name>, then ollama serve
+# For Transformers: pip install torch transformers (+ bitsandbytes for quantization)
+# For OpenAI-compatible: any server with /v1/chat/completions endpoint
+llm:
+  provider: ollama
+  model_name: qwen2.5:3b
+  base_url: "http://localhost:11434"
+  temperature: 0.1
+  max_tokens: 4096
+  top_p: 0.9
+  repeat_penalty: 1.1
+  timeout: 600
+  system_prompt: ""
+  device: auto           # transformers only: auto, cpu, cuda, mps
+  quantization: null     # transformers only: 4bit, 8bit, or null
+
+# --- Reasoning Engine --------------------------------------------------------
+engine:
+  max_correction_passes: 5
+
+# --- Verdict Store -----------------------------------------------------------
+store:
+  verdicts_dir: "verdicts"
+  chroma_dir: ".chroma_db"
+  collection_name: criterion_verdicts
+  default_retrieval_count: 5
+
+# --- Human Review ------------------------------------------------------------
+review:
+  auto_approve_threshold: null   # set to an integer (e.g. 90) to auto-approve high-score verdicts
+  show_reasoning_detail: true
+  max_browse_count: 20
