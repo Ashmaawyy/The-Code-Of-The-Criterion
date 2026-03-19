@@ -388,7 +388,7 @@ class ReasoningEngine:
     The LLM layer is fully decoupled — any model (local or API) can be plugged in.
     """
 
-    MAX_CORRECTION_PASSES = 5
+    MAX_CORRECTION_PASSES: int = 5
 
     def __init__(self, llm_call: Callable[[str], str]):
         self.llm_call = llm_call
