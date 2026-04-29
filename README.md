@@ -232,13 +232,6 @@ See [docs/README.md](docs/README.md) for the full index. Key documents:
 - [x] Lesson pipeline (24 episodes, 2,487 training pairs)
 - [x] 705 tests passing
 
-### 🔜 Next
-
-- [ ] Download & process episodes 2-23 (KB expansion)
-- [ ] Collect 500+ human-reviewed pipeline responses
-- [ ] Semantic search API endpoint (ES backend ready)
-- [ ] Cross-verse transition analysis
-
 ### 🔮 Future
 
 - [ ] Fine-tune Furqan-27B (SFT + DPO on Qwen3.5-27B-Claude-Opus-Distilled)
