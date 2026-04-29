@@ -1,0 +1,340 @@
+\documentclass[11pt,a4paper]{article}
+
+% --- Packages ---------------------------------------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+\geometry{margin=2.5cm}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!70!black,
+    citecolor=blue!70!black,
+    urlcolor=blue!70!black,
+}
+
+% --- Theorem environments ---------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{axiom}{Axiom}
+\newtheorem{proof_thm}[axiom]{Proof}
+\newtheorem{definition}[axiom]{Definition}
+\newtheorem{theorem}[axiom]{Theorem}
+\newtheorem{corollary}[axiom]{Corollary}
+
+% --- Custom commands --------------------------------------------------------
+\newcommand{\E}{\mathcal{E}}      % Entity domain
+\newcommand{\F}{\mathcal{F}}      % Framework domain
+\newcommand{\Exists}{\operatorname{Exists}}
+\newcommand{\Purpose}{\operatorname{Purpose}}
+\newcommand{\Causal}{\operatorname{Causal}}
+\newcommand{\Aligned}{\operatorname{Aligned}}
+\newcommand{\Functional}{\operatorname{Functional}}
+\newcommand{\Contingent}{\operatorname{Contingent}}
+\newcommand{\SelfGround}{\operatorname{SelfGround}}
+\newcommand{\Transcendent}{\operatorname{Transcendent}}
+\newcommand{\MoralDebt}{\operatorname{MoralDebt}}
+\newcommand{\HumanJustice}{\operatorname{HumanJustice}}
+\newcommand{\FinalCourt}{\operatorname{FinalCourt}}
+\newcommand{\Verified}{\operatorname{Verified}}
+\newcommand{\Consistent}{\operatorname{Consistent}}
+\newcommand{\FreeMediation}{\operatorname{FreeMediation}}
+\newcommand{\AckTranscendence}{\operatorname{AckTranscendence}}
+\newcommand{\Survives}{\operatorname{Survives}}
+
+% --- Document ---------------------------------------------------------------
+\begin{document}
+
+\begin{center}
+    {\LARGE\bfseries The Criterion (Al-Furqan)}\\[6pt]
+    {\Large Formal Axiom System}\\[12pt]
+    {\large Axiom-Anchored Reasoning Framework}\\[6pt]
+    \today
+\end{center}
+
+\vspace{1em}
+
+\begin{abstract}
+This document presents the formal mathematical foundation of The Criterion
+(\textit{Al-Furqan}), an axiom-anchored reasoning framework.  The system is
+built on three core axioms and two derived proofs, encoded in first-order
+logic and verified for satisfiability using the Z3 SMT solver.  Four
+survival gates operationalize the axioms as concrete testable predicates.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ============================================================================
+\section{Domains}
+% ============================================================================
+
+\begin{definition}[Entity Domain]
+Let $\E$ be the set of all entities---actions, systems, ideas, behaviours,
+and beings---that can be subjected to evaluation.
+\end{definition}
+
+\begin{definition}[Framework Domain]
+Let $\F$ be the set of all evaluative or philosophical frameworks---moral
+systems, ideologies, legal codes, economic models---that can themselves be
+tested against the axioms.
+\end{definition}
+
+% ============================================================================
+\section{Predicates}
+% ============================================================================
+
+\subsection{Entity Predicates ($\E \to \{T, F\}$)}
+
+\begin{center}
+\begin{tabular}{@{} l l p{8cm} @{}}
+\toprule
+\textbf{Symbol} & \textbf{Arity} & \textbf{Interpretation} \\
+\midrule
+$\Exists(x)$       & $\E \to \mathbb{B}$ & $x$ exists \\
+$\Purpose(x)$      & $\E \to \mathbb{B}$ & $x$ has an intrinsic purpose \\
+$\Causal(x)$       & $\E \to \mathbb{B}$ & $x$ participates in a causal network \\
+$\Aligned(x)$      & $\E \to \mathbb{B}$ & $x$ is aligned with its purpose \\
+$\Functional(x)$   & $\E \to \mathbb{B}$ & $x$ functions correctly \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Framework Predicates ($\F \to \{T, F\}$)}
+
+\begin{center}
+\begin{tabular}{@{} l l p{8cm} @{}}
+\toprule
+\textbf{Symbol} & \textbf{Arity} & \textbf{Interpretation} \\
+\midrule
+$\Contingent(f)$      & $\F \to \mathbb{B}$ & $f$ is contingent (not self-sufficient) \\
+$\SelfGround(f)$      & $\F \to \mathbb{B}$ & $f$ can justify itself from within \\
+$\Transcendent(f)$    & $\F \to \mathbb{B}$ & $f$ has a transcendent source \\
+$\MoralDebt(f)$       & $\F \to \mathbb{B}$ & $f$ contains unresolved moral debts \\
+$\HumanJustice(f)$    & $\F \to \mathbb{B}$ & Human justice suffices within $f$ \\
+$\FinalCourt(f)$      & $\F \to \mathbb{B}$ & $f$ requires a final non-contingent court \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Gate Predicates ($\E \to \{T, F\}$)}
+
+\begin{center}
+\begin{tabular}{@{} l l l p{6cm} @{}}
+\toprule
+\textbf{Gate} & \textbf{Symbol} & \textbf{Arity} & \textbf{Interpretation} \\
+\midrule
+G1 & $\Verified(x)$          & $\E \to \mathbb{B}$ & Source is traceable and transcendently grounded \\
+G2 & $\Consistent(x)$        & $\E \to \mathbb{B}$ & No internal contradictions \\
+G3 & $\FreeMediation(x)$     & $\E \to \mathbb{B}$ & Foundation $\neq$ human preference \\
+G4 & $\AckTranscendence(x)$  & $\E \to \mathbb{B}$ & Acknowledges transcendent origin \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ============================================================================
+\section{Core Axioms}
+% ============================================================================
+
+\begin{axiom}[Design --- Existence Entails Purpose]
+\label{ax:design}
+\begin{equation}
+\forall\, x \in \E : \quad \Exists(x) \implies \Purpose(x)
+\end{equation}
+Purposelessness is a logical impossibility for anything that exists.
+
+\medskip\noindent
+\textbf{Contrapositive:}
+\begin{equation}
+\forall\, x \in \E : \quad \lnot\,\Purpose(x) \implies \lnot\,\Exists(x)
+\end{equation}
+\end{axiom}
+
+\begin{axiom}[Network --- No Entity Exists in Isolation]
+\label{ax:network}
+\begin{equation}
+\forall\, x \in \E : \quad \Exists(x) \implies \Causal(x)
+\end{equation}
+Every existing entity produces compounded systemic consequences.  There are no
+causally inert entities.
+\end{axiom}
+
+\begin{axiom}[Alignment --- Functionality Requires Alignment with Purpose]
+\label{ax:alignment}
+\begin{equation}
+\forall\, x \in \E : \quad \Exists(x) \implies
+\bigl(\Aligned(x) \iff \Functional(x)\bigr)
+\end{equation}
+
+Expanded as two implications:
+\begin{equation}
+\forall\, x \in \E : \quad \Exists(x) \implies
+\Bigl[
+    \bigl(\Aligned(x) \implies \Functional(x)\bigr)
+    \;\land\;
+    \bigl(\Functional(x) \implies \Aligned(x)\bigr)
+\Bigr]
+\end{equation}
+
+Deviation from purpose is functionally equivalent to malfunction.
+\end{axiom}
+
+% ============================================================================
+\section{Derived Proofs}
+% ============================================================================
+
+\begin{proof_thm}[Transcendence Necessity]
+\label{pf:transcendence}
+\begin{equation}
+\forall\, f \in \F : \quad \Contingent(f) \implies
+\bigl(\lnot\,\SelfGround(f) \;\land\; \Transcendent(f)\bigr)
+\end{equation}
+
+A contingent framework cannot serve as its own foundation.  It must appeal to
+a source beyond itself.  Any attempt at self-grounding produces circularity.
+\end{proof_thm}
+
+\begin{proof_thm}[Final Court Necessity]
+\label{pf:finalcourt}
+\begin{equation}
+\forall\, f \in \F : \quad
+\bigl(\MoralDebt(f) \;\land\; \lnot\,\HumanJustice(f)\bigr) \implies \FinalCourt(f)
+\end{equation}
+
+When justice cannot be fully realised within the human domain---when oppressors
+die before accountability, when victims receive no restitution---a transcendent
+adjudicator is logically necessary.
+\end{proof_thm}
+
+% ============================================================================
+\section{Survival Gate Definition}
+% ============================================================================
+
+\begin{definition}[Criterion Survival]
+\label{def:survives}
+An entity $x \in \E$ \textbf{survives} The Criterion if and only if it
+passes all four gates:
+\begin{equation}
+\Survives(x) \iff
+\Verified(x) \;\land\; \Consistent(x) \;\land\; \FreeMediation(x) \;\land\; \AckTranscendence(x)
+\end{equation}
+\end{definition}
+
+\noindent The four gates operationalise the axioms as follows:
+
+\begin{center}
+\begin{tabular}{@{} l l l @{}}
+\toprule
+\textbf{Gate} & \textbf{Tests} & \textbf{Grounded in} \\
+\midrule
+G1: Source Integrity       & $\Verified(x)$         & Axiom~\ref{ax:design}, Proof~\ref{pf:transcendence} \\
+G2: Structural Consistency & $\Consistent(x)$       & Axiom~\ref{ax:alignment} \\
+G3: Mediation Zeroing      & $\FreeMediation(x)$    & Proof~\ref{pf:transcendence} \\
+G4: Origin Aware           & $\AckTranscendence(x)$ & Proof~\ref{pf:transcendence}, Proof~\ref{pf:finalcourt} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ============================================================================
+\section{Theorems}
+% ============================================================================
+
+\begin{theorem}[Misalignment Implies Dysfunction]
+\label{thm:dysfunction}
+From Axioms~\ref{ax:design} and~\ref{ax:alignment}:
+\begin{equation}
+\forall\, x \in \E : \quad \Exists(x) \;\land\; \lnot\,\Aligned(x) \implies \lnot\,\Functional(x)
+\end{equation}
+\begin{proof}
+Let $x \in \E$ with $\Exists(x)$ and $\lnot\,\Aligned(x)$.
+By Axiom~\ref{ax:alignment}, $\Exists(x) \implies (\Functional(x) \implies \Aligned(x))$.
+Contrapositive: $\lnot\,\Aligned(x) \implies \lnot\,\Functional(x)$. \qed
+\end{proof}
+\end{theorem}
+
+\begin{theorem}[No Neutral Actions]
+\label{thm:noneutral}
+From Axioms~\ref{ax:design} and~\ref{ax:network}:
+\begin{equation}
+\forall\, x \in \E : \quad \Exists(x) \implies \Purpose(x) \;\land\; \Causal(x)
+\end{equation}
+\begin{proof}
+Immediate from the conjunction of Axiom~\ref{ax:design} and Axiom~\ref{ax:network}. \qed
+\end{proof}
+\end{theorem}
+
+\begin{theorem}[Contingent Human-Grounded Frameworks Fail]
+\label{thm:contingent_fail}
+From Proof~\ref{pf:transcendence} and Gate G3:
+\begin{equation}
+\forall\, f \in \F,\; \forall\, x \in \E : \quad
+\Contingent(f) \;\land\; \lnot\,\FreeMediation(x) \implies \lnot\,\Survives(x)
+\end{equation}
+\begin{proof}
+$\Contingent(f) \implies \lnot\,\SelfGround(f)$ (Proof~\ref{pf:transcendence}).
+If the entity's foundation is human preference ($\lnot\,\FreeMediation(x)$),
+it fails Gate G3 and by Definition~\ref{def:survives},
+$\lnot\,\Survives(x)$. \qed
+\end{proof}
+\end{theorem}
+
+\begin{corollary}[Self-Referential Systems Fail G1 and G3]
+Any framework $f$ that claims to be its own source of authority
+satisfies $\Contingent(f) \land \lnot\,\FreeMediation(x)$ and thus
+$\lnot\,\Survives(x)$.  This covers moral relativism, pure utilitarianism,
+and any system whose axioms are derived from human consensus alone.
+\end{corollary}
+
+% ============================================================================
+\section{System Satisfiability}
+% ============================================================================
+
+The axiom system
+\begin{equation}
+\Sigma = \{A1,\; A2,\; A3,\; P1,\; P2\}
+\end{equation}
+has been verified as \textbf{satisfiable} using the Z3 SMT solver.  A model
+exists in which all five formulas hold simultaneously, confirming that The
+Criterion is internally consistent---it does not contradict itself.
+
+\medskip\noindent
+The Z3 encoding is maintained in the project source at:
+
+\texttt{src/al\_furqan/engine/symbolic/formal\_axioms.py}
+
+\medskip\noindent
+The verification engine at
+\texttt{src/al\_furqan/engine/symbolic/verifier.py}
+extracts predicates from LLM-generated verdicts and checks whether they are
+consistent with $\Sigma$ or produce contradictions (UNSAT).
+
+% ============================================================================
+\section{Notation Summary}
+% ============================================================================
+
+\begin{center}
+\begin{tabular}{@{} l l @{}}
+\toprule
+\textbf{Symbol} & \textbf{Meaning} \\
+\midrule
+$\forall$         & For all \\
+$\implies$        & Material implication (if \ldots\ then) \\
+$\iff$            & Biconditional (if and only if) \\
+$\land$           & Logical conjunction (and) \\
+$\lnot$           & Logical negation (not) \\
+$\E$              & Entity domain \\
+$\F$              & Framework domain \\
+$\mathbb{B}$      & Boolean domain $\{T, F\}$ \\
+$\Sigma$          & The complete axiom system \\
+SAT               & Satisfiable (a model exists) \\
+UNSAT             & Unsatisfiable (no model exists --- contradiction) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\end{document}

@@ -1,0 +1,127 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: al-furqan-api
+    ports:
+      - "8000:8000"
+    environment:
+      - LLM_PROVIDER=${LLM_PROVIDER:-ollama}
+      - LLM_MODEL=${LLM_MODEL:-llama3.1:8b}
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://ollama:11434}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - CHROMA_PERSIST_DIR=/app/.chroma_db
+      - VERDICTS_DIR=/app/verdicts
+      - REDIS_URL=redis://redis:6379/0
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    volumes:
+      - chroma_data:/app/.chroma_db
+      - verdicts_data:/app/verdicts
+    depends_on:
+      redis:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - al-furqan
+
+  redis:
+    image: redis:7-alpine
+    container_name: al-furqan-redis
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - al-furqan
+
+  elasticsearch:
+    image: elasticsearch:8.13.0
+    container_name: al-furqan-es
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms4g -Xmx4g
+    ports:
+      - "9200:9200"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - al-furqan
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: al-furqan-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped
+    networks:
+      - al-furqan
+    profiles:
+      - gpu
+
+  neo4j:
+    image: neo4j:5.18-community
+    container_name: al-furqan-neo4j
+    environment:
+      - NEO4J_AUTH=none
+      - NEO4J_PLUGINS=["graph-data-science"]
+      - NEO4J_server_memory_heap_max__size=2g
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4j_data:/data
+    restart: unless-stopped
+    networks:
+      - al-furqan
+
+  es-seed:
+    build:
+      context: .
+      dockerfile: Dockerfile.es-seed
+    container_name: al-furqan-es-seed
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    restart: "no"
+    networks:
+      - al-furqan
+
+volumes:
+  chroma_data:
+  verdicts_data:
+  redis_data:
+  ollama_data:
+  es_data:
+  neo4j_data:
+
+networks:
+  al-furqan:
+    driver: bridge

@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: al-furqan
+  namespace: al-furqan
+  labels:
+    app: al-furqan
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: al-furqan
+  template:
+    metadata:
+      labels:
+        app: al-furqan
+    spec:
+      imagePullSecrets:
+        - name: al-furqan-secret
+      containers:
+        - name: api
+          image: ${IMAGE_NAME}:${IMAGE_TAG}
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: al-furqan-config
+            - secretRef:
+                name: al-furqan-secrets
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 5
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+          volumeMounts:
+            - name: chroma-data
+              mountPath: /app/.chroma_db
+            - name: verdicts-data
+              mountPath: /app/verdicts
+      volumes:
+        - name: chroma-data
+          persistentVolumeClaim:
+            claimName: al-furqan-chroma-pvc
+        - name: verdicts-data
+          persistentVolumeClaim:
+            claimName: al-furqan-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: al-furqan
+  namespace: al-furqan
+spec:
+  selector:
+    app: al-furqan
+  ports:
+    - port: 80
+      targetPort: 8000

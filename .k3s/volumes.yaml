@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: al-furqan-pv
+spec:
+  storageClassName: ""
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: 10.255.0.96
+    path: /NFS_DEV_ENV/al-furqan
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: al-furqan-pvc
+  namespace: al-furqan
+spec:
+  storageClassName: ""
+  volumeName: al-furqan-pv
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi

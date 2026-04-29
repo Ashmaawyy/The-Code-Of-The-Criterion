@@ -1,0 +1,18 @@
+FROM python:3.12-slim
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y gcc curl && rm -rf /var/lib/apt/lists/*
+
+COPY pyproject.toml .
+COPY src/ src/
+COPY data/ data/
+COPY training/ training/
+COPY scripts/ scripts/
+
+RUN pip install --no-cache-dir . && \
+    pip install --no-cache-dir datasets neo4j
+
+COPY scripts/seed_es.sh /app/seed_es.sh
+RUN chmod +x /app/seed_es.sh
+
+CMD ["/app/seed_es.sh"]

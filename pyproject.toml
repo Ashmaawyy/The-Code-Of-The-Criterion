@@ -1,0 +1,66 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "al-furqan"
+version = "0.1.0"
+description = "Al-Furqan (The Criterion) — Axiom-anchored reasoning engine"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+
+    "requests>=2.28.0",
+    "pyyaml>=6.0",
+    "pydantic>=2.0",
+    "python-jose[cryptography]",
+    "passlib[bcrypt]",
+    "python-multipart",
+    "celery[redis]",
+    "redis",
+    "httpx",
+    "filelock>=3.0",
+    "z3-solver>=4.12.0",
+    "elasticsearch[async]>=8.0.0",
+]
+
+[project.optional-dependencies]
+embeddings = [
+    "numpy>=1.24.0",
+    "sentence-transformers>=2.2.0",
+]
+transcribe = [
+    "faster-whisper>=1.0.0",
+]
+graph = [
+    "graphviz>=0.20",
+]
+datasets = [
+    "datasets>=2.0.0",
+]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "pytest-cov",
+    "httpx",
+    "ruff",
+]
+all = [
+    "al-furqan[embeddings,transcribe,graph,datasets]",
+]
+
+[project.scripts]
+al-furqan = "al_furqan.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]

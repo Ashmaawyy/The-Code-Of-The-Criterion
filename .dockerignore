@@ -1,0 +1,46 @@
+# Git
+.git/
+.gitignore
+
+# CI/CD
+.gitlab-ci.yml
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Testing
+tests/
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Docs & config
+*.md
+LICENSE
+.env
+.env.*
+
+# Data (built at runtime)
+verdicts/
+.chroma_db/
+
+# OS
+.DS_Store
+Thumbs.db
