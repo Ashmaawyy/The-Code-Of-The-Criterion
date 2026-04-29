@@ -266,21 +266,9 @@ See [docs/README.md](docs/README.md) for the full index. Key documents:
 
 ---
 
-## 👥 Team
-
-1. **ماجد عارف (Magid Arif)** — CEO
-2. **محمود السمان (Mahmoud Al-Samman)** — Principal Software Architect
-3. **محمد الأشماوي (Muhammad Al-Ashmawy)** — Research Lead & Domain Expert
-4. **آية أبو الوفا (Aya Abu Al-Wafa)** — Researcher
-5. **مصطفى مرزوق (Mustafa Marzouk)** — Researcher
-6. **علي (Ali)** — Researcher
-7. **مريم ياسر (Maryam Yasser)** — Researcher
-
----
-
 ## 📄 License
 
-Confidential — Variiance R&D
+Apache 2.0
 
 ---
 
