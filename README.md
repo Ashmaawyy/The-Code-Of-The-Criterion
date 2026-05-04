@@ -57,40 +57,40 @@ pytest tests/ -v  # 705 tests
   <rect x="20" y="45" width="7" height="75" rx="3" fill="#1f6feb"/>
   <text x="38" y="62" fill="#58a6ff" font-size="9.5" font-weight="bold" letter-spacing="1.5" font-family="monospace">LAYER 4</text>
   <text x="110" y="62" fill="#e6edf3" font-size="12" font-weight="600" font-family="system-ui, sans-serif">API &amp; Orchestration</text>
-  <text x="38" y="81" fill="#6e7681" font-size="11" font-family="monospace">&#x251C;&#x2500;&#x2500; REST API (FastAPI)</text>
-  <text x="38" y="97" fill="#6e7681" font-size="11" font-family="monospace">&#x2514;&#x2500;&#x2500; Tafsir RAG Pipeline (Engine-Guided)</text>
+  <text x="38" y="81" fill="#6e7681" font-size="11" font-family="monospace">├── REST API (FastAPI)</text>
+  <text x="38" y="97" fill="#6e7681" font-size="11" font-family="monospace">└── Tafsir RAG Pipeline (Engine-Guided)</text>
 
   <!-- LAYER 3: Engine -->
   <rect x="20" y="130" width="660" height="130" rx="6" fill="#161b22" stroke="#388bfd" stroke-width="1.5"/>
   <rect x="20" y="130" width="7" height="130" rx="3" fill="#388bfd"/>
   <text x="38" y="147" fill="#79c0ff" font-size="9.5" font-weight="bold" letter-spacing="1.5" font-family="monospace">LAYER 3</text>
   <text x="110" y="147" fill="#e6edf3" font-size="12" font-weight="600" font-family="system-ui, sans-serif">Furqan Engine</text>
-  <text x="38" y="167" fill="#6e7681" font-size="11" font-family="monospace">&#x251C;&#x2500;&#x2500; 4 Axioms (immutable)</text>
-  <text x="38" y="183" fill="#6e7681" font-size="11" font-family="monospace">&#x251C;&#x2500;&#x2500; 4 Survival Gates</text>
-  <text x="38" y="199" fill="#6e7681" font-size="11" font-family="monospace">&#x251C;&#x2500;&#x2500; Guided Reasoning Chains</text>
-  <text x="38" y="215" fill="#6e7681" font-size="11" font-family="monospace">&#x251C;&#x2500;&#x2500; Symbolic Verification (Z3 SMT)</text>
-  <text x="38" y="231" fill="#6e7681" font-size="11" font-family="monospace">&#x251C;&#x2500;&#x2500; Reasoning-as-a-Skill (RaaS)</text>
-  <text x="38" y="247" fill="#6e7681" font-size="11" font-family="monospace">&#x2514;&#x2500;&#x2500; Tafsir Reasoning (Axiom-Guided Templates)</text>
+  <text x="38" y="167" fill="#6e7681" font-size="11" font-family="monospace">├── 4 Axioms (immutable)</text>
+  <text x="38" y="183" fill="#6e7681" font-size="11" font-family="monospace">├── 4 Survival Gates</text>
+  <text x="38" y="199" fill="#6e7681" font-size="11" font-family="monospace">├── Guided Reasoning Chains</text>
+  <text x="38" y="215" fill="#6e7681" font-size="11" font-family="monospace">├── Symbolic Verification (Z3 SMT)</text>
+  <text x="38" y="231" fill="#6e7681" font-size="11" font-family="monospace">├── Reasoning-as-a-Skill (RaaS)</text>
+  <text x="38" y="247" fill="#6e7681" font-size="11" font-family="monospace">└── Tafsir Reasoning (Axiom-Guided Templates)</text>
 
   <!-- LAYER 2: Knowledge Base (two-column) -->
   <rect x="20" y="270" width="660" height="120" rx="6" fill="#161b22" stroke="#3fb950" stroke-width="1.5"/>
   <rect x="20" y="270" width="7" height="120" rx="3" fill="#3fb950"/>
   <text x="38" y="287" fill="#56d364" font-size="9.5" font-weight="bold" letter-spacing="1.5" font-family="monospace">LAYER 2</text>
   <text x="110" y="287" fill="#e6edf3" font-size="12" font-weight="600" font-family="system-ui, sans-serif">Knowledge Base</text>
-  <text x="38" y="307" fill="#6e7681" font-size="11" font-family="monospace">&#x251C;&#x2500;&#x2500; Quran (114 surahs, 6,236 verses)</text>
-  <text x="38" y="323" fill="#6e7681" font-size="11" font-family="monospace">&#x251C;&#x2500;&#x2500; Fiqh Rules (major / minor)</text>
-  <text x="38" y="339" fill="#6e7681" font-size="11" font-family="monospace">&#x2514;&#x2500;&#x2500; Knowledge Graph (verse relationships)</text>
+  <text x="38" y="307" fill="#6e7681" font-size="11" font-family="monospace">├── Quran (114 surahs, 6,236 verses)</text>
+  <text x="38" y="323" fill="#6e7681" font-size="11" font-family="monospace">├── Fiqh Rules (major / minor)</text>
+  <text x="38" y="339" fill="#6e7681" font-size="11" font-family="monospace">└── Knowledge Graph (verse relationships)</text>
   <line x1="362" y1="300" x2="362" y2="352" stroke="#21262d" stroke-width="1"/>
-  <text x="373" y="307" fill="#6e7681" font-size="11" font-family="monospace">&#x251C;&#x2500;&#x2500; Hadith (Bukhari, Muslim, graded)</text>
-  <text x="373" y="323" fill="#6e7681" font-size="11" font-family="monospace">&#x251C;&#x2500;&#x2500; Tafsir KB (Sheikh Ahmad Al-Sayyid)</text>
-  <text x="373" y="339" fill="#6e7681" font-size="11" font-family="monospace">&#x2514;&#x2500;&#x2500; Embeddings (MiniLM / CamelBERT)</text>
+  <text x="373" y="307" fill="#6e7681" font-size="11" font-family="monospace">├── Hadith (Bukhari, Muslim, graded)</text>
+  <text x="373" y="323" fill="#6e7681" font-size="11" font-family="monospace">├── Tafsir KB (Sheikh Ahmad Al-Sayyid)</text>
+  <text x="373" y="339" fill="#6e7681" font-size="11" font-family="monospace">└── Embeddings (MiniLM / CamelBERT)</text>
 
   <!-- LAYER 1: Storage -->
   <rect x="20" y="400" width="660" height="50" rx="6" fill="#161b22" stroke="#a371f7" stroke-width="1.5"/>
   <rect x="20" y="400" width="7" height="50" rx="3" fill="#a371f7"/>
   <text x="38" y="418" fill="#bc8cff" font-size="9.5" font-weight="bold" letter-spacing="1.5" font-family="monospace">LAYER 1</text>
   <text x="110" y="418" fill="#e6edf3" font-size="12" font-weight="600" font-family="system-ui, sans-serif">Storage (Elasticsearch 8.13)</text>
-  <text x="38" y="438" fill="#6e7681" font-size="11" font-family="monospace">6 indices &#xB7; custom Arabic analyzer &#xB7; Verdict Store &#xB7; Feedback Store</text>
+  <text x="38" y="438" fill="#6e7681" font-size="11" font-family="monospace">6 indices · custom Arabic analyzer · Verdict Store · Feedback Store</text>
 </svg>
 
 ---
