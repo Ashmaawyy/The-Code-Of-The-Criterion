@@ -48,50 +48,60 @@ pytest tests/ -v  # 705 tests
 
 ## 🏗️ Architecture
 
-<svg width="700" height="465" viewBox="0 0 700 465" xmlns="http://www.w3.org/2000/svg">
-  <rect width="700" height="465" rx="10" fill="#0d1117"/>
-  <text x="350" y="28" text-anchor="middle" fill="#f0f6fc" font-size="14" font-weight="bold" font-family="system-ui, sans-serif" letter-spacing="0.3">Al-Furqan — System Architecture</text>
-
-  <!-- LAYER 4: API -->
-  <rect x="20" y="45" width="660" height="75" rx="6" fill="#161b22" stroke="#1f6feb" stroke-width="1.5"/>
-  <rect x="20" y="45" width="7" height="75" rx="3" fill="#1f6feb"/>
-  <text x="38" y="62" fill="#58a6ff" font-size="9.5" font-weight="bold" letter-spacing="1.5" font-family="monospace">LAYER 4</text>
-  <text x="110" y="62" fill="#e6edf3" font-size="12" font-weight="600" font-family="system-ui, sans-serif">API &amp; Orchestration</text>
-  <text x="38" y="81" fill="#6e7681" font-size="11" font-family="monospace">├── REST API (FastAPI)</text>
-  <text x="38" y="97" fill="#6e7681" font-size="11" font-family="monospace">└── Tafsir RAG Pipeline (Engine-Guided)</text>
-
-  <!-- LAYER 3: Engine -->
-  <rect x="20" y="130" width="660" height="130" rx="6" fill="#161b22" stroke="#388bfd" stroke-width="1.5"/>
-  <rect x="20" y="130" width="7" height="130" rx="3" fill="#388bfd"/>
-  <text x="38" y="147" fill="#79c0ff" font-size="9.5" font-weight="bold" letter-spacing="1.5" font-family="monospace">LAYER 3</text>
-  <text x="110" y="147" fill="#e6edf3" font-size="12" font-weight="600" font-family="system-ui, sans-serif">Furqan Engine</text>
-  <text x="38" y="167" fill="#6e7681" font-size="11" font-family="monospace">├── 4 Axioms (immutable)</text>
-  <text x="38" y="183" fill="#6e7681" font-size="11" font-family="monospace">├── 4 Survival Gates</text>
-  <text x="38" y="199" fill="#6e7681" font-size="11" font-family="monospace">├── Guided Reasoning Chains</text>
-  <text x="38" y="215" fill="#6e7681" font-size="11" font-family="monospace">├── Symbolic Verification (Z3 SMT)</text>
-  <text x="38" y="231" fill="#6e7681" font-size="11" font-family="monospace">├── Reasoning-as-a-Skill (RaaS)</text>
-  <text x="38" y="247" fill="#6e7681" font-size="11" font-family="monospace">└── Tafsir Reasoning (Axiom-Guided Templates)</text>
-
-  <!-- LAYER 2: Knowledge Base (two-column) -->
-  <rect x="20" y="270" width="660" height="120" rx="6" fill="#161b22" stroke="#3fb950" stroke-width="1.5"/>
-  <rect x="20" y="270" width="7" height="120" rx="3" fill="#3fb950"/>
-  <text x="38" y="287" fill="#56d364" font-size="9.5" font-weight="bold" letter-spacing="1.5" font-family="monospace">LAYER 2</text>
-  <text x="110" y="287" fill="#e6edf3" font-size="12" font-weight="600" font-family="system-ui, sans-serif">Knowledge Base</text>
-  <text x="38" y="307" fill="#6e7681" font-size="11" font-family="monospace">├── Quran (114 surahs, 6,236 verses)</text>
-  <text x="38" y="323" fill="#6e7681" font-size="11" font-family="monospace">├── Fiqh Rules (major / minor)</text>
-  <text x="38" y="339" fill="#6e7681" font-size="11" font-family="monospace">└── Knowledge Graph (verse relationships)</text>
-  <line x1="362" y1="300" x2="362" y2="352" stroke="#21262d" stroke-width="1"/>
-  <text x="373" y="307" fill="#6e7681" font-size="11" font-family="monospace">├── Hadith (Bukhari, Muslim, graded)</text>
-  <text x="373" y="323" fill="#6e7681" font-size="11" font-family="monospace">├── Tafsir KB (Sheikh Ahmad Al-Sayyid)</text>
-  <text x="373" y="339" fill="#6e7681" font-size="11" font-family="monospace">└── Embeddings (MiniLM / CamelBERT)</text>
-
-  <!-- LAYER 1: Storage -->
-  <rect x="20" y="400" width="660" height="50" rx="6" fill="#161b22" stroke="#a371f7" stroke-width="1.5"/>
-  <rect x="20" y="400" width="7" height="50" rx="3" fill="#a371f7"/>
-  <text x="38" y="418" fill="#bc8cff" font-size="9.5" font-weight="bold" letter-spacing="1.5" font-family="monospace">LAYER 1</text>
-  <text x="110" y="418" fill="#e6edf3" font-size="12" font-weight="600" font-family="system-ui, sans-serif">Storage (Elasticsearch 8.13)</text>
-  <text x="38" y="438" fill="#6e7681" font-size="11" font-family="monospace">6 indices · custom Arabic analyzer · Verdict Store · Feedback Store</text>
-</svg>
+```mermaid
+graph TD
+    A["<b>LAYER 4</b><br/>API &amp; Orchestration"]
+    A1["REST API<br/>FastAPI"]
+    A2["Tafsir RAG Pipeline<br/>Engine-Guided"]
+    
+    B["<b>LAYER 3</b><br/>Furqan Engine"]
+    B1["4 Axioms<br/>immutable"]
+    B2["4 Survival Gates"]
+    B3["Guided Reasoning<br/>Chains"]
+    B4["Symbolic Verification<br/>Z3 SMT"]
+    B5["Reasoning-as-a-Skill<br/>RaaS"]
+    B6["Tafsir Reasoning<br/>Axiom-Guided Templates"]
+    
+    C["<b>LAYER 2</b><br/>Knowledge Base"]
+    C1["Quran<br/>114 surahs<br/>6,236 verses"]
+    C2["Fiqh Rules<br/>major / minor"]
+    C3["Knowledge Graph<br/>verse relationships"]
+    C4["Hadith<br/>Bukhari, Muslim<br/>graded"]
+    C5["Tafsir KB<br/>Sheikh Ahmad Al-Sayyid"]
+    C6["Embeddings<br/>MiniLM / CamelBERT"]
+    
+    D["<b>LAYER 1</b><br/>Storage<br/>Elasticsearch 8.13"]
+    D1["6 indices · custom Arabic analyzer · Verdict Store · Feedback Store"]
+    
+    A --> A1
+    A --> A2
+    A1 --> B
+    A2 --> B
+    
+    B --> B1
+    B --> B2
+    B --> B3
+    B --> B4
+    B --> B5
+    B --> B6
+    
+    B --> C
+    
+    C --> C1
+    C --> C2
+    C --> C3
+    C --> C4
+    C --> C5
+    C --> C6
+    
+    C --> D
+    D --> D1
+    
+    style A fill:#1f6feb,color:#fff
+    style B fill:#388bfd,color:#fff
+    style C fill:#3fb950,color:#fff
+    style D fill:#a371f7,color:#fff
+```
 
 ---
 
@@ -119,54 +129,29 @@ Every claim — regardless of source, eloquence, or tradition — must pass four
 
 A complete pipeline for Quranic reasoning that teaches the LLM **how to think**, not just what to answer:
 
-<svg width="580" height="400" viewBox="0 0 580 400" xmlns="http://www.w3.org/2000/svg">
-  <rect width="580" height="400" rx="10" fill="#0d1117"/>
-  <text x="290" y="28" text-anchor="middle" fill="#f0f6fc" font-size="13" font-weight="bold" font-family="system-ui, sans-serif">Engine-Guided RAG Pipeline</text>
-
-  <!-- Input pill -->
-  <rect x="190" y="42" width="200" height="34" rx="17" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
-  <text x="290" y="64" text-anchor="middle" fill="#e6edf3" font-size="12" font-family="system-ui, sans-serif">User Question</text>
-
-  <!-- Arrow 1 -->
-  <line x1="290" y1="76" x2="290" y2="88" stroke="#484f58" stroke-width="2"/>
-  <polygon points="283,86 297,86 290,96" fill="#484f58"/>
-
-  <!-- Step 1 -->
-  <rect x="90" y="96" width="400" height="54" rx="6" fill="#161b22" stroke="#1f6feb" stroke-width="1.5"/>
-  <rect x="90" y="96" width="6" height="54" rx="3" fill="#1f6feb"/>
-  <text x="108" y="115" fill="#58a6ff" font-size="10" font-weight="bold" letter-spacing="1" font-family="monospace">&#x2460; QUERY ANALYZER</text>
-  <text x="108" y="135" fill="#6e7681" font-size="11" font-family="system-ui, sans-serif">Extracts verses, topics, and question type</text>
-
-  <!-- Arrow 2 -->
-  <line x1="290" y1="150" x2="290" y2="162" stroke="#484f58" stroke-width="2"/>
-  <polygon points="283,160 297,160 290,170" fill="#484f58"/>
-
-  <!-- Step 2 -->
-  <rect x="90" y="170" width="400" height="54" rx="6" fill="#161b22" stroke="#388bfd" stroke-width="1.5"/>
-  <rect x="90" y="170" width="6" height="54" rx="3" fill="#388bfd"/>
-  <text x="108" y="189" fill="#79c0ff" font-size="10" font-weight="bold" letter-spacing="1" font-family="monospace">&#x2461; REASONING PLAN BUILDER</text>
-  <text x="108" y="209" fill="#6e7681" font-size="11" font-family="system-ui, sans-serif">LLM selects Axioms and Gates dynamically</text>
-
-  <!-- Arrow 3 -->
-  <line x1="290" y1="224" x2="290" y2="236" stroke="#484f58" stroke-width="2"/>
-  <polygon points="283,234 297,234 290,244" fill="#484f58"/>
-
-  <!-- Step 3 -->
-  <rect x="90" y="244" width="400" height="54" rx="6" fill="#161b22" stroke="#3fb950" stroke-width="1.5"/>
-  <rect x="90" y="244" width="6" height="54" rx="3" fill="#3fb950"/>
-  <text x="108" y="263" fill="#56d364" font-size="10" font-weight="bold" letter-spacing="1" font-family="monospace">&#x2462; LLM EXECUTION</text>
-  <text x="108" y="283" fill="#6e7681" font-size="11" font-family="system-ui, sans-serif">Reasons and searches KB with tools</text>
-
-  <!-- Arrow 4 -->
-  <line x1="290" y1="298" x2="290" y2="310" stroke="#484f58" stroke-width="2"/>
-  <polygon points="283,308 297,308 290,318" fill="#484f58"/>
-
-  <!-- Step 4 -->
-  <rect x="90" y="318" width="400" height="54" rx="6" fill="#161b22" stroke="#f78166" stroke-width="1.5"/>
-  <rect x="90" y="318" width="6" height="54" rx="3" fill="#f78166"/>
-  <text x="108" y="337" fill="#ffa198" font-size="10" font-weight="bold" letter-spacing="1" font-family="monospace">&#x2463; HUMAN FEEDBACK</text>
-  <text x="108" y="357" fill="#6e7681" font-size="11" font-family="system-ui, sans-serif">4 verdicts: approved / approved+note / rejected / rejected+note</text>
-</svg>
+```mermaid
+graph TD
+    Q["📝 User Question"]
+    
+    S1["<b>① QUERY ANALYZER</b><br/>Extracts verses, topics,<br/>and question type"]
+    
+    S2["<b>② REASONING PLAN BUILDER</b><br/>LLM selects Axioms and Gates<br/>dynamically"]
+    
+    S3["<b>③ LLM EXECUTION</b><br/>Reasons and searches KB<br/>with tools"]
+    
+    S4["<b>④ HUMAN FEEDBACK</b><br/>4 verdicts: approved /<br/>approved+note / rejected /<br/>rejected+note"]
+    
+    Q --> S1
+    S1 --> S2
+    S2 --> S3
+    S3 --> S4
+    
+    style Q fill:#21262d,color:#fff
+    style S1 fill:#1f6feb,color:#fff
+    style S2 fill:#388bfd,color:#fff
+    style S3 fill:#3fb950,color:#fff
+    style S4 fill:#f78166,color:#fff
+```
 
 ### KB Tools (exposed to LLM via function calling)
 
@@ -226,40 +211,24 @@ Formal verification means the engine can distinguish between a claim that is *pr
 
 ## 📊 Test Coverage
 
-<svg width="580" height="285" viewBox="0 0 580 285" xmlns="http://www.w3.org/2000/svg">
-  <rect width="580" height="285" rx="10" fill="#0d1117"/>
-  <text x="290" y="26" text-anchor="middle" fill="#f0f6fc" font-size="13" font-weight="bold" font-family="system-ui, sans-serif">Test Coverage — 705 Tests</text>
+```mermaid
+graph LR
+    Engine["<b>Engine</b><br/>~560 tests"]
+    Tafsir["<b>Tafsir Pipeline</b><br/>100 tests"]
+    Memory["<b>Memory</b><br/>56 tests"]
+    KB["<b>Knowledge Base</b><br/>~60 tests"]
+    RaaS["<b>RaaS</b><br/>31 tests"]
+    Security["<b>Security</b><br/>~30 tests"]
+    
+    style Engine fill:#1f6feb,color:#fff
+    style Tafsir fill:#388bfd,color:#fff
+    style Memory fill:#a371f7,color:#fff
+    style KB fill:#3fb950,color:#fff
+    style RaaS fill:#e3b341,color:#fff
+    style Security fill:#f78166,color:#fff
+```
 
-  <!-- Engine ~560: bar_width = (560/560)*355 = 355 -->
-  <text x="168" y="65" text-anchor="end" fill="#8b949e" font-size="11" font-family="system-ui, sans-serif">Engine</text>
-  <rect x="175" y="50" width="355" height="24" rx="4" fill="#1f6feb"/>
-  <text x="538" y="67" fill="#e6edf3" font-size="11" font-family="monospace">~560</text>
-
-  <!-- Tafsir Pipeline 100: (100/560)*355 = 63 -->
-  <text x="168" y="103" text-anchor="end" fill="#8b949e" font-size="11" font-family="system-ui, sans-serif">Tafsir Pipeline</text>
-  <rect x="175" y="88" width="63" height="24" rx="4" fill="#388bfd"/>
-  <text x="246" y="105" fill="#e6edf3" font-size="11" font-family="monospace">100</text>
-
-  <!-- Memory 56: (56/560)*355 = 36 -->
-  <text x="168" y="141" text-anchor="end" fill="#8b949e" font-size="11" font-family="system-ui, sans-serif">Memory</text>
-  <rect x="175" y="126" width="36" height="24" rx="4" fill="#a371f7"/>
-  <text x="219" y="143" fill="#e6edf3" font-size="11" font-family="monospace">56</text>
-
-  <!-- KB ~60: (60/560)*355 = 38 -->
-  <text x="168" y="179" text-anchor="end" fill="#8b949e" font-size="11" font-family="system-ui, sans-serif">Knowledge Base</text>
-  <rect x="175" y="164" width="38" height="24" rx="4" fill="#3fb950"/>
-  <text x="221" y="181" fill="#e6edf3" font-size="11" font-family="monospace">~60</text>
-
-  <!-- RaaS 31: (31/560)*355 = 20 -->
-  <text x="168" y="217" text-anchor="end" fill="#8b949e" font-size="11" font-family="system-ui, sans-serif">RaaS</text>
-  <rect x="175" y="202" width="20" height="24" rx="4" fill="#e3b341"/>
-  <text x="203" y="219" fill="#e6edf3" font-size="11" font-family="monospace">31</text>
-
-  <!-- Security ~30: (30/560)*355 = 19 -->
-  <text x="168" y="255" text-anchor="end" fill="#8b949e" font-size="11" font-family="system-ui, sans-serif">Security</text>
-  <rect x="175" y="240" width="19" height="24" rx="4" fill="#f78166"/>
-  <text x="202" y="257" fill="#e6edf3" font-size="11" font-family="monospace">~30</text>
-</svg>
+**Total: 705 tests**
 
 ---
 
