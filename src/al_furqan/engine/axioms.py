@@ -194,8 +194,8 @@ def _compute_axiom_hash() -> str:
     return hashlib.sha256(content.encode("utf-8")).hexdigest()
 
 
-# Pinned canonical hash — computed at seal time for AXIOM_VERSION 1.1.0.
-SEALED_AXIOM_HASH = "ad40188c22a6dacd79e906399c7984cd9c0e41a2810066cdb857272b42afc379"
+# Pinned canonical hash — computed at seal time for AXIOM_VERSION 1.2.0.
+SEALED_AXIOM_HASH = "51ce6ea63f5bbd5a5bf1cf612eae5d31e7527659679fab9807b00d692cb9b440"
 
 AXIOM_HASH = _compute_axiom_hash()
 
