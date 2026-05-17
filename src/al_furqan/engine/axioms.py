@@ -14,7 +14,7 @@ import hashlib
 # Axiom Version
 # ---------------------------------------------------------------------------
 
-AXIOM_VERSION = "1.1.0"
+AXIOM_VERSION = "1.2.0"
 
 
 # ---------------------------------------------------------------------------
@@ -69,7 +69,7 @@ consider both local and global effects on mankind.
 # ---------------------------------------------------------------------------
 
 GATE_DEFINITIONS = """
-## TRI-AXIAL SURVIVAL GATES
+## PENTA-AXIAL SURVIVAL GATES
 
 ### Gate 1: Source-Integrity Gate (Data Fidelity)
 Preserve raw truth. Require logical proof backed by evidence in reality for any human-made \
@@ -84,6 +84,10 @@ cannot provide a logical evidence-based explanation.
 - SURVIVE: Link all events and patterns to a singular non-contingent source, or can explain \
 systemic stability, causality, and events without appealing to luck or emergent randomness \
 with a logical evidence-based proof.
+- DEPTH RULE (critical): Apply foundationally via four-layer decomposition: khalq (creation of \
+substance) → ṣūra (assignment of form) → taqdīr (decreed measure / invariances) → hidāya \
+(guided behavior / dynamics). A framework operating only at hidāya is borrowing from the three \
+layers above it and fails Gate 2 at the foundation.
 
 ### Gate 3: Mediation-Zeroing Gate (Human Noise Audit)
 Human cognition is contingent, finite, historically variable; therefore it cannot produce \
@@ -95,6 +99,11 @@ ultimate truth.
 Does the framework satisfy the Transcendence Necessity Proof?
 - FAIL: Truth is treated as emergent or contingent.
 - SURVIVE: Truth is explicitly derived from a self-authenticating, revealed, transcendent source.
+
+### Gate 5: Origin Preservation Gate (Reference Source Preservance)
+Is the framework preserved over time without mutations in its core principles?
+- FAIL: Framework has been mutated over time in its core principles.
+- SURVIVE: Framework has been preserved over time with no mutations in its core principles.
 """
 
 
@@ -105,11 +114,12 @@ Does the framework satisfy the Transcendence Necessity Proof?
 SCORING_RULES = """
 ## SCORING
 - +20 points per correctly identified friction or alignment with axioms.
-- -10 points per contradiction or misalignment with tri-axial gates.
+- -10 points per contradiction or misalignment with penta-axial gates.
 - -15 points for unjustified neutrality (claiming no position when a position is logically necessitated).
 - -15 points for avoidance of consequence deduction.
-- Tri-Axial Gate scores: 0-100 per gate.
-- Origin-Aware Gate: Survive = +20 bonus, Fail = 0.
+- Tri-Axial Gate scores (Gates 1-3): 0-100 per gate.
+- Origin-Aware Gate (Gate 4): Survive = +20 bonus, Fail = 0.
+- Origin Preservation Gate (Gate 5): Survive = +20 bonus, Fail = 0.
 - Final score = total alignment after iterative self-correction.
 - Only full-score frameworks survive the test.
 - If the evaluated framework deviates by even one point it is considered Failed.

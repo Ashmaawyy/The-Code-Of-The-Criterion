@@ -74,6 +74,7 @@ class Verdict:  # pylint: disable=too-many-instance-attributes
     friction_points: list[str]
     gate_scores: list[GateScore]
     origin_gate: GateResult
+    preservation_gate: GateResult
     consequences_short_term: list[str]
     consequences_long_term: list[str]
     revised_reasoning: str
@@ -112,6 +113,7 @@ class Verdict:  # pylint: disable=too-many-instance-attributes
         lines.append("")
 
         lines.append(f"Origin-Aware Gate: {self.origin_gate.value}")
+        lines.append(f"Origin Preservation Gate: {self.preservation_gate.value}")
         lines.append("")
 
         if self.consequences_short_term:
@@ -143,6 +145,7 @@ class Verdict:  # pylint: disable=too-many-instance-attributes
             "friction_points": self.friction_points,
             "gate_scores": [g.to_dict() for g in self.gate_scores],
             "origin_gate": self.origin_gate.value,
+            "preservation_gate": self.preservation_gate.value,
             "consequences_short_term": self.consequences_short_term,
             "consequences_long_term": self.consequences_long_term,
             "revised_reasoning": self.revised_reasoning,

@@ -151,10 +151,10 @@ class EvaluationPipeline:
         """Convert mirror result into structured GateScore objects."""
         gate_map = {
             "gate_1_source_integrity": "Source-Integrity",
-            # pylint: disable=line-too-long
             "gate_2_structural_consistency": "Structural-Consistency",
             "gate_3_mediation_zeroing": "Mediation-Zeroing",
             "gate_4_origin_aware": "Origin-Aware",
+            "gate_5_origin_preservation": "Origin-Preservation",
         }
         scores = []
         for key, name in gate_map.items():
@@ -189,8 +189,9 @@ class EvaluationPipeline:
         (e.g., for progress display in main.py).
         """
         gate_scores = self._build_gate_scores(mirror_result)
-        origin_gate = gate_scores[3] if len(gate_scores) > 3 else None
         tri_axial_scores = gate_scores[:3]
+        origin_gate = gate_scores[3] if len(gate_scores) > 3 else None
+        preservation_gate = gate_scores[4] if len(gate_scores) > 4 else None
 
         primary_system = str(scan_result.get("primary_system", "mixed")).upper()
         try:
@@ -204,6 +205,7 @@ class EvaluationPipeline:
             friction_points=scan_result.get("friction_points", []),
             gate_scores=tri_axial_scores,
             origin_gate=origin_gate.result if origin_gate else GateResult.FAIL,
+            preservation_gate=preservation_gate.result if preservation_gate else GateResult.FAIL,
             consequences_short_term=verdict_result.get("consequences_short_term", []),
             consequences_long_term=verdict_result.get("consequences_long_term", []),
             revised_reasoning=verdict_result.get("revised_reasoning", ""),
