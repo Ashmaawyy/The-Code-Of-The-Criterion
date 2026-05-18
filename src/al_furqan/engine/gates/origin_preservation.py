@@ -1,5 +1,5 @@
 """
-Gate 5: Origin Preservation (الحفظ) — Reference Source Preservance
+Gate 5: Origin Preservation (الحفظ) — Reference Source Preservation
 
 Evaluates whether the framework has been preserved over time without mutations in core principles.
 

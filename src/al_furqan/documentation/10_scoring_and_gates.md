@@ -102,8 +102,8 @@ The total score is an aggregate alignment metric calculated by the LLM during th
 
 The Criterion Test is the ultimate pass/fail evaluation of a framework or system:
 
-- **Only full-score frameworks survive the test.**
-- **If the evaluated framework deviates by even one point, it is considered Failed.**
+- **Only full-score frameworks can be considered as a source of truth.**
+- **If the evaluated framework deviates by even one point, it is considered Disqualified for a Source of Truth.**
 
 This is intentionally absolute. The reasoning is: if a framework claims to be a complete system of truth, any internal contradiction — no matter how small — indicates that the framework is not self-consistent, and therefore not complete.
 

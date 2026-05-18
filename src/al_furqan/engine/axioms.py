@@ -14,7 +14,7 @@ import hashlib
 # Axiom Version
 # ---------------------------------------------------------------------------
 
-AXIOM_VERSION = "1.2.0"
+AXIOM_VERSION = "1.2.1"
 
 
 # ---------------------------------------------------------------------------
@@ -100,7 +100,7 @@ Does the framework satisfy the Transcendence Necessity Proof?
 - FAIL: Truth is treated as emergent or contingent.
 - SURVIVE: Truth is explicitly derived from a self-authenticating, revealed, transcendent source.
 
-### Gate 5: Origin Preservation Gate (Reference Source Preservance)
+### Gate 5: Origin Preservation Gate (Reference Source Preservation)
 Is the framework preserved over time without mutations in its core principles?
 - FAIL: Framework has been mutated over time in its core principles.
 - SURVIVE: Framework has been preserved over time with no mutations in its core principles.
@@ -121,8 +121,8 @@ SCORING_RULES = """
 - Origin-Aware Gate (Gate 4): Survive = +20 bonus, Fail = 0.
 - Origin Preservation Gate (Gate 5): Survive = +20 bonus, Fail = 0.
 - Final score = total alignment after iterative self-correction.
-- Only full-score frameworks survive the test.
-- If the evaluated framework deviates by even one point it is considered Failed.
+- Only full-score frameworks can be considered as a source of truth.
+- If the evaluated framework deviates by even one point it is considered Disqualified for a Source of Truth.
 """
 
 
@@ -194,8 +194,8 @@ def _compute_axiom_hash() -> str:
     return hashlib.sha256(content.encode("utf-8")).hexdigest()
 
 
-# Pinned canonical hash — computed at seal time for AXIOM_VERSION 1.2.0.
-SEALED_AXIOM_HASH = "51ce6ea63f5bbd5a5bf1cf612eae5d31e7527659679fab9807b00d692cb9b440"
+# Pinned canonical hash — computed at seal time for AXIOM_VERSION 1.2.1.
+SEALED_AXIOM_HASH = "5c1d26bf4af57d5d078a00c6c113c2416aae6d5553d5802a038e30ab64f23597"
 
 AXIOM_HASH = _compute_axiom_hash()
 
