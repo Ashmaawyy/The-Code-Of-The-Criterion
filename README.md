@@ -1,362 +1,275 @@
-# Al-Furqan (الفرقان) — The Criterion
+# Al-Furqan - The Criterion
 
-> Axiom-Anchored Neuro-Symbolic Reasoning Engine with Tafsir Knowledge Base
+> Axiom-anchored neuro-symbolic reasoning engine for evaluating claims,
+> systems, and frameworks against immutable logical axioms grounded in verified
+> Islamic scholarship.
 
----
+Al-Furqan is not a general chatbot. It is a reasoning system whose job is to
+separate judgment from generation:
 
-## The Problem
-
-Most AI systems reason by pattern-matching across probability distributions. They aggregate, they hedge, they produce outputs calibrated to what "most sources say." This works for many tasks — but it has a structural flaw: **there is no fixed ground**.
-
-When truth is treated as emergent from data, every conclusion is provisional. Causality becomes correlation. Authority becomes consensus. And the system has no principled way to distinguish a sound argument from a plausible-sounding one.
-
-Al-Furqan is built on a different premise: that **logical necessity, not statistical likelihood**, should govern reasoning. It evaluates ideas, systems, and claims against four immutable axioms through formal verification — using the Islamic Knowledge Base as its verified reference point, because those axioms themselves establish it as the only source that passes all four survival gates.
-
----
-
-## 🚀 Quick Start
-
-```bash
-# 1. Clone and install
-git clone https://github.com/your-org/al-furqan.git
-cd al-furqan
-pip install -e ".[dev]"
-
-# 2. Start Elasticsearch (required for KB and storage)
-docker-compose up -d elasticsearch
-
-# 3. Configure your LLM provider
-cp .env.example .env
-# Set ANTHROPIC_API_KEY, DASHSCOPE_API_KEY, or OLLAMA_HOST
-
-# 4. Start the API
-uvicorn src.al_furqan.api.main:app --reload
-
-# 5. Run your first query
-curl -X POST http://localhost:8000/reason \
-  -H "Content-Type: application/json" \
-  -d '{"question": "What does verse 6:5 establish about human cognition?"}'
+```text
+The code routes and scores.
+The LLM extracts, reasons, and explains.
+Z3 checks formal consistency.
+Elasticsearch retrieves verified knowledge and stores verdicts.
+Humans review and correct.
 ```
 
-Run the full test suite:
+The canonical Criterion flow remains four sequential gates:
 
-```bash
-pytest tests/ -v  # 705 tests
+1. Source-Integrity
+2. Structural-Consistency
+3. Mediation-Zeroing
+4. Origin-Aware
+
+The current implementation also carries an `Origin-Preservation` verdict field
+as a preservation extension in the engine, API schemas, and ES verdict store.
+
+---
+
+## Current Architecture
+
+```text
+Client surfaces
+  CLI: al-furqan
+  REST: FastAPI under /api/v1
+  MCP: furqan-raas reasoning server
+  MCP: furqan-memory local memory server
+
+Security envelope
+  API keys, role-aware auth, rate limiting, request limits, security headers
+  PromptGuard, IntegrityVerifier, OutputValidator, AdapterSandbox, AuditLogger
+
+Orchestration
+  FastAPI routers and Orchestrator connect engine, KB, stores, Z3, and LLMs.
+  Cross-layer access should happen here, not inside the engine or KB.
+
+Reasoning engine
+  Immutable axioms and SHA-256 integrity checks
+  Intent detection, Scan -> Mirror -> Verdict -> Self-Correction
+  Dual-perspective evaluation for embedded assumptions
+  Independent gate modules, guided chains, deterministic scoring
+  Symbolic verifier and predicate extraction over Z3
+  Tafsir RAG planner, templates, feedback loop, and tool execution
+
+Knowledge and retrieval
+  ES-backed Quran, Hadith, graph, lessons, verdicts, and feedback indices
+  Arabic analyzer defined in al_furqan.kb.es.analyzers
+  Tafsir KB tools exposed to the guided RAG pipeline
+  Multi-level Quran tokenizer: Word, Root, Semantic, Logic, Transition
+  Ingestion and review path for proposed graph edges
+
+Data and learning
+  data_archive/ stores archived/static source material and generated JSONL
+  training/pipeline builds verse-centric graph and history training exports
+  Runtime verdict/feedback persistence lives in Elasticsearch
+  furqan-memory remains local-only SQLite + ChromaDB by design
 ```
 
----
-
-## 🏗️ Architecture
-
-```mermaid
-graph TD
-    A["<b>LAYER 4</b><br/>API &amp; Orchestration"]
-    A1["REST API<br/>FastAPI"]
-    A2["Tafsir RAG Pipeline<br/>Engine-Guided"]
-    
-    B["<b>LAYER 3</b><br/>Furqan Engine"]
-    B1["4 Axioms<br/>immutable"]
-    B2["4 Survival Gates"]
-    B3["Guided Reasoning<br/>Chains"]
-    B4["Symbolic Verification<br/>Z3 SMT"]
-    B5["Reasoning-as-a-Skill<br/>RaaS"]
-    B6["Tafsir Reasoning<br/>Axiom-Guided Templates"]
-    
-    C["<b>LAYER 2</b><br/>Knowledge Base"]
-    C1["Quran<br/>114 surahs<br/>6,236 verses"]
-    C2["Fiqh Rules<br/>major / minor"]
-    C3["Knowledge Graph<br/>verse relationships"]
-    C4["Hadith<br/>Bukhari, Muslim<br/>graded"]
-    C5["Tafsir KB<br/>Sheikh Ahmad Al-Sayyid"]
-    C6["Embeddings<br/>MiniLM / CamelBERT"]
-    
-    D["<b>LAYER 1</b><br/>Storage<br/>Elasticsearch 8.13"]
-    D1["6 indices · custom Arabic analyzer · Verdict Store · Feedback Store"]
-    
-    A --> A1
-    A --> A2
-    A1 --> B
-    A2 --> B
-    
-    B --> B1
-    B --> B2
-    B --> B3
-    B --> B4
-    B --> B5
-    B --> B6
-    
-    B --> C
-    
-    C --> C1
-    C --> C2
-    C --> C3
-    C --> C4
-    C --> C5
-    C --> C6
-    
-    C --> D
-    D --> D1
-    
-    style A fill:#1f6feb,color:#fff
-    style B fill:#388bfd,color:#fff
-    style C fill:#3fb950,color:#fff
-    style D fill:#a371f7,color:#fff
-```
+Only orchestration should know about every layer. The engine receives context
+as text and returns verdict objects; the KB returns retrieval context; stores
+persist and retrieve verdict/feedback documents.
 
 ---
 
-## 🎯 The Four Survival Gates
+## Runtime Surfaces
 
-Every claim — regardless of source, eloquence, or tradition — must pass four sequential gates. A claim that fails any gate is rejected, not hedged.
+| Surface | Entry point | Responsibility |
+| --- | --- | --- |
+| CLI | `al-furqan` | Local command-line access to the core package |
+| REST API | `uvicorn al_furqan.api.app:app` | Evaluation, grounded evaluation, Criterion tests, verdict review, stats, health |
+| RaaS MCP | `python -m furqan_raas.mcp_server` | JSON-RPC/MCP wrapper for reasoning tools |
+| Memory MCP | `python -m furqan_memory.mcp_server` | Local agent memory, recall, pattern recognition, feedback |
 
-| Gate | Name | Criterion |
-|------|------|-----------|
-| 1 | **Source-Integrity** | Is raw truth preserved without reduction? |
-| 2 | **Structural-Consistency** | Can the system explain causality without luck? |
-| 3 | **Mediation-Zeroing** | Is human cognition treated as finite, not authoritative? |
-| 4 | **Origin-Aware** | Does truth trace to a transcendent source? |
+Main REST endpoints are mounted under `/api/v1`:
 
-**What failure looks like at each gate:**
-
-- **Gate 1 failure:** The system selectively quotes, paraphrases, or reframes the source — changing the claim in the process of transmitting it. Any lossy compression of truth fails here.
-- **Gate 2 failure:** The system can describe what happened but not *why*. Correlations presented as causes, outcomes attributed to chance, or circular explanations all fail here.
-- **Gate 3 failure:** Human reasoning, consensus, or authority is treated as a terminal source rather than an instrument. The moment a scholar's opinion becomes unfalsifiable, Gate 3 collapses.
-- **Gate 4 failure:** The reasoning chain terminates at a contingent origin — a text, a tradition, a person — rather than tracing to a transcendent, self-sufficient source. Systems that bottom out at "because we decided so" fail here.
-
----
-
-## 🧠 Engine-Guided Tafsir RAG Pipeline
-
-A complete pipeline for Quranic reasoning that teaches the LLM **how to think**, not just what to answer:
-
-```mermaid
-graph TD
-    Q["📝 User Question"]
-    
-    S1["<b>① QUERY ANALYZER</b><br/>Extracts verses, topics,<br/>and question type"]
-    
-    S2["<b>② REASONING PLAN BUILDER</b><br/>LLM selects Axioms and Gates<br/>dynamically"]
-    
-    S3["<b>③ LLM EXECUTION</b><br/>Reasons and searches KB<br/>with tools"]
-    
-    S4["<b>④ HUMAN FEEDBACK</b><br/>4 verdicts: approved /<br/>approved+note / rejected /<br/>rejected+note"]
-    
-    Q --> S1
-    S1 --> S2
-    S2 --> S3
-    S3 --> S4
-    
-    style Q fill:#21262d,color:#fff
-    style S1 fill:#1f6feb,color:#fff
-    style S2 fill:#388bfd,color:#fff
-    style S3 fill:#3fb950,color:#fff
-    style S4 fill:#f78166,color:#fff
-```
-
-### KB Tools (exposed to LLM via function calling)
-
-| Tool | Description |
-|------|-------------|
-| `search_kb_by_verse("6:5")` | All knowledge graph edges for a verse |
-| `search_kb_by_topic("السنة الإلهية")` | Semantic topic search across the KB |
-| `search_kb_by_relation("6:5", "LINKED_HADITH")` | Filter by specific relation type |
-| `get_verse_context("6:5", range=3)` | Surrounding verses + all KB data |
-
-### Reasoning Templates
-
-Six templates, each dynamically mapped to relevant Axioms and Gates by the LLM at query time:
-
-`TAFSIR` · `VERSE_LINK` · `ISTINBAT` · `COMPARISON` · `SEERAH_LINK` · `GENERAL`
+| Endpoint | Purpose |
+| --- | --- |
+| `POST /evaluate` | Run the standard evaluation pipeline |
+| `POST /evaluate/grounded` | Evaluate with retrieved precedent/context |
+| `GET /evaluate/{verdict_id}` | Read evaluation result/status |
+| `POST /criterion-test` | Evaluate a named framework |
+| `GET /verdicts` | List verdicts |
+| `GET /verdicts/search` | Search verdicts |
+| `GET /verdicts/{verdict_id}` | Read one verdict |
+| `DELETE /verdicts/{verdict_id}` | Invalidate a verdict and cascade flags |
+| `POST /verdicts/{verdict_id}/review` | Approve, reject, or correct a verdict |
+| `GET /stats` | Store statistics |
+| `GET /health` | API, store, and LLM health |
 
 ---
 
-## 📚 Knowledge Base
+## Storage and Search
 
-The KB is not limited to Tafsir. **Tafsir is the first validated use case for a general-purpose verified-knowledge framework.** The same ingestion pipeline — transcription → chunking → LLM extraction → human review — is designed to absorb any verified scholarly source: Hadith sciences, Fiqh, Aqeedah, Seerah, Arabic language, Maqasid, contemporary scholarship, and beyond.
+Elasticsearch is the runtime storage and retrieval backend for the core system.
+The registry in `src/al_furqan/kb/es/indices.py` defines these runtime indices:
 
-**Current state:**
-- **First use case:** مدارسة سورة الأنعام — الشيخ أحمد السيد (23 episodes)
-- **Ingestion pipeline:** Whisper transcription → chunk → LLM extraction → human review
-- **Loaded:** 67 entries (Episode 1), central verses: 6:1, 6:5
-- **Structure:** Central verse → linked verses, hadiths, concepts, tafsir nodes
-- **Coverage:** 9 Arabic Tafsir books consolidated, 24 episodes transcribed, 2,487 training pairs
+| Logical name | Default ES index | Purpose |
+| --- | --- | --- |
+| `quran` | `furqan_quran` | Quran verses, Arabic/English text, metadata, embeddings |
+| `hadith` | `furqan_hadith` | Hadith records, grading, narration metadata, embeddings |
+| `graph` | `furqan_graph` | Knowledge graph edges and provenance |
+| `lessons` | `furqan_lessons` | Enriched lesson chapters and linked evidence |
+| `verdicts` | `furqan_verdicts` | Evaluation results and precedent retrieval |
+| `feedback` | `furqan_feedback` | Human feedback and corrections |
 
----
+Training/staging indices are also defined in code:
 
-## 🔬 Symbolic Verification
+| Plan key | ES index | Source JSONL |
+| --- | --- | --- |
+| `graph` | `furqan_graph_edges` | `data_archive/training/quran_graph.jsonl` |
+| `history` | `furqan_history_events` | `data_archive/training/human_history.jsonl` |
+| `testing_talk_about_history` | `furqan_testing_talk_about_history` | `data_archive/training/testing/model_testing_how_people_talk_about_history.jsonl` |
 
-Z3 SMT solver provides formal mathematical proofs — not heuristics, not confidence scores — for:
-
-- Transcendence Necessity Proof
-- Final Court Necessity Proof
-- Axiom consistency verification
-
-Formal verification means the engine can distinguish between a claim that is *probably true* and one that is *necessarily true*. That distinction is the foundation of the entire system.
-
----
-
-## 🛡️ Security
-
-5-layer defense-in-depth:
-
-| Layer | Component | Function |
-|-------|-----------|----------|
-| 1 | **Prompt Guard** | Injection detection + sanitization |
-| 2 | **Axiom Integrity** | SHA-256 hash verification — axioms are immutable |
-| 3 | **Output Validator** | Response filtering before delivery |
-| 4 | **Adapter Sandbox** | Isolated LLM execution environment |
-| 5 | **Audit Logger** | Hashed question logging for traceability |
+The current checkout has archived raw corpora under
+`data_archive/backup_for_stored_data/`. Code-level path constants in
+`src/al_furqan/paths.py` define normalized anchors such as
+`data_archive/quran`, `data_archive/hadith`, and `data_archive/lessons`; pass
+`--data-dir` to migration commands when working from the backup snapshot.
 
 ---
 
-## 📊 Test Coverage
+## Project Layout
 
-```mermaid
-graph LR
-    Engine["<b>Engine</b><br/>~560 tests"]
-    Tafsir["<b>Tafsir Pipeline</b><br/>100 tests"]
-    Memory["<b>Memory</b><br/>56 tests"]
-    KB["<b>Knowledge Base</b><br/>~60 tests"]
-    RaaS["<b>RaaS</b><br/>31 tests"]
-    Security["<b>Security</b><br/>~30 tests"]
-    
-    style Engine fill:#1f6feb,color:#fff
-    style Tafsir fill:#388bfd,color:#fff
-    style Memory fill:#a371f7,color:#fff
-    style KB fill:#3fb950,color:#fff
-    style RaaS fill:#e3b341,color:#fff
-    style Security fill:#f78166,color:#fff
-```
-
-**Total: 705 tests**
-
----
-
-## 🚀 Roadmap
-
-### ✅ Complete
-
-- Furqan Engine (4 gates, reasoning chains, Z3 verification)
-- Knowledge Base (Quran, Hadith, Fiqh, 9 Tafsir books)
-- Knowledge Graph (transcript extraction, central verse tracking)
-- Security (5-layer defense, axiom integrity)
-- Engine-Guided RAG Pipeline (query analysis → reasoning plan → LLM + tools → feedback)
-- Human Feedback System (4 verdicts, full context storage)
-- Dynamic Axiom/Gate Selection (LLM selects from raw Engine definitions)
-- Elasticsearch migration (all core storage — 6 indices with Arabic analyzer)
-- Multi-level Quran Tokenizer (5 levels: Word → Root → Semantic → Logic → Transition)
-- Lesson pipeline (24 episodes, 2,487 training pairs)
-- 705 tests passing
-
-### 🔜 Next (Near-Term)
-
-- [ ] Multi-scholar KB support — expand beyond Sheikh Ahmad Al-Sayyid
-- [ ] QLP v3.0 integration (Local-First)
-- [ ] Local deployment (vLLM / SGLang)
-
-### 🔮 Horizon
-
-- [ ] Fine-tune Furqan-27B (SFT + DPO on Qwen3.5-27B-Claude-Opus-Distilled)
-
----
-
-## 📁 Project Structure
-
-```
+```text
 al-furqan/
-├── src/al_furqan/
-│   ├── engine/                    # Furqan Engine
-│   │   ├── axioms.py              # Immutable axioms + gates
-│   │   ├── pipeline.py            # Scan → Mirror → Verdict
-│   │   ├── chains/                # Guided reasoning chains
-│   │   ├── gates/                 # 4 survival gates
-│   │   ├── symbolic/              # Z3 formal verification
-│   │   ├── security/              # 5-layer security
-│   │   └── tafsir/                # Tafsir reasoning pipeline
-│   │       ├── axiom_selector.py
-│   │       ├── reasoning_plan_builder.py
-│   │       ├── reasoning_templates.py
-│   │       ├── pipeline.py        # End-to-end RAG pipeline
-│   │       └── feedback.py        # Human feedback system
-│   ├── kb/                        # Knowledge Base
-│   │   ├── es/                    # Elasticsearch backend
-│   │   │   ├── collections.py     # Quran, Hadith collections
-│   │   │   ├── graph.py           # ES-backed knowledge graph
-│   │   │   ├── retriever.py       # Unified retriever
-│   │   │   └── indices.py         # 6 index definitions
-│   │   ├── graph/                 # Graph schema
-│   │   ├── ingestion/             # Transcript → KB extraction
-│   │   └── tafsir/                # Tafsir KB tools
-│   │       ├── query_analyzer.py
-│   │       ├── kb_tools.py        # 4 search tools for LLM
-│   │       └── tool_executor.py
-│   ├── tokenizer/                 # Multi-level Quran tokenizer
-│   │   ├── encoder.py             # 5-level tokenization pipeline
-│   │   ├── schema.py              # Token dataclasses
-│   │   ├── morphology.py          # QAC-aware root extraction
-│   │   └── semantics.py           # Semantic + logic + transitions
-│   ├── providers/                 # LLM providers (Ollama, DashScope, Anthropic, etc.)
-│   ├── store/                     # Verdict + feedback storage (ES-backed)
-│   └── api/                       # REST API
-├── data/
-│   ├── quran/                     # Complete Quran text
-│   ├── hadith/                    # Hadith collections
-│   ├── tafsir/                    # 9 Arabic tafsir books (consolidated)
-│   ├── lessons/                   # Transcribed episodes
-│   ├── review/                    # Proposed edges (KB)
-│   ├── benchmark/                 # Evaluation results
-│   └── tafsir_feedback/           # Human feedback entries
-├── furqan-raas/                   # Reasoning-as-a-Skill (MCP)
-├── furqan-memory/                 # Memory system (MCP)
-├── tests/                         # 705 tests
-├── scripts/
-│   ├── eval/                      # Engine evaluation & A/B testing
-│   ├── ingestion/                 # Data prep & KB ingestion
-│   ├── benchmarks/                # KB & embedding benchmarks
-│   ├── kb_extraction/             # Lesson → knowledge graph
-│   └── rendering/                 # Architecture docs to PDF/PNG
-└── docs/                          # Documentation
+  src/al_furqan/
+    api/                 FastAPI app, routers, schemas, orchestrator
+    auth/                API key auth, roles, rate limiting, security middleware
+    core/                Backward-compatible re-exports for the engine package
+    engine/              Axioms, gates, chains, symbolic verifier, security, Tafsir RAG
+    kb/                  ES collections, graph schema, ingestion, Tafsir KB tools
+    lessons/             Transcription, cleaning, enrichment helpers
+    providers/           LLM provider abstraction
+    review/              Human review helpers
+    store/               ES verdict and feedback stores
+    tokenizer/           Quran tokenizer and QAC-aware morphology
+  tests/                 Core package tests
+  furqan-raas/           MCP reasoning server wrapper
+  furqan-memory/         Local MCP memory server
+  data_archive/          Archived corpora and generated training JSONL
+  training/              Graph/history extraction and staging pipelines
+  scripts/               Benchmarks, evals, fetchers, KB extraction, Neo4j, rendering
+  docs/                  Active and legacy documentation
+  plan/                  PRDs, sprint plans, and roadmap documents
 ```
+
+Current tree snapshot from this checkout:
+
+| Area | Count |
+| --- | ---: |
+| Core Python modules under `src/al_furqan` | 110 |
+| Core test modules under `tests` | 42 |
+| RaaS test modules | 1 |
+| Memory test modules | 4 |
+| Test functions across core/RaaS/Memory | 684 |
 
 ---
 
-## 🛠️ Tech Stack
+## Quick Start
+
+```bash
+pip install -e ".[dev]"
+pytest -m "not slow"
+ruff check src/ tests/
+al-furqan
+```
+
+Run the API:
+
+```bash
+uvicorn al_furqan.api.app:app --reload
+```
+
+Run Elasticsearch and supporting services:
+
+```bash
+docker compose up elasticsearch redis
+```
+
+Create and inspect runtime ES indices:
+
+```bash
+python -m al_furqan.kb.es.setup_indices --test
+python -m al_furqan.kb.es.setup_indices --status
+```
+
+Migrate static data into ES, pointing to the current backup snapshot if needed:
+
+```bash
+python -m al_furqan.kb.es.migrate_data --data-dir data_archive/backup_for_stored_data --verify
+```
+
+Index training JSONL outputs:
+
+```bash
+python -m training.pipeline.staging.index_training_data --dry-run
+python -m training.pipeline.staging.index_training_data --only graph
+```
+
+Operational note: `docker-compose.yml` includes an `es-seed` service, but the
+current `Dockerfile.es-seed` still references a legacy `data/` directory and a
+`scripts/seed_es.sh` file that is not present in this checkout. Use the explicit
+commands above until that container path is reconciled.
+
+---
+
+## Documentation
+
+Start with [docs/README.md](docs/README.md). The most useful active documents:
+
+| Document | Role |
+| --- | --- |
+| [AL-FURQAN-ARCHITECTURE-v3.0](docs/active_docs/AL-FURQAN-ARCHITECTURE-v3.0.md) | Baseline architecture plus post-v3 update notes |
+| [PROJECT-STATUS](docs/active_docs/PROJECT-STATUS.md) | Latest project status and decisions |
+| [ELASTICSEARCH-MIGRATION](docs/active_docs/ELASTICSEARCH-MIGRATION.md) | ES migration rationale and schemas |
+| [QURAN-TOKENIZER-v1.0](docs/active_docs/QURAN-TOKENIZER-v1.0.md) | Current tokenizer architecture |
+| [RAG-IMPLEMENTATION-PLAN-v1.0](docs/active_docs/RAG-IMPLEMENTATION-PLAN-v1.0.md) | Engine-guided RAG design |
+| [FURQAN-AXIOM-SECURITY-POLICY-v1.0](docs/active_docs/FURQAN-AXIOM-SECURITY-POLICY-v1.0.md) | Security model |
+| [FURQAN-RAAS-DOCS](docs/active_docs/FURQAN-RAAS-DOCS.md) | Reasoning MCP docs |
+| [FURQAN-MEMORY-DOCS](docs/active_docs/FURQAN-MEMORY-DOCS.md) | Local memory MCP docs |
+
+The architecture document is still the baseline source of truth, but the live
+code has post-v3 updates: ES is the core backend, the tokenizer uses
+`TransitionToken` rather than a phonetic/tajweed layer, and training now includes
+graph/history staging outputs.
+
+---
+
+## Architecture Rules
+
+- Do not normalize, strip, transliterate, or stem Arabic text outside the
+  tokenizer/analyzer paths that already define this behavior.
+- Do not edit axiom definitions without updating the anchored SHA-256 integrity
+  expectations.
+- Route LLM calls through `providers/`; avoid raw provider HTTP calls in feature
+  code.
+- Keep layer boundaries: orchestration connects engine, KB, stores, and security.
+- Treat `furqan-memory/` as local client memory, not core engine storage.
+- Treat generated JSONL as rebuildable pipeline output; edit sources or
+  extractors instead.
+
+---
+
+## Tech Stack
 
 | Layer | Technology |
-|-------|------------|
-| Language | Python 3.12 |
-| LLM Providers | DashScope (Qwen), Anthropic, Ollama, OpenAI-compatible |
-| Formal Verification | Z3 SMT Solver |
-| Embeddings | MiniLM / CamelBERT |
-| Storage (Core) | Elasticsearch 8.13 (6 indices, custom Arabic analyzer) |
-| Storage (Memory Skill) | SQLite + ChromaDB (client-side, local-only) |
-| API | FastAPI |
-| Testing | pytest (705 tests) |
-| Transcription | OpenAI Whisper |
-| Tokenizer | 5-level Quran tokenizer (Word, Root, Semantic, Logic, Transition) |
-| Future Training | LLaMA-Factory + Unsloth (LoRA/QLoRA) |
+| --- | --- |
+| Language | Python 3.10+ |
+| API | FastAPI, uvicorn |
+| Tasks/cache | Celery + Redis in dependencies; Redis in compose |
+| LLM providers | Anthropic, DashScope/Qwen, Ollama, OpenAI-compatible |
+| Formal verification | Z3 SMT solver |
+| Runtime storage/search | Elasticsearch 8.x with custom Arabic analyzer |
+| Local memory skill | SQLite + ChromaDB |
+| Optional embeddings | sentence-transformers / MiniLM-style 384-dim vectors |
+| Optional transcription | faster-whisper |
+| Graph tooling | ES graph edges; Neo4j loaders for visualization/exploration |
 
 ---
 
-## 📚 Documentation
+## License / Classification
 
-| Document | Description |
-|----------|-------------|
-| [Architecture v3.0](docs/active_docs/AL-FURQAN-ARCHITECTURE-v3.0.md) | Complete system architecture |
-| [Project Status](docs/active_docs/PROJECT-STATUS.md) | Current state, what's done, what's planned |
-| [Elasticsearch Migration](docs/active_docs/ELASTICSEARCH-MIGRATION.md) | ChromaDB/JSON → ES migration |
-| [Quran Tokenizer](docs/active_docs/QURAN-TOKENIZER-v1.0.md) | 5-level tokenizer design |
-| [RAG Implementation Plan](docs/active_docs/RAG-IMPLEMENTATION-PLAN-v1.0.md) | Engine-Guided RAG pipeline design |
-| [Fine-Tuning Plan](docs/active_docs/FINE-TUNING-IMPLEMENTATION-PLAN-v1.0.md) | SFT + DPO plan for Furqan-27B |
-| [Security Policy](docs/active_docs/FURQAN-AXIOM-SECURITY-POLICY-v1.0.md) | 5-layer security architecture |
-| [RaaS Docs](docs/active_docs/FURQAN-RAAS-DOCS.md) | Reasoning-as-a-Skill |
-
----
-
-## 📄 License
-
-Apache 2.0
-
----
-
-*The Code guides. The LLM thinks. Z3 proves. The Knowledge Base knows.*
+Repository metadata currently declares MIT, while project documentation marks
+the work as Variiance R&D. Confirm distribution terms before publishing outside
+the organization.

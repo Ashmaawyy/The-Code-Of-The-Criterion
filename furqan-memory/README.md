@@ -1,104 +1,159 @@
 # Furqan Memory
 
-**Client-side memory and learning skill for AI agents.**
+Client-side memory and learning MCP server for Al-Furqan-compatible agents.
+It stores verdict-shaped records locally, recalls related past judgments, learns
+patterns, and records feedback without sending data to a network service.
 
-Stores verdicts, learns patterns, enables offline reasoning. All data stays on the user's device.
+This package is deliberately separate from the core engine:
 
-## Features
-
-- **Remember** — Store evaluation verdicts in local SQLite + vector search
-- **Recall** — Semantic search over past verdicts
-- **Recognize** — Fast-path pattern matching (<50ms target)
-- **Feedback** — Rate verdicts to improve pattern accuracy
-- **Stats** — Memory usage dashboard
-
-## Architecture
-
+```text
+MCP client
+  -> JSON-RPC over stdio
+  -> FurqanMemoryMCPServer
+  -> MemoryManager
+  -> SQLite structured store
+  -> ChromaDB vector collections
 ```
+
+The core Al-Furqan runtime uses Elasticsearch for verdict and feedback storage.
+`furqan-memory/` is different by design: it is a local agent memory cache that
+stays on the user's device.
+
+---
+
+## Capabilities
+
+| Capability | Tool | Backing layer |
+| --- | --- | --- |
+| Store a verdict | `furqan_remember` | SQLite verdict table + Chroma verdict vector |
+| Recall related verdicts | `furqan_recall` | Chroma semantic search enriched from SQLite |
+| Recognize mature patterns | `furqan_recognize` | Chroma pattern vector + SQLite confidence gate |
+| Record feedback | `furqan_feedback` | SQLite feedback table and pattern confidence update |
+| Inspect local usage | `furqan_memory_stats` | SQLite counts + Chroma collection counts |
+
+---
+
+## Package Layout
+
+```text
 furqan-memory/
-├── src/furqan_memory/
-│   ├── storage/
-│   │   ├── sqlite_store.py    # SQLite structured storage
-│   │   └── vector_store.py    # ChromaDB semantic search
-│   ├── memory_manager.py      # Core orchestration
-│   └── mcp_server.py          # MCP JSON-RPC server
-├── tests/
-│   ├── test_sqlite_store.py
-│   ├── test_vector_search.py
-│   ├── test_memory_manager.py
-│   └── test_mcp_memory.py
-└── SKILL.md
+  src/furqan_memory/
+    __main__.py
+    mcp_server.py              JSON-RPC/MCP stdio server
+    memory_manager.py          Coordinates structured and vector storage
+    storage/
+      sqlite_store.py          Verdicts, patterns, feedback, context
+      vector_store.py          ChromaDB verdict/pattern collections
+  tests/
+    test_mcp_memory.py
+    test_memory_manager.py
+    test_sqlite_store.py
+    test_vector_search.py
+  pyproject.toml
+  SKILL.md
 ```
 
-## Storage Schema
+---
 
-### verdicts
-| Column | Type | Description |
-|--------|------|-------------|
-| id | TEXT PK | Verdict ID (v_xxxx) |
-| question | TEXT | Original question |
-| domain | TEXT | Knowledge domain |
-| verdict_json | TEXT | Full verdict data as JSON |
-| total_score | INTEGER | Overall score |
-| gate_results | TEXT | Gate scores as JSON |
-| final_judgment | TEXT | Final judgment text |
-| tags | TEXT | JSON array of tags |
-| created_at | REAL | Unix timestamp |
-| accessed_at | REAL | Last access time |
-| access_count | INTEGER | Number of accesses |
+## Local Storage Model
 
-### patterns
-| Column | Type | Description |
-|--------|------|-------------|
-| id | TEXT PK | Pattern ID (p_xxxx) |
-| category | TEXT | Pattern category |
-| domain | TEXT | Knowledge domain |
-| rule | TEXT | Pattern rule text |
-| signals | TEXT | Trigger signals (JSON) |
-| expected_gates | TEXT | Expected gate results (JSON) |
-| confidence | REAL | Pattern confidence (0-1) |
-| hit_count | INTEGER | Times matched |
-| version | INTEGER | Pattern version |
+SQLite tables are created automatically:
 
-### feedback
-| Column | Type | Description |
-|--------|------|-------------|
-| id | TEXT PK | Feedback ID (f_xxxx) |
-| target_id | TEXT | Verdict/pattern ID |
-| target_type | TEXT | "verdict" or "pattern" |
-| rating | TEXT | positive/negative/neutral |
-| correction | TEXT | Optional correction |
+| Table | Purpose |
+| --- | --- |
+| `verdicts` | Original question, domain, verdict JSON, score, gate results, tags, access metadata |
+| `patterns` | Learned recognition rules, signals, expected gates, confidence, source verdicts, hit counts |
+| `feedback` | Positive/negative/neutral ratings and optional corrections |
+| `context` | Domain-scoped key/value context |
 
-### context
-| Column | Type | Description |
-|--------|------|-------------|
-| key | TEXT PK | Context key |
-| value | TEXT | JSON value |
-| domain | TEXT | Scope domain |
+ChromaDB keeps two collections:
+
+| Collection | Purpose |
+| --- | --- |
+| `verdicts` | Semantic recall over stored questions/verdicts |
+| `patterns` | Fast recognition of mature patterns |
+
+The recognition path only returns a match when vector similarity clears the
+requested threshold and the stored pattern confidence is at least `0.8`.
+
+---
 
 ## Quick Start
 
+From this package directory:
+
 ```bash
-# Install
 pip install -e ".[dev]"
-
-# Run tests
 pytest tests/ -v
-
-# Start MCP server
 python -m furqan_memory
 ```
 
-## MCP Tools
+From the repository root:
 
-| Tool | Description |
-|------|-------------|
-| `furqan_remember` | Store a verdict in local memory |
-| `furqan_recall` | Search memory for relevant past verdicts |
-| `furqan_recognize` | Fast-path pattern matching (<50ms) |
-| `furqan_feedback` | Rate a verdict to improve accuracy |
-| `furqan_memory_stats` | Memory usage statistics |
+```bash
+python -m pytest furqan-memory/tests/ -v
+```
 
-## Privacy
+Runtime paths can be controlled with environment variables:
 
-All data stays on the user's device. No network calls. No telemetry.
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `FURQAN_MEMORY_DB` | `furqan_memory.db` | SQLite database path |
+| `FURQAN_MEMORY_VECTORS` | unset | ChromaDB persistence directory; unset is ephemeral |
+
+Example:
+
+```bash
+FURQAN_MEMORY_DB=~/.al-furqan/memory.db \
+FURQAN_MEMORY_VECTORS=~/.al-furqan/memory_vectors \
+python -m furqan_memory.mcp_server
+```
+
+On Windows PowerShell:
+
+```powershell
+$env:FURQAN_MEMORY_DB = "$HOME\.al-furqan\memory.db"
+$env:FURQAN_MEMORY_VECTORS = "$HOME\.al-furqan\memory_vectors"
+python -m furqan_memory.mcp_server
+```
+
+---
+
+## MCP Client Configuration
+
+Use the package module as a stdio server:
+
+```json
+{
+  "mcpServers": {
+    "furqan-memory": {
+      "command": "python",
+      "args": ["-m", "furqan_memory.mcp_server"],
+      "cwd": "/path/to/al-furqan/furqan-memory"
+    }
+  }
+}
+```
+
+---
+
+## Tool Arguments
+
+| Tool | Required arguments | Optional arguments |
+| --- | --- | --- |
+| `furqan_remember` | `question`, `verdict` | `domain`, `tags` |
+| `furqan_recall` | `query` | `domain`, `limit` |
+| `furqan_recognize` | `query` | `threshold` |
+| `furqan_feedback` | `verdict_id`, `rating` | `correction` |
+| `furqan_memory_stats` | none | `domain` |
+
+Ratings for `furqan_feedback` are `positive`, `negative`, or `neutral`.
+
+---
+
+## Privacy Boundary
+
+- No network call is made by the SQLite store.
+- ChromaDB runs locally; persistence is controlled by `FURQAN_MEMORY_VECTORS`.
+- The server does not import the core Al-Furqan engine and does not evaluate
+  claims itself. It stores, retrieves, and learns from verdict-shaped data.
