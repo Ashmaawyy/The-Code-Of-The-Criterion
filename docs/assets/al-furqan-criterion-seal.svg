@@ -1,0 +1,111 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 512 512"
+  role="img"
+  aria-labelledby="title desc"
+>
+  <title id="title">Al-Furqan Criterion Seal</title>
+  <desc id="desc">
+    A restrained circular seal for Al-Furqan, combining four evaluation gates,
+    an abstract balance, an axiom anchor, and a vector-drawn fa-inspired glyph.
+  </desc>
+  <defs>
+    <style>
+      .ink {
+        stroke: #0e1514;
+      }
+
+      .gold {
+        stroke: #c9a24a;
+      }
+
+      .ivory {
+        fill: #f6f1e6;
+      }
+
+      .ink-fill {
+        fill: #0e1514;
+      }
+
+      .gold-fill {
+        fill: #c9a24a;
+      }
+
+      .line {
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+    </style>
+  </defs>
+
+  <!-- Transparent by default; uncomment for an ivory seal background. -->
+  <!-- <circle class="ivory" cx="256" cy="256" r="240" /> -->
+
+  <g class="line" stroke-width="12">
+    <circle class="ink" cx="256" cy="256" r="220" />
+    <circle class="gold" cx="256" cy="256" r="190" />
+  </g>
+
+  <g class="line gold" stroke-width="8" opacity="0.9">
+    <path d="M256 36v54" />
+    <path d="M256 422v54" />
+    <path d="M36 256h54" />
+    <path d="M422 256h54" />
+  </g>
+
+  <g class="line ink" stroke-width="5" opacity="0.75">
+    <path d="M256 91v42" />
+    <path d="M256 379v42" />
+    <path d="M91 256h42" />
+    <path d="M379 256h42" />
+  </g>
+
+  <g class="gold-fill">
+    <circle cx="256" cy="90" r="7" />
+    <circle cx="256" cy="422" r="7" />
+    <circle cx="90" cy="256" r="7" />
+    <circle cx="422" cy="256" r="7" />
+  </g>
+
+  <g class="line" stroke-width="10">
+    <path class="ink" d="M256 152v200" />
+    <path class="gold" d="M200 214h112" />
+    <path class="ink" d="M232 174l24-24 24 24-24 24z" />
+  </g>
+
+  <g class="line gold" stroke-width="7" opacity="0.95">
+    <path d="M208 214l-30 58h60z" />
+    <path d="M304 214l-30 58h60z" />
+    <path d="M190 272h36" />
+    <path d="M286 272h36" />
+  </g>
+
+  <g class="line ink" stroke-width="8">
+    <path d="M162 344h188" />
+    <path d="M256 352l-23 35h46z" />
+  </g>
+
+  <g class="line" stroke-width="7">
+    <path
+      class="gold"
+      d="M186 326c18 36 58 58 105 50 38-7 65-30 70-63"
+    />
+    <path
+      class="ink"
+      d="M300 303c-15-21-51-24-70-5-17 17-11 44 13 52 28 9 67-12 82-42"
+    />
+    <path class="ink" d="M326 308c14 8 25 21 31 38" />
+  </g>
+
+  <g class="gold-fill">
+    <circle cx="323" cy="278" r="9" />
+  </g>
+
+  <g class="line ink" stroke-width="4" opacity="0.55">
+    <path d="M161 161l33 33" />
+    <path d="M351 161l-33 33" />
+    <path d="M161 351l33-33" />
+    <path d="M351 351l-33-33" />
+  </g>
+</svg>

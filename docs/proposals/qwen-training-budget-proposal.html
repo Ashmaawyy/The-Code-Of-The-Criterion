@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Al-Furqan Qwen Fine-Tuning Budget Proposal</title>
+  <style>
+    :root {
+      --ink: #172026;
+      --muted: #5c6670;
+      --paper: #ffffff;
+      --soft: #f5f7f8;
+      --line: #dce3e8;
+      --accent: #0f766e;
+      --accent-dark: #0b4f49;
+      --warn: #8a5a00;
+      --danger: #8a1f1f;
+      --good: #176f42;
+      --shadow: 0 18px 45px rgba(19, 34, 42, 0.10);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #e9eef1;
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.55;
+    }
+
+    a {
+      color: var(--accent-dark);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+
+    .page {
+      width: min(1120px, calc(100% - 32px));
+      margin: 32px auto;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--line);
+    }
+
+    header {
+      padding: 42px 48px 34px;
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(135deg, rgba(15, 118, 110, 0.10), rgba(23, 32, 38, 0.02) 48%, rgba(23, 32, 38, 0.00)),
+        var(--paper);
+    }
+
+    .header-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .kicker {
+      margin: 0 0 12px;
+      color: var(--accent-dark);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(30px, 5vw, 52px);
+      line-height: 1.03;
+      letter-spacing: 0;
+      max-width: 780px;
+    }
+
+    .subtitle {
+      margin: 18px 0 0;
+      max-width: 820px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .meta-card {
+      width: 260px;
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+
+    .meta-row {
+      display: grid;
+      grid-template-columns: 86px 1fr;
+      gap: 10px;
+      padding: 7px 0;
+      border-bottom: 1px solid #edf1f3;
+      font-size: 13px;
+    }
+
+    .meta-row:last-child {
+      border-bottom: 0;
+    }
+
+    .meta-row span:first-child {
+      color: var(--muted);
+    }
+
+    main {
+      padding: 0 48px 46px;
+    }
+
+    section {
+      padding: 34px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    section:last-child {
+      border-bottom: 0;
+    }
+
+    h2 {
+      margin: 0 0 18px;
+      font-size: 25px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 24px 0 10px;
+      font-size: 18px;
+      line-height: 1.3;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0 0 14px;
+    }
+
+    .lead {
+      max-width: 850px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .decision-box {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 260px;
+      gap: 24px;
+      padding: 24px;
+      background: #f0f8f7;
+      border: 1px solid #bddbd7;
+      border-left: 6px solid var(--accent);
+      border-radius: 6px;
+    }
+
+    .decision-box strong {
+      color: var(--accent-dark);
+    }
+
+    .ask-number {
+      align-self: stretch;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 18px;
+      text-align: center;
+      background: var(--paper);
+      border: 1px solid #bddbd7;
+      border-radius: 6px;
+    }
+
+    .ask-number .amount {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--accent-dark);
+      font-size: 42px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .ask-number .label {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .card {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--paper);
+    }
+
+    .card.recommended {
+      border-color: #8cc8c1;
+      box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.08);
+    }
+
+    .card h3 {
+      margin-top: 0;
+    }
+
+    .price {
+      margin: 8px 0 10px;
+      font-size: 30px;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .tag {
+      display: inline-block;
+      margin-bottom: 12px;
+      padding: 4px 8px;
+      color: var(--accent-dark);
+      background: #e6f4f2;
+      border: 1px solid #bddbd7;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .tag.neutral {
+      color: #34424c;
+      background: #eef2f4;
+      border-color: #d8e1e6;
+    }
+
+    .tag.warn {
+      color: var(--warn);
+      background: #fff5db;
+      border-color: #ead39b;
+    }
+
+    ul {
+      margin: 10px 0 0;
+      padding-left: 20px;
+    }
+
+    li {
+      margin: 7px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 8px;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      padding: 11px 12px;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+    }
+
+    th {
+      color: #26343d;
+      background: var(--soft);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    td.num,
+    th.num {
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .total-row td {
+      font-weight: 800;
+      background: #fbfcfd;
+    }
+
+    .note {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .formula {
+      display: inline-block;
+      padding: 2px 6px;
+      color: #26343d;
+      background: #eef2f4;
+      border: 1px solid #dce3e8;
+      border-radius: 4px;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 13px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .callout {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbfcfd;
+    }
+
+    .callout.warning {
+      border-color: #ead39b;
+      background: #fffaf0;
+    }
+
+    .callout.danger {
+      border-color: #e5b6b6;
+      background: #fff5f5;
+    }
+
+    .callout.good {
+      border-color: #b8d9c8;
+      background: #f3fbf6;
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .step {
+      min-height: 132px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--paper);
+    }
+
+    .step strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--accent-dark);
+      font-size: 13px;
+    }
+
+    .step span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .source-list {
+      columns: 2;
+      column-gap: 30px;
+      padding-left: 20px;
+      font-size: 13px;
+    }
+
+    .footer-note {
+      padding-top: 20px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .screen-only {
+      display: flex;
+      justify-content: flex-end;
+      padding: 18px 48px 0;
+    }
+
+    button {
+      cursor: pointer;
+      padding: 9px 13px;
+      color: #ffffff;
+      background: var(--accent-dark);
+      border: 0;
+      border-radius: 5px;
+      font: 700 13px Arial, Helvetica, sans-serif;
+    }
+
+    @media (max-width: 900px) {
+      .header-grid,
+      .decision-box,
+      .two-col,
+      .cards,
+      .timeline {
+        grid-template-columns: 1fr;
+      }
+
+      .meta-card {
+        width: 100%;
+      }
+
+      header,
+      main,
+      .screen-only {
+        padding-left: 24px;
+        padding-right: 24px;
+      }
+
+      table {
+        display: block;
+        overflow-x: auto;
+      }
+
+      .source-list {
+        columns: 1;
+      }
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+
+      .page {
+        width: 100%;
+        margin: 0;
+        border: 0;
+        box-shadow: none;
+      }
+
+      .screen-only {
+        display: none;
+      }
+
+      section {
+        page-break-inside: avoid;
+      }
+
+      a {
+        color: #172026;
+        text-decoration: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="screen-only">
+      <button type="button" onclick="window.print()">Print or Save PDF</button>
+    </div>
+
+    <header>
+      <div class="header-grid">
+        <div>
+          <p class="kicker">Decision proposal</p>
+          <h1>Cloud Budget for Al-Furqan Qwen Fine-Tuning Pilot</h1>
+          <p class="subtitle">
+            A staged proposal to determine whether Al-Furqan should allocate paid cloud compute for
+            Qwen-family LoRA/QLoRA fine-tuning, with clear stop conditions before larger spend.
+          </p>
+        </div>
+        <aside class="meta-card" aria-label="Proposal metadata">
+          <div class="meta-row"><span>Project</span><strong>al-furqan</strong></div>
+          <div class="meta-row"><span>Date</span><strong>June 21, 2026</strong></div>
+          <div class="meta-row"><span>Currency</span><strong>USD</strong></div>
+          <div class="meta-row"><span>Scope</span><strong>Training pilot only</strong></div>
+          <div class="meta-row"><span>Method</span><strong>LoRA / QLoRA</strong></div>
+        </aside>
+      </div>
+    </header>
+
+    <main>
+      <section id="decision">
+        <h2>Decision Requested</h2>
+        <div class="decision-box">
+          <div>
+            <p>
+              Approve a controlled cloud compute and evaluation budget of <strong>up to $2,500</strong>
+              for a six-week pilot. The pilot starts with Qwen3-8B, then runs Qwen3.6-27B or Qwen3-32B
+              only if the smaller model proves the dataset and evaluation pipeline are worth scaling.
+            </p>
+            <p>
+              This is <strong>not</strong> a request for full pretraining, full fine-tuning, or production
+              inference hosting. The goal is to test whether a fine-tuned adapter improves gate-following,
+              citation discipline, and structured reasoning behavior for The Criterion engine.
+            </p>
+          </div>
+          <div class="ask-number">
+            <span class="amount">$2,500</span>
+            <span class="label">recommended approval cap</span>
+          </div>
+        </div>
+
+        <div class="cards">
+          <article class="card">
+            <span class="tag neutral">Minimum</span>
+            <h3>8B Feasibility</h3>
+            <div class="price">$750</div>
+            <p>Enough to validate the dataset, run Qwen3-8B LoRA training, and compare against prompt-only behavior.</p>
+          </article>
+          <article class="card recommended">
+            <span class="tag">Recommended</span>
+            <h3>8B + 27B/32B Pilot</h3>
+            <div class="price">$2,500</div>
+            <p>Includes the 8B baseline plus one controlled larger-model comparison, retries, and external evaluation budget.</p>
+          </article>
+          <article class="card">
+            <span class="tag warn">Aggressive</span>
+            <h3>Expanded Validation</h3>
+            <div class="price">$6,000</div>
+            <p>Allows extra larger-model sweeps, DPO preference training, and a short internal inference proof of concept.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="why">
+        <h2>Why This Budget Is Worth Considering</h2>
+        <p class="lead">
+          Al-Furqan already has the correct safety architecture: source integrity, formal checks, provider abstraction,
+          and audit layers. The model should not become the authority. It should become a better disciplined mediator
+          between user claims, the knowledge base, Z3-backed gates, and human review.
+        </p>
+        <div class="two-col">
+          <div class="callout good">
+            <h3>Expected gains</h3>
+            <ul>
+              <li>More reliable execution of the four Criterion gates in the right order.</li>
+              <li>Lower prompt fragility for Arabic/English scholarly reasoning workflows.</li>
+              <li>Better structured outputs for claims, evidences, contradictions, and uncertainty.</li>
+              <li>Reduced hallucinated citations when trained against explicit negative examples.</li>
+            </ul>
+          </div>
+          <div class="callout warning">
+            <h3>What fine-tuning will not solve</h3>
+            <ul>
+              <li>It will not replace the Quran/Hadith/Fiqh/Tafsir knowledge base.</li>
+              <li>It will not replace Z3 or source-integrity checks.</li>
+              <li>It will not guarantee theological correctness without curated data and review.</li>
+              <li>It will not remove the need for human-in-the-loop validation on sensitive claims.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="model-strategy">
+        <h2>Model Strategy</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Candidate</th>
+              <th>Role in pilot</th>
+              <th>Reason</th>
+              <th>Decision rule</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Qwen3-8B</strong></td>
+              <td>Primary first model</td>
+              <td>8.2B parameters, Apache-2.0, multilingual, supports thinking and non-thinking mode, cheap enough for iteration.</td>
+              <td>Train first. Continue only if it beats prompt baseline on gate compliance and citation discipline.</td>
+            </tr>
+            <tr>
+              <td><strong>Qwen3.6-27B</strong></td>
+              <td>Larger-model validation</td>
+              <td>27B open-weight model with stronger agentic and long-context positioning, but needs larger GPU memory.</td>
+              <td>Run only after 8B pipeline succeeds or fails in a way likely solved by scale.</td>
+            </tr>
+            <tr>
+              <td><strong>Qwen3-32B</strong></td>
+              <td>Alternative larger candidate</td>
+              <td>32.8B open model, text-generation focused, similar hardware class to the 27B pilot.</td>
+              <td>Compare against 27B if text-only behavior is preferred over multimodal architecture.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="note">
+          Note on naming: the earlier phrase "Qwen 3.7" is treated here as "Qwen 3.x family." This proposal uses
+          currently visible official/open candidates: Qwen3-8B, Qwen3.6-27B, and Qwen3-32B.
+        </p>
+      </section>
+
+      <section id="approach">
+        <h2>Training Approach</h2>
+        <div class="two-col">
+          <div>
+            <h3>Method</h3>
+            <ul>
+              <li>Supervised fine-tuning with LoRA/QLoRA adapters, not full fine-tuning.</li>
+              <li>Use TRL or Unsloth for memory-efficient training.</li>
+              <li>Keep base model frozen; train small adapter weights that can be merged or served separately.</li>
+              <li>Push artifacts to Hugging Face Hub or internal model storage after each accepted run.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Dataset scope</h3>
+            <ul>
+              <li>1,500-5,000 curated training examples for the first pilot.</li>
+              <li>300-500 held-out evaluation cases.</li>
+              <li>Include positive and negative examples: correct gate traces, bad citations, unsupported claims, contradictory evidence, and refusal/uncertainty cases.</li>
+              <li>Do not train on unverified religious claims as if they were ground truth.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="provider-comparison">
+        <h2>Paid Cloud Options</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Provider</th>
+              <th>Best use</th>
+              <th>Representative prices used</th>
+              <th>Trade-off</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Hugging Face Jobs</strong></td>
+              <td>Recommended default for managed training jobs and Hub persistence.</td>
+              <td>L4 24GB: $0.80/hr; A10G 24GB: $1.50/hr; L40S 48GB: $1.80/hr; A100 80GB: $2.50/hr; H200 141GB: $5.00/hr.</td>
+              <td>Cleaner workflow and less ops work, but requires Pro/Team/Enterprise and can cost more than raw GPU markets.</td>
+            </tr>
+            <tr>
+              <td><strong>RunPod</strong></td>
+              <td>Cost-optimized larger-model experiments when we can manage the environment ourselves.</td>
+              <td>L40S 48GB: $0.86/hr; A100 80GB: $1.39-$1.49/hr; RTX Pro 6000 96GB: $2.09/hr; H100 80GB: $2.89-$3.29/hr.</td>
+              <td>Lower hourly rates, but more setup, checkpoint, storage, and environment responsibility.</td>
+            </tr>
+            <tr>
+              <td><strong>Colab Pro / Pro+</strong></td>
+              <td>Notebook experimentation for smaller models.</td>
+              <td>Not used in the base budget because GPU type and availability are not deterministic enough for 27B planning.</td>
+              <td>Convenient for exploration, risky for repeatable management-approved training.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="budget-calculations">
+        <h2>Budget Calculations</h2>
+        <p class="lead">
+          The raw GPU compute is relatively inexpensive because the proposal uses LoRA/QLoRA, not full training.
+          The approval cap is higher than the raw math to cover failed runs, retries, data-generation/evaluation calls,
+          storage, and one larger-model comparison without asking for a second approval.
+        </p>
+
+        <h3>Scenario A: Minimum 8B feasibility budget</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Line item</th>
+              <th>Formula</th>
+              <th class="num">Estimated cost</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>HF Pro access, 2 months</td>
+              <td><span class="formula">2 x $9</span></td>
+              <td class="num">$18.00</td>
+            </tr>
+            <tr>
+              <td>Dataset validation and preprocessing on CPU</td>
+              <td><span class="formula">10 hr x $0.03/hr</span></td>
+              <td class="num">$0.30</td>
+            </tr>
+            <tr>
+              <td>Qwen3-8B smoke tests on L4</td>
+              <td><span class="formula">8 hr x $0.80/hr</span></td>
+              <td class="num">$6.40</td>
+            </tr>
+            <tr>
+              <td>Qwen3-8B candidate training on A10G</td>
+              <td><span class="formula">40 hr x $1.50/hr</span></td>
+              <td class="num">$60.00</td>
+            </tr>
+            <tr>
+              <td>Batch evaluation and adapter packaging on L4</td>
+              <td><span class="formula">20 hr x $0.80/hr</span></td>
+              <td class="num">$16.00</td>
+            </tr>
+            <tr>
+              <td>External evaluation or synthetic-data API allowance</td>
+              <td><span class="formula">fixed allowance</span></td>
+              <td class="num">$150.00</td>
+            </tr>
+            <tr>
+              <td>Retries, failed runs, small storage, and safety buffer</td>
+              <td><span class="formula">management reserve</span></td>
+              <td class="num">$249.30</td>
+            </tr>
+            <tr class="total-row">
+              <td>Raw scenario subtotal</td>
+              <td></td>
+              <td class="num">$500.00</td>
+            </tr>
+            <tr class="total-row">
+              <td>Recommended approval cap</td>
+              <td>rounded up to avoid interruption</td>
+              <td class="num">$750.00</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Scenario B: Recommended 8B + 27B/32B pilot</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Line item</th>
+              <th>Formula</th>
+              <th class="num">Estimated cost</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Scenario A approved cap</td>
+              <td><span class="formula">8B feasibility</span></td>
+              <td class="num">$750.00</td>
+            </tr>
+            <tr>
+              <td>Qwen3.6-27B or Qwen3-32B candidate training on A100 80GB</td>
+              <td><span class="formula">60 hr x $2.50/hr</span></td>
+              <td class="num">$150.00</td>
+            </tr>
+            <tr>
+              <td>Larger-model stress tests on H200 or equivalent</td>
+              <td><span class="formula">20 hr x $5.00/hr</span></td>
+              <td class="num">$100.00</td>
+            </tr>
+            <tr>
+              <td>Larger-model batch evaluation on L40S</td>
+              <td><span class="formula">30 hr x $1.80/hr</span></td>
+              <td class="num">$54.00</td>
+            </tr>
+            <tr>
+              <td>Artifact storage, checkpoints, and transfer allowance</td>
+              <td><span class="formula">fixed allowance</span></td>
+              <td class="num">$50.00</td>
+            </tr>
+            <tr>
+              <td>External evaluation or synthetic-data API allowance</td>
+              <td><span class="formula">fixed allowance</span></td>
+              <td class="num">$500.00</td>
+            </tr>
+            <tr>
+              <td>Retries, failed jobs, provider switching, and reserve</td>
+              <td><span class="formula">guardrail reserve</span></td>
+              <td class="num">$896.00</td>
+            </tr>
+            <tr class="total-row">
+              <td>Recommended approval cap</td>
+              <td>maximum spend before re-approval</td>
+              <td class="num">$2,500.00</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Scenario C: Aggressive validation budget</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Line item</th>
+              <th>Formula</th>
+              <th class="num">Estimated cost</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Recommended Scenario B cap</td>
+              <td><span class="formula">baseline + larger pilot</span></td>
+              <td class="num">$2,500.00</td>
+            </tr>
+            <tr>
+              <td>Additional A100/H200 sweeps and DPO preference trial</td>
+              <td><span class="formula">100 hr blended x $3.50/hr</span></td>
+              <td class="num">$350.00</td>
+            </tr>
+            <tr>
+              <td>Short internal inference proof of concept</td>
+              <td><span class="formula">200 hr blended x $1.50/hr</span></td>
+              <td class="num">$300.00</td>
+            </tr>
+            <tr>
+              <td>Expanded external evaluation allowance</td>
+              <td><span class="formula">fixed allowance</span></td>
+              <td class="num">$1,000.00</td>
+            </tr>
+            <tr>
+              <td>Storage, checkpoints, data versioning, and reserve</td>
+              <td><span class="formula">management reserve</span></td>
+              <td class="num">$1,850.00</td>
+            </tr>
+            <tr class="total-row">
+              <td>Aggressive approval cap</td>
+              <td>requires separate approval</td>
+              <td class="num">$6,000.00</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="hf-vs-runpod">
+        <h2>HF Jobs vs. RunPod Larger-Model Cost Check</h2>
+        <p class="lead">
+          If the team prefers lower GPU cost over managed workflow simplicity, the larger-model portion can be run
+          on RunPod. The savings are real but modest compared with the cost of failed data design.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>27B/32B activity</th>
+              <th>HF Jobs estimate</th>
+              <th>RunPod estimate</th>
+              <th>Comment</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>60 hr training on A100 80GB</td>
+              <td>60 x $2.50 = $150.00</td>
+              <td>60 x $1.49 = $89.40</td>
+              <td>RunPod is cheaper, HF is simpler for Hub-native jobs.</td>
+            </tr>
+            <tr>
+              <td>20 hr stress tests on H100/H200 class</td>
+              <td>20 x $5.00 = $100.00</td>
+              <td>20 x $3.29 = $65.80</td>
+              <td>RunPod H100 cost is lower than HF H200 in this comparison.</td>
+            </tr>
+            <tr>
+              <td>Checkpoint and network storage allowance</td>
+              <td>$50.00 allowance</td>
+              <td>250 GB x $0.07/GB/mo = $17.50</td>
+              <td>Storage varies by provider and persistence model.</td>
+            </tr>
+            <tr class="total-row">
+              <td>Approximate larger-model subtotal</td>
+              <td>$300.00</td>
+              <td>$172.70</td>
+              <td>Potential saving: about $127 before ops overhead.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="timeline">
+        <h2>Six-Week Execution Plan</h2>
+        <div class="timeline">
+          <div class="step">
+            <strong>Week 1</strong>
+            <span>Build dataset schema, eval harness, and baseline prompt-only results.</span>
+          </div>
+          <div class="step">
+            <strong>Week 2</strong>
+            <span>Run Qwen3-8B smoke tests and fix data formatting failures before serious GPU spend.</span>
+          </div>
+          <div class="step">
+            <strong>Week 3</strong>
+            <span>Train Qwen3-8B candidate adapters and evaluate against held-out gate tests.</span>
+          </div>
+          <div class="step">
+            <strong>Week 4</strong>
+            <span>Run Qwen3.6-27B or Qwen3-32B comparison if the 8B pipeline passes.</span>
+          </div>
+          <div class="step">
+            <strong>Week 5</strong>
+            <span>Perform red-team evals: false citations, unsupported claims, contradictions, and refusal cases.</span>
+          </div>
+          <div class="step">
+            <strong>Week 6</strong>
+            <span>Deliver model card, evaluation report, recommendation, and production budget decision.</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="go-no-go">
+        <h2>Go / No-Go Criteria</h2>
+        <div class="two-col">
+          <div class="callout good">
+            <h3>Proceed if</h3>
+            <ul>
+              <li>Qwen3-8B adapter improves gate-order compliance by at least 15% over prompt-only baseline.</li>
+              <li>Source-citation hallucination rate decreases or remains below the current baseline.</li>
+              <li>Structured output validity improves enough to reduce post-processing exceptions.</li>
+              <li>The 27B/32B candidate shows a meaningful gain on difficult reasoning cases before expanded spend.</li>
+            </ul>
+          </div>
+          <div class="callout danger">
+            <h3>Stop if</h3>
+            <ul>
+              <li>The adapter fabricates sources, weakens source-integrity behavior, or bypasses tool verification.</li>
+              <li>The 8B model does not beat the prompt-only baseline after data cleanup.</li>
+              <li>27B/32B gains are marginal compared with 8B but add deployment cost and latency.</li>
+              <li>Data curation becomes the bottleneck before model size becomes the bottleneck.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="risks">
+        <h2>Risks and Controls</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Risk</th>
+              <th>Impact</th>
+              <th>Control</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Model learns confident theological style without evidence discipline.</td>
+              <td>High</td>
+              <td>Train on explicit refusal, uncertainty, and source-integrity examples; evaluate hallucinated citations separately.</td>
+            </tr>
+            <tr>
+              <td>Training data bakes in unsupported or weak claims.</td>
+              <td>High</td>
+              <td>Curate data through the existing source-integrity process; mark weak evidence as weak, not true.</td>
+            </tr>
+            <tr>
+              <td>27B/32B model costs more to serve than the benefit justifies.</td>
+              <td>Medium</td>
+              <td>Require 8B baseline first; approve 27B only when evals justify scale.</td>
+            </tr>
+            <tr>
+              <td>Cloud job failures waste spend.</td>
+              <td>Medium</td>
+              <td>Run CPU validation first, small smoke tests second, and checkpoint/push artifacts on every serious run.</td>
+            </tr>
+            <tr>
+              <td>Scope drift toward full training or production hosting.</td>
+              <td>Medium</td>
+              <td>Keep this as a capped pilot. Production inference requires a separate proposal.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="recommendation">
+        <h2>Recommendation</h2>
+        <div class="callout good">
+          <p>
+            Approve <strong>Scenario B: $2,500 maximum spend</strong>. It gives the project enough room to prove
+            the practical value of fine-tuning without committing to production infrastructure. Spend should be released
+            in gates: first $750 for the 8B feasibility stage, then the remaining allowance only if the baseline evals
+            justify a larger-model comparison.
+          </p>
+          <p>
+            The strongest management position is not "buy the biggest model." It is: fund a disciplined experiment,
+            protect source integrity, measure the result, and scale only if the evidence says model size is the limiting factor.
+          </p>
+        </div>
+      </section>
+
+      <section id="sources">
+        <h2>Sources and Price Basis</h2>
+        <p class="note">
+          Prices and model references were checked on June 21, 2026. Cloud prices can change; the approval cap should be
+          treated as a spend ceiling, not a commitment to spend every dollar.
+        </p>
+        <ul class="source-list">
+          <li><a href="https://huggingface.co/Qwen/Qwen3-8B">Qwen/Qwen3-8B model card</a> - 8.2B parameters, Apache-2.0, multilingual Qwen3 candidate.</li>
+          <li><a href="https://huggingface.co/Qwen/Qwen3.6-27B">Qwen/Qwen3.6-27B model card</a> - 27B open-weight candidate and serving notes.</li>
+          <li><a href="https://huggingface.co/Qwen/Qwen3-32B">Qwen/Qwen3-32B model card</a> - 32.8B text-generation candidate.</li>
+          <li><a href="https://huggingface.co/docs/huggingface_hub/en/guides/jobs">Hugging Face Jobs documentation</a> - Jobs access, pay-as-you-go model, timeout behavior, and hardware pricing.</li>
+          <li><a href="https://huggingface.co/pricing">Hugging Face pricing</a> - Pro plan and GPU pricing reference.</li>
+          <li><a href="https://www.runpod.io/pricing">RunPod pricing</a> - raw GPU and storage pricing used for the lower-cost comparison.</li>
+          <li><a href="https://research.google.com/colaboratory/faq.html">Google Colab FAQ</a> - free/paid notebook resource limits and non-guaranteed availability context.</li>
+        </ul>
+        <p class="footer-note">
+          Prepared as an internal decision memo for Al-Furqan. This proposal covers cloud compute and evaluation budget only;
+          staff time, legal review, scholar review, production serving, and long-term MLOps are out of scope unless separately approved.
+        </p>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
