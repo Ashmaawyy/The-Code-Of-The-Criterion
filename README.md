@@ -270,4 +270,4 @@ graph/history staging outputs.
 
 ## License / Classification
 
-MIT 2.0
+Apache-2.0
