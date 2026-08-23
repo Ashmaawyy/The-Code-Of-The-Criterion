@@ -1,0 +1,49 @@
+package:
+  name: al-furqan
+  version: 0.1.0
+
+source:
+  path: ..
+
+build:
+  noarch: python
+  number: 0
+  entry_points:
+    - al-furqan = al_furqan.cli:main
+  script: "{{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv"
+
+requirements:
+  host:
+    - python >=3.10
+    - pip
+    - setuptools >=68
+    - wheel
+  run:
+    - python >=3.10
+    - fastapi
+    - uvicorn
+    - requests >=2.28
+    - pyyaml >=6.0
+    - pydantic >=2.0
+    - python-jose
+    - passlib
+    - python-multipart
+    - celery
+    - redis-py
+    - httpx
+    - filelock >=3.0
+    - z3-solver >=4.12
+    - elasticsearch >=8.0
+
+about:
+  home: https://github.com/Ashmaawyy/Al-Furqan
+  license: Apache-2.0
+  license_file: LICENSE
+  summary: Axiom-anchored reasoning engine
+  description: >-
+    Al-Furqan (The Criterion) is an axiom-anchored neuro-symbolic reasoning
+    engine for evaluating claims, systems, and frameworks.
+
+extra:
+  recipe-maintainers:
+    - Ashmaawyy

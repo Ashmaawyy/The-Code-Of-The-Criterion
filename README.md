@@ -175,6 +175,26 @@ ruff check src/ tests/
 al-furqan
 ```
 
+### Conda package
+
+Create the development environment with:
+
+```bash
+conda env update --file environment.yml --name al-furqan
+conda activate al-furqan
+```
+
+Build the local Conda package with `conda-build`:
+
+```bash
+conda install -c conda-forge conda-build
+conda build conda.recipe
+```
+
+The GitHub Actions workflow builds the package on pushes and pull requests
+and stores the resulting artifact. Publishing to Anaconda should be added as a
+separate release job using an `ANACONDA_API_TOKEN` repository secret.
+
 Run the API:
 
 ```bash
