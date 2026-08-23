@@ -270,6 +270,4 @@ graph/history staging outputs.
 
 ## License / Classification
 
-Repository metadata currently declares MIT, while project documentation marks
-the work as Variiance R&D. Confirm distribution terms before publishing outside
-the organization.
+MIT 2.0
