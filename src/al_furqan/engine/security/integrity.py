@@ -24,7 +24,7 @@ class IntegrityStatus:
 class SecurityError(Exception):
     """Raised when axiom integrity is compromised."""
 
-    pass  # pylint: disable=unnecessary-pass
+    # pylint: disable=unnecessary-pass
 
 
 class IntegrityVerifier:
@@ -35,7 +35,11 @@ class IntegrityVerifier:
 
     def _compute_hashes(self) -> dict:
         """Compute SHA-256 hashes of all protected components."""
-        from al_furqan.engine.axioms import AXIOMS, GATE_DEFINITIONS, SCORING_RULES  # pylint: disable=import-outside-toplevel
+        from al_furqan.engine.axioms import (  # pylint: disable=import-outside-toplevel
+            AXIOMS,
+            GATE_DEFINITIONS,
+            SCORING_RULES,
+        )
 
         axiom_hash = hashlib.sha256(AXIOMS.encode()).hexdigest()
         gate_hash = hashlib.sha256(GATE_DEFINITIONS.encode()).hexdigest()

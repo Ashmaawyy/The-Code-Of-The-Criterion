@@ -5,10 +5,16 @@
 import os
 
 import pytest
-from al_furqan.kb.tafsir.kb_tools import TafsirKBTools
-from al_furqan.kb.tafsir.tool_executor import ToolExecutor, parse_tool_calls_from_response
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "review", "proposed_edges.db")
+from al_furqan.kb.tafsir.kb_tools import TafsirKBTools
+from al_furqan.kb.tafsir.tool_executor import (
+    ToolExecutor,
+    parse_tool_calls_from_response,
+)
+
+DB_PATH = os.path.join(
+    os.path.dirname(__file__), "..", "data", "review", "proposed_edges.db"
+)
 
 
 @pytest.fixture
@@ -22,6 +28,7 @@ def executor():
 
 class TestToolExecution:
     """TestToolExecution class."""
+
     def test_search_by_verse(self, executor):
         """Test search_by_verse."""
         result = executor.execute("search_kb_by_verse", {"verse_ref": "6:5"})
@@ -36,9 +43,10 @@ class TestToolExecution:
 
     def test_search_by_relation(self, executor):
         """Test search_by_relation."""
-        result = executor.execute("search_kb_by_relation", {
-            "verse_ref": "6:5", "relation_type": "LINKED_HADITH"
-        })
+        result = executor.execute(
+            "search_kb_by_relation",
+            {"verse_ref": "6:5", "relation_type": "LINKED_HADITH"},
+        )
         assert "LINKED_HADITH" in result
 
     def test_get_verse_context(self, executor):
@@ -59,6 +67,7 @@ class TestToolExecution:
 
 class TestCallLog:
     """TestCallLog class."""
+
     def test_log_tracks_calls(self, executor):
         """Test log_tracks_calls."""
         executor.reset_log()
@@ -85,6 +94,7 @@ class TestCallLog:
 
 class TestParseInlineToolCalls:
     """TestParseInlineToolCalls class."""
+
     def test_parse_search_by_verse(self):
         """Test parse_search_by_verse."""
         text = 'أحتاج أبحث: search_kb_by_verse("6:5") عن هذه الآية'
@@ -102,10 +112,10 @@ class TestParseInlineToolCalls:
 
     def test_parse_multiple_calls(self):
         """Test parse_multiple_calls."""
-        text = '''
+        text = """
         search_kb_by_verse("6:5")
         search_kb_by_topic("بدر")
-        '''
+        """
         calls = parse_tool_calls_from_response(text)
         assert len(calls) == 2
 

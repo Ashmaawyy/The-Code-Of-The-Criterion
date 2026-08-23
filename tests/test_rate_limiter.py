@@ -2,11 +2,12 @@
 
 import time
 
-from al_furqan.auth.rate_limiter import RateLimiter, classify_endpoint, TokenBucket
+from al_furqan.auth.rate_limiter import RateLimiter, TokenBucket, classify_endpoint
 
 
 class TestClassifyEndpoint:
     """TestClassifyEndpoint class."""
+
     def test_health(self):
         """Test health."""
         assert classify_endpoint("GET", "/api/v1/health") == "health"
@@ -30,6 +31,7 @@ class TestClassifyEndpoint:
 
 class TestTokenBucket:
     """TestTokenBucket class."""
+
     def test_consume_under_limit(self):
         """Test consume_under_limit."""
         bucket = TokenBucket(capacity=5, tokens=5.0, refill_rate=5.0 / 60)
@@ -58,6 +60,7 @@ class TestTokenBucket:
 
 class TestRateLimiter:
     """TestRateLimiter class."""
+
     def test_under_limit_allowed(self):
         """Test under_limit_allowed."""
         rl = RateLimiter(default_rpm=10)

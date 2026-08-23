@@ -53,7 +53,9 @@ class AdapterSandbox:  # pylint: disable=too-few-public-methods
         keyword-based heuristic check.
         """
         try:
-            from al_furqan.engine.symbolic.verifier import SymbolicVerifier  # pylint: disable=import-outside-toplevel
+            from al_furqan.engine.symbolic.verifier import (
+                SymbolicVerifier,  # pylint: disable=import-outside-toplevel
+            )
 
             verifier = SymbolicVerifier(timeout_ms=5000)
 

@@ -1,11 +1,12 @@
 """Tests for DeterministicScorer — determinism is CRITICAL."""
 
 import pytest
+
 from al_furqan.engine.chains.scorer import DeterministicScorer
-from al_furqan.engine.gates.source_integrity import SourceIntegrityGate
-from al_furqan.engine.gates.structural_consistency import StructuralConsistencyGate
 from al_furqan.engine.gates.mediation_zeroing import MediationZeroingGate
 from al_furqan.engine.gates.origin_aware import OriginAwareGate
+from al_furqan.engine.gates.source_integrity import SourceIntegrityGate
+from al_furqan.engine.gates.structural_consistency import StructuralConsistencyGate
 from al_furqan.engine.models import GateResult
 
 # pylint: disable=redefined-outer-name
@@ -23,11 +24,14 @@ class TestDeterministicScorer:
     def test_score_single_gate(self, scorer):
         """Score a single gate correctly."""
         gate = SourceIntegrityGate()
-        result = scorer.score_gate(gate, {
-            "source_type": "divine",
-            "verifiable": True,
-            "contradicts_primary": False,
-        })
+        result = scorer.score_gate(
+            gate,
+            {
+                "source_type": "divine",
+                "verifiable": True,
+                "contradicts_primary": False,
+            },
+        )
         assert result.score == 100
         assert result.result == GateResult.SURVIVE
 

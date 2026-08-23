@@ -1,9 +1,9 @@
 """Tests for the Output Validator (Sprint 6C)."""
 
-  # pylint: disable=wrong-import-order
+# pylint: disable=wrong-import-order
 
+from al_furqan.engine.models import GateResult, GateScore, SystemType, Verdict
 from al_furqan.engine.security.output_validator import OutputValidator, ValidationResult
-from al_furqan.engine.models import Verdict, GateScore, GateResult, SystemType
 
 
 def _make_valid_verdict(**overrides) -> Verdict:
@@ -13,10 +13,27 @@ def _make_valid_verdict(**overrides) -> Verdict:
         primary_system=SystemType.SOCIAL,
         friction_points=["point1"],
         gate_scores=[
-            GateScore(name="Source Integrity", score=85, result=GateResult.SURVIVE, reasoning="ok"),
-            GateScore(name="Structural Consistency", score=80, result=GateResult.SURVIVE, reasoning="ok"),  # pylint: disable=line-too-long
-            GateScore(name="Mediation Zeroing", score=75, result=GateResult.SURVIVE, reasoning="ok"),  # pylint: disable=line-too-long
-            GateScore(name="Origin Aware", score=90, result=GateResult.SURVIVE, reasoning="ok"),
+            GateScore(
+                name="Source Integrity",
+                score=85,
+                result=GateResult.SURVIVE,
+                reasoning="ok",
+            ),
+            GateScore(
+                name="Structural Consistency",
+                score=80,
+                result=GateResult.SURVIVE,
+                reasoning="ok",
+            ),  # pylint: disable=line-too-long
+            GateScore(
+                name="Mediation Zeroing",
+                score=75,
+                result=GateResult.SURVIVE,
+                reasoning="ok",
+            ),  # pylint: disable=line-too-long
+            GateScore(
+                name="Origin Aware", score=90, result=GateResult.SURVIVE, reasoning="ok"
+            ),
         ],
         origin_gate=GateResult.SURVIVE,
         consequences_short_term=["c1"],
@@ -46,45 +63,120 @@ class TestOutputValidator:
 
     def test_missing_gates_detected(self):
         """Test missing_gates_detected."""
-        verdict = _make_valid_verdict(gate_scores=[
-            GateScore(name="Source Integrity", score=85, result=GateResult.SURVIVE, reasoning="ok"),
-        ])
+        verdict = _make_valid_verdict(
+            gate_scores=[
+                GateScore(
+                    name="Source Integrity",
+                    score=85,
+                    result=GateResult.SURVIVE,
+                    reasoning="ok",
+                ),
+            ]
+        )
         result = self.validator.validate_verdict(verdict)
         assert not result.valid
         assert any("Expected 4 gates" in i for i in result.issues)
 
     def test_wrong_gate_names_detected(self):
         """Test wrong_gate_names_detected."""
-        verdict = _make_valid_verdict(gate_scores=[
-            GateScore(name="Source Integrity", score=85, result=GateResult.SURVIVE, reasoning="ok"),
-            GateScore(name="Structural Consistency", score=80, result=GateResult.SURVIVE, reasoning="ok"),  # pylint: disable=line-too-long
-            GateScore(name="Mediation Zeroing", score=75, result=GateResult.SURVIVE, reasoning="ok"),  # pylint: disable=line-too-long
-            GateScore(name="WRONG NAME", score=90, result=GateResult.SURVIVE, reasoning="ok"),
-        ])
+        verdict = _make_valid_verdict(
+            gate_scores=[
+                GateScore(
+                    name="Source Integrity",
+                    score=85,
+                    result=GateResult.SURVIVE,
+                    reasoning="ok",
+                ),
+                GateScore(
+                    name="Structural Consistency",
+                    score=80,
+                    result=GateResult.SURVIVE,
+                    reasoning="ok",
+                ),  # pylint: disable=line-too-long
+                GateScore(
+                    name="Mediation Zeroing",
+                    score=75,
+                    result=GateResult.SURVIVE,
+                    reasoning="ok",
+                ),  # pylint: disable=line-too-long
+                GateScore(
+                    name="WRONG NAME",
+                    score=90,
+                    result=GateResult.SURVIVE,
+                    reasoning="ok",
+                ),
+            ]
+        )
         result = self.validator.validate_verdict(verdict)
         assert not result.valid
-        assert any("Missing gates" in i or "Unexpected gates" in i for i in result.issues)
+        assert any(
+            "Missing gates" in i or "Unexpected gates" in i for i in result.issues
+        )
 
     def test_score_out_of_range_negative(self):
         """Test score_out_of_range_negative."""
-        verdict = _make_valid_verdict(gate_scores=[
-            GateScore(name="Source Integrity", score=-5, result=GateResult.FAIL, reasoning="ok"),
-            GateScore(name="Structural Consistency", score=80, result=GateResult.SURVIVE, reasoning="ok"),  # pylint: disable=line-too-long
-            GateScore(name="Mediation Zeroing", score=75, result=GateResult.SURVIVE, reasoning="ok"),  # pylint: disable=line-too-long
-            GateScore(name="Origin Aware", score=90, result=GateResult.SURVIVE, reasoning="ok"),
-        ])
+        verdict = _make_valid_verdict(
+            gate_scores=[
+                GateScore(
+                    name="Source Integrity",
+                    score=-5,
+                    result=GateResult.FAIL,
+                    reasoning="ok",
+                ),
+                GateScore(
+                    name="Structural Consistency",
+                    score=80,
+                    result=GateResult.SURVIVE,
+                    reasoning="ok",
+                ),  # pylint: disable=line-too-long
+                GateScore(
+                    name="Mediation Zeroing",
+                    score=75,
+                    result=GateResult.SURVIVE,
+                    reasoning="ok",
+                ),  # pylint: disable=line-too-long
+                GateScore(
+                    name="Origin Aware",
+                    score=90,
+                    result=GateResult.SURVIVE,
+                    reasoning="ok",
+                ),
+            ]
+        )
         result = self.validator.validate_verdict(verdict)
         assert not result.valid
         assert any("out of range" in i for i in result.issues)
 
     def test_score_out_of_range_above_100(self):
         """Test score_out_of_range_above_100."""
-        verdict = _make_valid_verdict(gate_scores=[
-            GateScore(name="Source Integrity", score=85, result=GateResult.SURVIVE, reasoning="ok"),
-            GateScore(name="Structural Consistency", score=150, result=GateResult.SURVIVE, reasoning="ok"),  # pylint: disable=line-too-long
-            GateScore(name="Mediation Zeroing", score=75, result=GateResult.SURVIVE, reasoning="ok"),  # pylint: disable=line-too-long
-            GateScore(name="Origin Aware", score=90, result=GateResult.SURVIVE, reasoning="ok"),
-        ])
+        verdict = _make_valid_verdict(
+            gate_scores=[
+                GateScore(
+                    name="Source Integrity",
+                    score=85,
+                    result=GateResult.SURVIVE,
+                    reasoning="ok",
+                ),
+                GateScore(
+                    name="Structural Consistency",
+                    score=150,
+                    result=GateResult.SURVIVE,
+                    reasoning="ok",
+                ),  # pylint: disable=line-too-long
+                GateScore(
+                    name="Mediation Zeroing",
+                    score=75,
+                    result=GateResult.SURVIVE,
+                    reasoning="ok",
+                ),  # pylint: disable=line-too-long
+                GateScore(
+                    name="Origin Aware",
+                    score=90,
+                    result=GateResult.SURVIVE,
+                    reasoning="ok",
+                ),
+            ]
+        )
         result = self.validator.validate_verdict(verdict)
         assert not result.valid
 
@@ -97,21 +189,48 @@ class TestOutputValidator:
 
     def test_missing_gate_scores_attribute(self):
         """Object without gate_scores should fail."""
+
         class FakeVerdict:  # pylint: disable=too-few-public-methods
             """FakeVerdict class."""
-            pass  # pylint: disable=unnecessary-pass
+
+            # pylint: disable=unnecessary-pass
+
         result = self.validator.validate_verdict(FakeVerdict())
         assert not result.valid
 
     def test_extra_gates_detected(self):
         """Test extra_gates_detected."""
-        verdict = _make_valid_verdict(gate_scores=[
-            GateScore(name="Source Integrity", score=85, result=GateResult.SURVIVE, reasoning="ok"),
-            GateScore(name="Structural Consistency", score=80, result=GateResult.SURVIVE, reasoning="ok"),  # pylint: disable=line-too-long
-            GateScore(name="Mediation Zeroing", score=75, result=GateResult.SURVIVE, reasoning="ok"),  # pylint: disable=line-too-long
-            GateScore(name="Origin Aware", score=90, result=GateResult.SURVIVE, reasoning="ok"),
-            GateScore(name="Extra Gate", score=50, result=GateResult.FAIL, reasoning="ok"),
-        ])
+        verdict = _make_valid_verdict(
+            gate_scores=[
+                GateScore(
+                    name="Source Integrity",
+                    score=85,
+                    result=GateResult.SURVIVE,
+                    reasoning="ok",
+                ),
+                GateScore(
+                    name="Structural Consistency",
+                    score=80,
+                    result=GateResult.SURVIVE,
+                    reasoning="ok",
+                ),  # pylint: disable=line-too-long
+                GateScore(
+                    name="Mediation Zeroing",
+                    score=75,
+                    result=GateResult.SURVIVE,
+                    reasoning="ok",
+                ),  # pylint: disable=line-too-long
+                GateScore(
+                    name="Origin Aware",
+                    score=90,
+                    result=GateResult.SURVIVE,
+                    reasoning="ok",
+                ),
+                GateScore(
+                    name="Extra Gate", score=50, result=GateResult.FAIL, reasoning="ok"
+                ),
+            ]
+        )
         result = self.validator.validate_verdict(verdict)
         assert not result.valid
 

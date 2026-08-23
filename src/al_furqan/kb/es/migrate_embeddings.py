@@ -12,14 +12,12 @@ Usage:
 import argparse
 import logging
 import time
-from pathlib import Path
 
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
 
 from al_furqan import setup_logging
 from al_furqan.kb.es.client import create_es_client
-from al_furqan.paths import DATA_ARCHIVE as _DEFAULT_DATA_DIR
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +37,7 @@ VERDICT_EMBED_TEMPLATE = (
 # ---------------------------------------------------------------------------
 # Generate mode: create fresh embeddings from source text in ES
 # ---------------------------------------------------------------------------
+
 
 def _generate_for_index(
     es: Elasticsearch,
@@ -72,8 +71,9 @@ def _generate_for_index(
         return 0
 
     if dry_run:
-        logger.info("[DRY RUN] Would generate embeddings for %d docs in %s",
-                    total, index_name)
+        logger.info(
+            "[DRY RUN] Would generate embeddings for %d docs in %s", total, index_name
+        )
         return total
 
     logger.info("Generating embeddings for %d docs in %s...", total, index_name)
@@ -109,12 +109,14 @@ def _generate_for_index(
             # Build bulk update actions
             actions = []
             for doc_id, embedding in zip(doc_ids, embeddings):
-                actions.append({
-                    "_op_type": "update",
-                    "_index": index_name,
-                    "_id": doc_id,
-                    "doc": {"embedding": embedding},
-                })
+                actions.append(
+                    {
+                        "_op_type": "update",
+                        "_index": index_name,
+                        "_id": doc_id,
+                        "doc": {"embedding": embedding},
+                    }
+                )
 
             success, errors = bulk(es, actions, raise_on_error=False)
             if errors:
@@ -126,8 +128,13 @@ def _generate_for_index(
 
     es.clear_scroll(scroll_id=scroll_id)
     elapsed = time.monotonic() - start
-    logger.info("Generated embeddings for %d/%d docs in %s (%.1fs)",
-                updated, total, index_name, elapsed)
+    logger.info(
+        "Generated embeddings for %d/%d docs in %s (%.1fs)",
+        updated,
+        total,
+        index_name,
+        elapsed,
+    )
     return updated
 
 
@@ -192,14 +199,21 @@ def generate_embeddings(
 
     for name in targets:
         if name not in _INDEX_TEXT_BUILDERS:
-            logger.warning("No text builder for index '%s', skipping "
-                           "(supported: %s)", name, list(_INDEX_TEXT_BUILDERS.keys()))
+            logger.warning(
+                "No text builder for index '%s', skipping (supported: %s)",
+                name,
+                list(_INDEX_TEXT_BUILDERS.keys()),
+            )
             continue
 
         index_name = f"{prefix}_{name}"
         count = _generate_for_index(
-            es, embed_fn, index_name, _INDEX_TEXT_BUILDERS[name],
-            batch_size=batch_size, dry_run=dry_run,
+            es,
+            embed_fn,
+            index_name,
+            _INDEX_TEXT_BUILDERS[name],
+            batch_size=batch_size,
+            dry_run=dry_run,
         )
         results[name] = count
 
@@ -210,25 +224,34 @@ def generate_embeddings(
 # CLI
 # ---------------------------------------------------------------------------
 
+
 def main():
     """Entry point."""
     setup_logging()
 
     parser = argparse.ArgumentParser(
-        description="Generate vector embeddings and store in Elasticsearch dense_vector fields")
-    parser.add_argument("--index", nargs="*", default=None,
-                        choices=list(_INDEX_TEXT_BUILDERS.keys()),
-                        help="Process specific indices (default: all)")
-    parser.add_argument("--model", default="minilm",
-                        help="Embedding model name (default: minilm)")
-    parser.add_argument("--batch-size", type=int, default=200,
-                        help="Documents per batch (default: 200)")
-    parser.add_argument("--prefix", default="furqan",
-                        help="Index name prefix (default: furqan)")
-    parser.add_argument("--es-url", default=None,
-                        help="Elasticsearch URL")
-    parser.add_argument("--dry-run", action="store_true",
-                        help="Preview without writing")
+        description="Generate vector embeddings and store in Elasticsearch dense_vector fields"
+    )
+    parser.add_argument(
+        "--index",
+        nargs="*",
+        default=None,
+        choices=list(_INDEX_TEXT_BUILDERS.keys()),
+        help="Process specific indices (default: all)",
+    )
+    parser.add_argument(
+        "--model", default="minilm", help="Embedding model name (default: minilm)"
+    )
+    parser.add_argument(
+        "--batch-size", type=int, default=200, help="Documents per batch (default: 200)"
+    )
+    parser.add_argument(
+        "--prefix", default="furqan", help="Index name prefix (default: furqan)"
+    )
+    parser.add_argument("--es-url", default=None, help="Elasticsearch URL")
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Preview without writing"
+    )
     args = parser.parse_args()
 
     hosts = [args.es_url] if args.es_url else None
@@ -236,12 +259,16 @@ def main():
 
     logger.info("Loading embedding model: %s", args.model)
     from al_furqan.kb.embeddings import EmbeddingModel
+
     model = EmbeddingModel(args.model)
     logger.info("Model loaded (dimension=%d)", model.dimension)
 
     results = generate_embeddings(
-        es, embed_fn=model.embed, prefix=args.prefix,
-        only=args.index, batch_size=args.batch_size,
+        es,
+        embed_fn=model.embed,
+        prefix=args.prefix,
+        only=args.index,
+        batch_size=args.batch_size,
         dry_run=args.dry_run,
     )
 

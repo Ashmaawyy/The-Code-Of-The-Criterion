@@ -135,10 +135,12 @@ class TestProposedEdgeStore:
     def test_get_rejection_patterns(self, store):
         """Analyze rejection patterns."""
         for _ in range(3):
-            store.save(_make_edge(
-                status="rejected",
-                edge_type="discusses_topic",
-            ))
+            store.save(
+                _make_edge(
+                    status="rejected",
+                    edge_type="discusses_topic",
+                )
+            )
             # We need to use reject to set review_notes
         edge1 = _make_edge()
         store.save(edge1)

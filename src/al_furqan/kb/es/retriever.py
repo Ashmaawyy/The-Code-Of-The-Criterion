@@ -10,22 +10,22 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional
 
 from elasticsearch import Elasticsearch
 
 from al_furqan.kb.es.collections import (
-    QuranCollection,
     HadithCollection,
+    QuranCollection,
 )
-
 
 # ---------------------------------------------------------------------------
 # Retriever dataclasses (canonical location)
 # ---------------------------------------------------------------------------
 
+
 class Source(str, Enum):
     """Knowledge source type."""
+
     QURAN = "quran"
     HADITH = "hadith"
     FIQH = "fiqh"
@@ -34,6 +34,7 @@ class Source(str, Enum):
 @dataclass
 class RetrievalResult:
     """A single retrieval result from any collection."""
+
     source: Source
     content_ar: str
     content_en: str
@@ -44,20 +45,21 @@ class RetrievalResult:
 @dataclass
 class RetrievalConfig:
     """Configuration for retrieval."""
-    sources: list[Source] = field(
-        default_factory=lambda: [Source.QURAN, Source.HADITH]
-    )
+
+    sources: list[Source] = field(default_factory=lambda: [Source.QURAN, Source.HADITH])
     limit_per_source: int = 3
-    hadith_grading_filter: Optional[str] = None
+    hadith_grading_filter: str | None = None
 
 
 @dataclass
 class KnowledgeContext:
     """Aggregated knowledge context ready for engine consumption."""
+
     results: list[RetrievalResult]
     formatted_text: str
     query: str
     sources_searched: list[Source]
+
 
 logger = logging.getLogger(__name__)
 
@@ -83,7 +85,7 @@ class ESUnifiedRetriever:
     def retrieve(
         self,
         query: str,
-        config: Optional[RetrievalConfig] = None,
+        config: RetrievalConfig | None = None,
     ) -> KnowledgeContext:
         """Search all configured collections and return merged results."""
         if config is None:

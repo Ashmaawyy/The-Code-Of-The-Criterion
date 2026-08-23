@@ -14,7 +14,9 @@ from al_furqan.engine.tafsir.feedback import (
 )
 from al_furqan.engine.tafsir.pipeline import TafsirPipeline
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "review", "proposed_edges.db")
+DB_PATH = os.path.join(
+    os.path.dirname(__file__), "..", "data", "review", "proposed_edges.db"
+)
 
 
 @pytest.fixture
@@ -42,6 +44,7 @@ def sample_feedback():
 
 class TestFeedbackStore:
     """TestFeedbackStore class."""
+
     def test_store_correct(self, temp_store, sample_feedback):
         """Test store_correct."""
         fid = temp_store.store(sample_feedback)
@@ -100,8 +103,12 @@ class TestFeedbackStore:
 
     def test_list_all(self, temp_store):
         """Test list_all."""
-        fb1 = TafsirFeedback(question="q1", llm_response="r1", reviewer="m", verdict="correct")
-        fb2 = TafsirFeedback(question="q2", llm_response="r2", reviewer="m", verdict="wrong")
+        fb1 = TafsirFeedback(
+            question="q1", llm_response="r1", reviewer="m", verdict="correct"
+        )
+        fb2 = TafsirFeedback(
+            question="q2", llm_response="r2", reviewer="m", verdict="wrong"
+        )
         temp_store.store(fb1)
         temp_store.store(fb2)
         entries = temp_store.list_all()
@@ -117,6 +124,7 @@ class TestFeedbackStore:
 
 class TestFeedbackStats:
     """TestFeedbackStats class."""
+
     def test_stats_empty(self, temp_store):
         """Test stats_empty."""
         stats = temp_store.get_stats()
@@ -137,6 +145,7 @@ class TestFeedbackStats:
 
 class TestPipelineFeedback:
     """TestPipelineFeedback class."""
+
     def test_submit_feedback(self):
         """Test submit_feedback."""
         if not os.path.exists(DB_PATH):

@@ -1,10 +1,9 @@
 """Tests for the reference validator."""
 
-
 from al_furqan.kb.ingestion.reference_validator import (
+    SURAH_AYAH_COUNTS,
     validate_reference,
     validate_references,
-    SURAH_AYAH_COUNTS,
 )
 
 

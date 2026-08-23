@@ -14,7 +14,6 @@ import math
 
 import numpy as np
 import pytest
-
 from al_furqan.kb.embeddings import EmbeddingModel
 
 # pylint: disable=redefined-outer-name
@@ -107,7 +106,9 @@ class TestNormalization:
         """Test single_embedding_normalized."""
         vec = np.array(model.embed_query("بسم الله الرحمن الرحيم"))
         norm = np.linalg.norm(vec)
-        assert math.isclose(norm, 1.0, abs_tol=1e-4), f"L2 norm = {norm}, expected ≈ 1.0"
+        assert math.isclose(norm, 1.0, abs_tol=1e-4), (
+            f"L2 norm = {norm}, expected ≈ 1.0"
+        )
 
     def test_batch_embeddings_normalized(self, model: EmbeddingModel) -> None:
         """Test batch_embeddings_normalized."""
@@ -152,7 +153,9 @@ class TestSemanticSimilarity:
     def test_quran_hadith_topic_similarity(self, model: EmbeddingModel) -> None:
         """Test quran_hadith_topic_similarity."""
         # Both about riba (usury/interest)
-        quran_riba = "الذين يأكلون الربا لا يقومون إلا كما يقوم الذي يتخبطه الشيطان من المس"
+        quran_riba = (
+            "الذين يأكلون الربا لا يقومون إلا كما يقوم الذي يتخبطه الشيطان من المس"
+        )
         hadith_riba = "لعن رسول الله صلى الله عليه وسلم آكل الربا ومؤكله وكاتبه وشاهديه"
         # Unrelated: about travel
         unrelated = "السفر قطعة من العذاب يمنع أحدكم طعامه وشرابه ونومه"

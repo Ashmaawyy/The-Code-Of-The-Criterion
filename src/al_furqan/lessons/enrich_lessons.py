@@ -22,19 +22,20 @@ logger = logging.getLogger(__name__)
 # ES-backed matching
 # ---------------------------------------------------------------------------
 
+
 def _get_es_client(config: PipelineConfig):
     """Create an Elasticsearch client from config."""
     from al_furqan.kb.es.client import create_es_client
+
     return create_es_client(hosts=[config.es_url])
 
 
-def find_verse_matches(es, content: str, config: PipelineConfig,
-                       surah_filter: int | None = None) -> list[dict]:
+def find_verse_matches(
+    es, content: str, config: PipelineConfig, surah_filter: int | None = None
+) -> list[dict]:
     """Find Quranic verses referenced in the content using ES phrase_match."""
     query = {
-        "match_phrase": {
-            "text_ar": {"query": content, "slop": config.verse_match_slop}
-        }
+        "match_phrase": {"text_ar": {"query": content, "slop": config.verse_match_slop}}
     }
     if surah_filter is not None:
         query = {
@@ -71,6 +72,7 @@ def find_hadith_matches(es, content: str, config: PipelineConfig) -> list[dict]:
 # Format output
 # ---------------------------------------------------------------------------
 
+
 def _index_lesson_to_es(es, lesson: dict, config: PipelineConfig) -> bool:
     """Index a single enriched lesson document into Elasticsearch.
 
@@ -88,14 +90,16 @@ def _index_lesson_to_es(es, lesson: dict, config: PipelineConfig) -> bool:
 
     chapters = []
     for ch in lesson.get("chapters", []):
-        chapters.append({
-            "chapter_number": ch["chapter_number"],
-            "title": ch.get("title", ""),
-            "content": ch.get("content", ""),
-            "taught_verses": ch.get("taught_verses", []),
-            "linked_verses": ch.get("linked_verses", []),
-            "mentioned_ahadeeth": ch.get("mentioned_ahadeeth", []),
-        })
+        chapters.append(
+            {
+                "chapter_number": ch["chapter_number"],
+                "title": ch.get("title", ""),
+                "content": ch.get("content", ""),
+                "taught_verses": ch.get("taught_verses", []),
+                "linked_verses": ch.get("linked_verses", []),
+                "mentioned_ahadeeth": ch.get("mentioned_ahadeeth", []),
+            }
+        )
 
     doc = {
         "lesson_number": lesson_num,
@@ -141,6 +145,7 @@ def format_hadith_ref(h: dict) -> dict:
 # Main processing
 # ---------------------------------------------------------------------------
 
+
 def _enrich_single_chapter(chapter, es, config: PipelineConfig):
     """Enrich a single chapter via ES."""
     content = chapter["content"]
@@ -185,8 +190,9 @@ def _enrich_single_chapter(chapter, es, config: PipelineConfig):
     return len(deduped_taught), len(deduped_linked), len(deduped_hadith)
 
 
-def process_all(lessons_dir: Path, output_dir: Path,
-                config: PipelineConfig | None = None):
+def process_all(
+    lessons_dir: Path, output_dir: Path, config: PipelineConfig | None = None
+):
     """Run enrichment on all clean lesson JSON files via ES."""
     if config is None:
         config = PipelineConfig()
@@ -195,13 +201,19 @@ def process_all(lessons_dir: Path, output_dir: Path,
 
     for idx in (config.es_quran_index, config.es_hadith_index):
         if not es.indices.exists(index=idx):
-            logger.error("Index %s not found. Run: python -m al_furqan.kb.es.migrate_data", idx)
+            logger.error(
+                "Index %s not found. Run: python -m al_furqan.kb.es.migrate_data", idx
+            )
             return
 
     quran_count = es.count(index=config.es_quran_index)["count"]
     hadith_count = es.count(index=config.es_hadith_index)["count"]
-    logger.info("ES: %d verses, %d hadith (target surah: %d)",
-                quran_count, hadith_count, config.target_surah)
+    logger.info(
+        "ES: %d verses, %d hadith (target surah: %d)",
+        quran_count,
+        hadith_count,
+        config.target_surah,
+    )
 
     output_dir.mkdir(parents=True, exist_ok=True)
     totals = [0, 0, 0]
@@ -227,8 +239,11 @@ def process_all(lessons_dir: Path, output_dir: Path,
             for i in range(3):
                 totals[i] += counts[i]
             if sum(counts) > 0:
-                logger.info("  Ch %2d: %d taught, %d linked, %d hadith",
-                            chapter['chapter_number'], *counts)
+                logger.info(
+                    "  Ch %2d: %d taught, %d linked, %d hadith",
+                    chapter["chapter_number"],
+                    *counts,
+                )
 
         out_path = output_dir / lesson_file.name
         with open(out_path, "w", encoding="utf-8") as f:
@@ -243,16 +258,22 @@ def process_all(lessons_dir: Path, output_dir: Path,
 def main():
     """CLI entry point."""
     from al_furqan.lessons.logging_config import setup_logging
+
     setup_logging()
 
     cfg = PipelineConfig()
 
     parser = argparse.ArgumentParser(
-        description="Enrich lessons with verse/hadith references via Elasticsearch.")
+        description="Enrich lessons with verse/hadith references via Elasticsearch."
+    )
     parser.add_argument("--input", type=Path, default=cfg.lessons_clean_dir)
     parser.add_argument("--output", type=Path, default=cfg.lessons_enriched_dir)
-    parser.add_argument("--surah", type=int, default=cfg.target_surah,
-                        help=f"Target surah (default: {cfg.target_surah})")
+    parser.add_argument(
+        "--surah",
+        type=int,
+        default=cfg.target_surah,
+        help=f"Target surah (default: {cfg.target_surah})",
+    )
     parser.add_argument("--es-url", default=cfg.es_url)
     args = parser.parse_args()
 

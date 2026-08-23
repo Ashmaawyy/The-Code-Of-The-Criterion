@@ -19,7 +19,6 @@ from __future__ import annotations
 import argparse
 import json
 import logging
-import os
 from pathlib import Path
 
 from al_furqan.paths import ES_CACHE_DIR as CACHE_DIR
@@ -135,15 +134,19 @@ def run(es, indices: list[str] | None, cache_dir: Path) -> dict[str, int]:
 
 
 def main() -> None:
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+    logging.basicConfig(
+        level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s"
+    )
 
     parser = argparse.ArgumentParser(description="Snapshot ES indices to local cache")
     parser.add_argument("--es-url", default=None)
     parser.add_argument("--cache-dir", type=Path, default=CACHE_DIR)
-    parser.add_argument("--only", nargs="*", default=None,
-                        help="Limit to specific indices")
-    parser.add_argument("--list", action="store_true",
-                        help="List indices that would be snapshotted")
+    parser.add_argument(
+        "--only", nargs="*", default=None, help="Limit to specific indices"
+    )
+    parser.add_argument(
+        "--list", action="store_true", help="List indices that would be snapshotted"
+    )
     args = parser.parse_args()
 
     if args.list:
@@ -152,6 +155,7 @@ def main() -> None:
         return
 
     from al_furqan.kb.es.client import create_es_client
+
     hosts = [args.es_url] if args.es_url else None
     es = create_es_client(hosts=hosts)
 

@@ -9,19 +9,18 @@ DELETE /verdicts/{id}      — Invalidate with cascade
 import json
 import logging
 from pathlib import Path
-from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from al_furqan.api.dependencies import get_store
 from al_furqan.api.schemas import (
-    VerdictResponse,
-    VerdictListResponse,
-    SearchResultResponse,
-    GateScoreResponse,
     GateResultEnum,
-    VerdictStatusEnum,
+    GateScoreResponse,
+    SearchResultResponse,
     SystemTypeEnum,
+    VerdictListResponse,
+    VerdictResponse,
+    VerdictStatusEnum,
 )
 from al_furqan.store.es_verdict_store import ESVerdictStore as VerdictStore
 
@@ -114,10 +113,10 @@ def search_verdicts(
     summary="List verdicts with filters",
 )
 def list_verdicts(
-    status_filter: Optional[str] = Query(
+    status_filter: str | None = Query(
         None, alias="status", description="Filter by status"
     ),
-    system_type: Optional[str] = Query(None, description="Filter by primary_system"),
+    system_type: str | None = Query(None, description="Filter by primary_system"),
     limit: int = Query(default=20, ge=1, le=100, description="Page size"),
     offset: int = Query(default=0, ge=0, description="Offset for pagination"),
     store: VerdictStore = Depends(get_store),
@@ -141,7 +140,7 @@ def list_verdicts(
 
     for path in verdicts_dir.glob("*.json"):
         try:
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 data = json.load(f)
         except (json.JSONDecodeError, OSError) as exc:
             logger.warning("Skipping corrupt verdict file %s: %s", path.name, exc)

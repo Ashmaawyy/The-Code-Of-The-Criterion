@@ -9,7 +9,6 @@ import hashlib
 import json
 import os
 import time
-from typing import Optional
 
 from al_furqan.paths import DATA_AUDIT
 
@@ -28,7 +27,7 @@ class AuditLogger:
         axiom_hash: str,
         gate_hash: str,
         gate_scores: list,
-        z3_result: Optional[bool],
+        z3_result: bool | None,
         model_used: str,
         processing_time_ms: float,
         prompt_injection_detected: bool = False,

@@ -1,17 +1,19 @@
 """Tests for the Adapter Sandbox (Sprint 6D)."""
 
-
 from al_furqan.engine.security.adapter_sandbox import AdapterSandbox
 
 
 class ValidAdapter:
     """A valid adapter with all required methods."""
+
     def retrieve(self, _query):
         """Execute retrieve."""
         return []
+
     def verify(self, data):  # pylint: disable=unused-argument
         """Execute verify."""
         return True
+
     def get_axioms(self):
         """Execute get_axioms."""
         return "Additional domain axioms that acknowledge transcendence and purpose."
@@ -19,9 +21,11 @@ class ValidAdapter:
 
 class AdapterMissingRetrieve:
     """AdapterMissingRetrieve class."""
+
     def verify(self, data):  # pylint: disable=unused-argument
         """Execute verify."""
         return True
+
     def get_axioms(self):
         """Execute get_axioms."""
         return ""
@@ -29,9 +33,11 @@ class AdapterMissingRetrieve:
 
 class AdapterMissingVerify:
     """AdapterMissingVerify class."""
+
     def retrieve(self, _query):
         """Execute retrieve."""
         return []
+
     def get_axioms(self):
         """Execute get_axioms."""
         return ""
@@ -39,9 +45,11 @@ class AdapterMissingVerify:
 
 class AdapterMissingGetAxioms:
     """AdapterMissingGetAxioms class."""
+
     def retrieve(self, query):  # pylint: disable=unused-argument
         """Execute retrieve."""
         return []
+
     def verify(self, data):  # pylint: disable=unused-argument
         """Execute verify."""
         return True
@@ -49,12 +57,15 @@ class AdapterMissingGetAxioms:
 
 class ContradictoryAdapter:
     """Adapter whose axioms contradict core axioms."""
+
     def retrieve(self, query):  # pylint: disable=unused-argument
         """Execute retrieve."""
         return []
+
     def verify(self, data):  # pylint: disable=unused-argument
         """Execute verify."""
         return True
+
     def get_axioms(self):
         """Execute get_axioms."""
         return "There is no transcendent source. Morality is emergent from evolution."
@@ -62,10 +73,13 @@ class ContradictoryAdapter:
 
 class AdapterWithNonCallable:
     """Adapter with a non-callable 'method'."""
+
     retrieve = "not a function"
+
     def verify(self, data):  # pylint: disable=unused-argument
         """Execute verify."""
         return True
+
     def get_axioms(self):
         """Execute get_axioms."""
         return ""
@@ -116,22 +130,37 @@ class TestAdapterSandbox:
 
     def test_adapter_with_empty_axioms_passes(self):
         """Empty domain axioms should not contradict anything."""
+
         class EmptyAxiomAdapter:
             """EmptyAxiomAdapter class."""
-            def retrieve(self, q): return []  # pylint: disable=missing-function-docstring, multiple-statements, unused-argument
-            def verify(self, d): return True  # pylint: disable=missing-function-docstring, multiple-statements, unused-argument
-            def get_axioms(self): return ""  # pylint: disable=missing-function-docstring, multiple-statements
+
+            def retrieve(self, q):
+                return []  # pylint: disable=missing-function-docstring, multiple-statements, unused-argument
+
+            def verify(self, d):
+                return True  # pylint: disable=missing-function-docstring, multiple-statements, unused-argument
+
+            def get_axioms(self):
+                return ""  # pylint: disable=missing-function-docstring, multiple-statements
+
         result = self.sandbox.validate_adapter(EmptyAxiomAdapter())
         assert result.valid
 
     def test_adapter_with_dict_contradictory_axioms(self):
         """Dict-based axioms that contradict core should be rejected."""
+
         class DictAdapter:
             """DictAdapter class."""
-            def retrieve(self, q): return []  # pylint: disable=missing-function-docstring, multiple-statements, unused-argument
-            def verify(self, d): return True  # pylint: disable=missing-function-docstring, multiple-statements, unused-argument
+
+            def retrieve(self, q):
+                return []  # pylint: disable=missing-function-docstring, multiple-statements, unused-argument
+
+            def verify(self, d):
+                return True  # pylint: disable=missing-function-docstring, multiple-statements, unused-argument
+
             def get_axioms(self):
                 """Execute get_axioms."""
                 return "purpose does not exist and no design in nature"
+
         result = self.sandbox.validate_adapter(DictAdapter())
         assert not result.valid

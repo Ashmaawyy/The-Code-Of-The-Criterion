@@ -8,15 +8,15 @@ import logging
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from al_furqan.api.dependencies import get_engine, get_store, get_config
 from al_furqan.api.converters import dict_to_verdict_response
+from al_furqan.api.dependencies import get_config, get_engine, get_store
 from al_furqan.api.schemas import (  # pylint: disable=unused-import
     CriterionTestRequest,
     VerdictResponse,
 )
+from al_furqan.config import AppConfig
 from al_furqan.core.reasoning_engine import ReasoningEngine, Verdict
 from al_furqan.store.es_verdict_store import ESVerdictStore as VerdictStore
-from al_furqan.config import AppConfig
 
 logger = logging.getLogger("al_furqan.api.criterion")
 

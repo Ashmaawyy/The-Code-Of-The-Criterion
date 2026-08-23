@@ -7,7 +7,6 @@ The LLM executes the plan and uses KB tools to search for sources.
 
 from al_furqan.kb.tafsir.query_analyzer import QueryType
 
-
 # --- Axiom Guidelines (translated to Tafsir context) ---
 
 AXIOM_GUIDELINES = {

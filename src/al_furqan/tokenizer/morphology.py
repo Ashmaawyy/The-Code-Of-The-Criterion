@@ -19,7 +19,6 @@ from __future__ import annotations
 import logging
 import re
 from dataclasses import dataclass
-from typing import Optional
 
 logger = logging.getLogger(__name__)
 
@@ -28,29 +27,29 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 _DIACRITICS = re.compile(
-    r'[\u0610-\u061A\u064B-\u065F\u0670'
-    r'\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED]'
+    r"[\u0610-\u061A\u064B-\u065F\u0670"
+    r"\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED]"
 )
-_ALEF_VARIANTS = re.compile(r'[إأآٱ]')
+_ALEF_VARIANTS = re.compile(r"[إأآٱ]")
 
 
 def strip_diacritics(text: str) -> str:
     """Remove all Arabic diacritical marks."""
-    return _DIACRITICS.sub('', text)
+    return _DIACRITICS.sub("", text)
 
 
 def normalize_alef(text: str) -> str:
     """Normalize alef variants to plain alef."""
-    return _ALEF_VARIANTS.sub('ا', text)
+    return _ALEF_VARIANTS.sub("ا", text)
 
 
 def clean_word(word: str) -> str:
     """Strip diacritics and normalize for root extraction."""
     w = strip_diacritics(word)
     w = normalize_alef(w)
-    w = w.replace('ة', 'ه').replace('ى', 'ي').replace('\u0640', '')
+    w = w.replace("ة", "ه").replace("ى", "ي").replace("\u0640", "")
     # Strip BOM and zero-width characters
-    w = w.replace('\ufeff', '').replace('\u200b', '').replace('\u200c', '')
+    w = w.replace("\ufeff", "").replace("\u200b", "").replace("\u200c", "")
     return w
 
 
@@ -60,23 +59,88 @@ def clean_word(word: str) -> str:
 
 # Ordered from longest to shortest to avoid partial matches
 PREFIXES = [
-    "وبال", "فبال", "وال", "فال", "بال", "كال", "لل",
-    "وب", "فب", "ول", "فل", "وك", "فك",
-    "ال", "و", "ف", "ب", "ل", "ك", "س",
+    "وبال",
+    "فبال",
+    "وال",
+    "فال",
+    "بال",
+    "كال",
+    "لل",
+    "وب",
+    "فب",
+    "ول",
+    "فل",
+    "وك",
+    "فك",
+    "ال",
+    "و",
+    "ف",
+    "ب",
+    "ل",
+    "ك",
+    "س",
 ]
 
 SUFFIXES = [
-    "كموها", "تموها",
-    "وهم", "هما", "كم", "هم", "نا", "ها", "ون", "ين", "ات", "تم",
-    "وا", "ه", "ك", "ي", "ت", "ا", "ن",
+    "كموها",
+    "تموها",
+    "وهم",
+    "هما",
+    "كم",
+    "هم",
+    "نا",
+    "ها",
+    "ون",
+    "ين",
+    "ات",
+    "تم",
+    "وا",
+    "ه",
+    "ك",
+    "ي",
+    "ت",
+    "ا",
+    "ن",
 ]
 
 # Arabic stop words (particles that have no root)
 STOP_WORDS = {
-    "في", "من", "الى", "على", "عن", "ان", "لا", "ما", "يا", "لم",
-    "لن", "قد", "اذا", "اذ", "ثم", "او", "بل", "هل", "كل", "هذا",
-    "هذه", "ذلك", "تلك", "الذي", "التي", "الذين", "اللذين", "هو",
-    "هي", "هم", "هن", "نحن", "انتم", "انت", "انا", "الا",
+    "في",
+    "من",
+    "الى",
+    "على",
+    "عن",
+    "ان",
+    "لا",
+    "ما",
+    "يا",
+    "لم",
+    "لن",
+    "قد",
+    "اذا",
+    "اذ",
+    "ثم",
+    "او",
+    "بل",
+    "هل",
+    "كل",
+    "هذا",
+    "هذه",
+    "ذلك",
+    "تلك",
+    "الذي",
+    "التي",
+    "الذين",
+    "اللذين",
+    "هو",
+    "هي",
+    "هم",
+    "هن",
+    "نحن",
+    "انتم",
+    "انت",
+    "انا",
+    "الا",
 }
 
 
@@ -86,7 +150,7 @@ def strip_prefixes(word: str) -> tuple[list[str], str]:
     for prefix in PREFIXES:
         if word.startswith(prefix) and len(word) - len(prefix) >= 2:
             found.append(prefix)
-            word = word[len(prefix):]
+            word = word[len(prefix) :]
             break  # only strip one layer of prefix
     return found, word
 
@@ -97,7 +161,7 @@ def strip_suffixes(word: str) -> tuple[str, list[str]]:
     for suffix in SUFFIXES:
         if word.endswith(suffix) and len(word) - len(suffix) >= 2:
             found.append(suffix)
-            word = word[:-len(suffix)]
+            word = word[: -len(suffix)]
             break  # only strip one layer of suffix
     return word, found
 
@@ -110,13 +174,13 @@ def strip_suffixes(word: str) -> tuple[str, list[str]]:
 # Position indices into the stripped stem where root letters appear
 _TRILITERAL_PATTERNS = [
     # pattern, wazn_name, stem_template (F=root1, A=root2, L=root3)
-    ("FAL", "فَعَلَ", 3),        # basic: 3 letters = root
-    ("FAAL", "فَاعَلَ", 4),      # 3rd form: letter 2 is zaa'id
-    ("AFAL", "أَفْعَلَ", 4),     # 4th form: initial ا is zaa'id
-    ("TAFAL", "تَفَعَّلَ", 5),   # 5th form
+    ("FAL", "فَعَلَ", 3),  # basic: 3 letters = root
+    ("FAAL", "فَاعَلَ", 4),  # 3rd form: letter 2 is zaa'id
+    ("AFAL", "أَفْعَلَ", 4),  # 4th form: initial ا is zaa'id
+    ("TAFAL", "تَفَعَّلَ", 5),  # 5th form
     ("ANFAL", "اِنْفَعَلَ", 5),  # 7th form
     ("AFTAL", "اِفْتَعَلَ", 5),  # 8th form
-    ("STFAL", "اِسْتَفْعَلَ", 6), # 10th form
+    ("STFAL", "اِسْتَفْعَلَ", 6),  # 10th form
 ]
 
 
@@ -161,27 +225,27 @@ def extract_root(word: str) -> tuple[str, list[str], str]:
         return ("", [], "particle")
 
     # Strip affixes
-    prefixes, stem = strip_prefixes(cleaned)
-    stem, suffixes = strip_suffixes(stem)
+    _prefixes, stem = strip_prefixes(cleaned)
+    stem, _suffixes = strip_suffixes(stem)
 
     # Remove any remaining alef/waw/yaa that are pattern letters (not root)
     # but only if we still have >3 letters
     if len(stem) > 3:
         # Remove alef wasla at start
-        if stem.startswith('ا') and len(stem) > 3:
+        if stem.startswith("ا") and len(stem) > 3:
             stem = stem[1:]
         # Remove taa prefix (form V, VI)
-        if stem.startswith('ت') and len(stem) > 3:
+        if stem.startswith("ت") and len(stem) > 3:
             stem = stem[1:]
         # Remove nun prefix (form VII)
-        if stem.startswith('ن') and len(stem) > 3:
+        if stem.startswith("ن") and len(stem) > 3:
             stem = stem[1:]
 
     # Handle doubled middle letter (form II, V): فعّل → فعل
     if len(stem) >= 4:
         for i in range(len(stem) - 1):
             if stem[i] == stem[i + 1]:
-                stem = stem[:i + 1] + stem[i + 2:]
+                stem = stem[: i + 1] + stem[i + 2 :]
                 break
 
     # Handle weak roots (middle waw/yaa that may have been elided)
@@ -207,8 +271,8 @@ def extract_root(word: str) -> tuple[str, list[str], str]:
 # Part of speech detection (rule-based)
 # ---------------------------------------------------------------------------
 
-_VERB_PREFIXES = {'ي', 'ت', 'ن', 'ا'}  # imperfect verb prefixes
-_VERB_SUFFIXES = {'وا', 'ون', 'ين', 'نا', 'تم', 'ت'}
+_VERB_PREFIXES = {"ي", "ت", "ن", "ا"}  # imperfect verb prefixes
+_VERB_SUFFIXES = {"وا", "ون", "ين", "نا", "تم", "ت"}
 
 
 def detect_pos(word: str, root: str) -> str:
@@ -256,15 +320,15 @@ def detect_pos(word: str, root: str) -> str:
             return "V"
 
     # Past tense verb suffixes
-    if any(cleaned.endswith(s) for s in ['وا', 'تم', 'نا', 'ت']):
+    if any(cleaned.endswith(s) for s in ["وا", "تم", "نا", "ت"]):
         return "V"
 
     # Words starting with م often are nouns (مفعول، مكتوب، etc.)
-    if cleaned.startswith('م') and len(cleaned) >= 4:
+    if cleaned.startswith("م") and len(cleaned) >= 4:
         return "N"
 
     # Words with ال are typically nouns/adjectives
-    if clean_word(word).startswith('ال') or word.startswith('ال'):
+    if clean_word(word).startswith("ال") or word.startswith("ال"):
         return "N"
 
     # Default: noun (most common in Quran)
@@ -275,9 +339,11 @@ def detect_pos(word: str, root: str) -> str:
 # Public API
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class MorphAnalysis:
     """Result of morphological analysis for a single word."""
+
     surface: str
     surface_clean: str
     root: str
@@ -297,11 +363,23 @@ _QAC_INDEX = "furqan_qac_morphology"
 
 # POS key mapping from QAC tags to our POS enum
 _QAC_POS_MAP = {
-    "N": "N", "PN": "PN", "V": "V", "P": "PRT", "ADJ": "ADJ",
-    "PRON": "PRON", "DEM": "DEM", "REL": "REL", "CONJ": "CONJ",
-    "INTJ": "INTJ", "NEG": "NEG", "COND": "COND", "INT": "INT",
-    "EMPH": "EMPH", "VOC": "VOC",
-    "DET": "PRT", "PREP": "PREP",
+    "N": "N",
+    "PN": "PN",
+    "V": "V",
+    "P": "PRT",
+    "ADJ": "ADJ",
+    "PRON": "PRON",
+    "DEM": "DEM",
+    "REL": "REL",
+    "CONJ": "CONJ",
+    "INTJ": "INTJ",
+    "NEG": "NEG",
+    "COND": "COND",
+    "INT": "INT",
+    "EMPH": "EMPH",
+    "VOC": "VOC",
+    "DET": "PRT",
+    "PREP": "PREP",
 }
 
 
@@ -328,6 +406,7 @@ class QACLookup:
         if self._es is None:
             try:
                 from al_furqan.kb.es.client import create_es_client
+
                 self._es = create_es_client()
             except Exception as exc:
                 logger.debug("ES client not available — QAC disabled: %s", exc)
@@ -338,9 +417,13 @@ class QACLookup:
             self._available = self._es.indices.exists(index=self._index)
             if self._available:
                 count = self._es.count(index=self._index)["count"]
-                logger.info("QAC corpus available in ES: %s (%d verses)", self._index, count)
+                logger.info(
+                    "QAC corpus available in ES: %s (%d verses)", self._index, count
+                )
             else:
-                logger.debug("QAC index %s not found — using rule-based fallback", self._index)
+                logger.debug(
+                    "QAC index %s not found — using rule-based fallback", self._index
+                )
         except Exception as exc:
             logger.debug("ES check failed — QAC disabled: %s", exc)
             self._available = False
@@ -352,7 +435,7 @@ class QACLookup:
         """True if QAC data is available in ES."""
         return self._ensure_client()
 
-    def lookup(self, verse_key: str, position: int) -> Optional[MorphAnalysis]:
+    def lookup(self, verse_key: str, position: int) -> MorphAnalysis | None:
         """Look up a word by verse_key and position (1-indexed)."""
         if not self._ensure_client():
             return None
@@ -404,8 +487,19 @@ class QACLookup:
             elif "SUFF" in seg_tags:
                 suffixes.append(seg.get("text", ""))
 
-        is_stop = pos in ("PRT", "PREP", "CONJ", "NEG", "INT", "EMPH",
-                          "VOC", "COND", "DEM", "REL", "PRON")
+        is_stop = pos in (
+            "PRT",
+            "PREP",
+            "CONJ",
+            "NEG",
+            "INT",
+            "EMPH",
+            "VOC",
+            "COND",
+            "DEM",
+            "REL",
+            "PRON",
+        )
 
         return MorphAnalysis(
             surface=w.get("text_uthmani", ""),
@@ -427,6 +521,7 @@ _qac = QACLookup()
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
+
 
 def analyze_word(word: str, verse_key: str = "", position: int = 0) -> MorphAnalysis:
     """Perform full morphological analysis on a single Arabic word.
@@ -482,5 +577,9 @@ def analyze_verse(verse_key: str, text: str) -> list[MorphAnalysis]:
 
     # Fallback: word-by-word rule-based analysis
     import re
-    words = [w for w in re.split(r'\s+', text.strip()) if w]
-    return [analyze_word(w, verse_key=verse_key, position=i + 1) for i, w in enumerate(words)]
+
+    words = [w for w in re.split(r"\s+", text.strip()) if w]
+    return [
+        analyze_word(w, verse_key=verse_key, position=i + 1)
+        for i, w in enumerate(words)
+    ]

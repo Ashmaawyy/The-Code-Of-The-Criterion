@@ -5,7 +5,6 @@ Enforces role-based access control (reader/evaluator/admin).
 """
 
 import logging
-from typing import Optional
 
 from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -41,14 +40,14 @@ class APIKeyMiddleware(BaseHTTPMiddleware):  # pylint: disable=too-few-public-me
         app,
         key_manager: KeyManager,
         auth_enabled: bool = True,
-        rate_limiter: Optional[RateLimiter] = None,
+        rate_limiter: RateLimiter | None = None,
     ):
         super().__init__(app)
         self.key_manager = key_manager
         self.auth_enabled = auth_enabled
         self.rate_limiter = rate_limiter or RateLimiter()
 
-    def _extract_key(self, request: Request) -> Optional[str]:
+    def _extract_key(self, request: Request) -> str | None:
         """Extract the API key from request headers."""
         # Try X-API-Key header first
         api_key = request.headers.get("X-API-Key")

@@ -5,7 +5,7 @@ The LLM is used ONLY to extract structured facts from input text.
 Scoring is done separately by the DeterministicScorer.
 """
 
-from typing import Callable
+from collections.abc import Callable
 
 from al_furqan.engine.gates.base import Gate
 

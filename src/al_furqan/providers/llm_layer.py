@@ -11,15 +11,13 @@ All providers expose the same callable signature:
 This is the only interface the reasoning engine depends on.
 """
 
+import logging
+import os
 import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Optional
-import logging
-import os
 
 import requests
-
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +46,7 @@ class LLMConfig:  # pylint: disable=too-many-instance-attributes
     timeout: int = 300  # request timeout in seconds
     system_prompt: str = ""  # optional system prompt override
     device: str = "auto"  # for transformers: auto, cpu, cuda, mps
-    quantization: Optional[str] = None  # for transformers: 4bit, 8bit, or None
+    quantization: str | None = None  # for transformers: 4bit, 8bit, or None
 
 
 # ---------------------------------------------------------------------------
@@ -235,7 +233,10 @@ class TransformersProvider(LLMProvider):
 
         try:
             import torch  # pylint: disable=import-outside-toplevel
-            from transformers import AutoModelForCausalLM, AutoTokenizer  # pylint: disable=import-outside-toplevel
+            from transformers import (  # pylint: disable=import-outside-toplevel
+                AutoModelForCausalLM,
+                AutoTokenizer,
+            )
         except ImportError as e:
             raise ImportError(
                 "TransformersProvider requires 'torch' and 'transformers' packages. "
@@ -266,7 +267,9 @@ class TransformersProvider(LLMProvider):
         # Quantization
         if self.config.quantization == "4bit":
             try:
-                from transformers import BitsAndBytesConfig  # pylint: disable=import-outside-toplevel
+                from transformers import (
+                    BitsAndBytesConfig,  # pylint: disable=import-outside-toplevel
+                )
             except ImportError as e:
                 raise ImportError(
                     "4-bit quantization requires 'bitsandbytes'. "
@@ -278,7 +281,9 @@ class TransformersProvider(LLMProvider):
             )
         elif self.config.quantization == "8bit":
             try:
-                from transformers import BitsAndBytesConfig  # pylint: disable=import-outside-toplevel
+                from transformers import (
+                    BitsAndBytesConfig,  # pylint: disable=import-outside-toplevel
+                )
             except ImportError as e:
                 raise ImportError(
                     "8-bit quantization requires 'bitsandbytes'. "
@@ -287,9 +292,8 @@ class TransformersProvider(LLMProvider):
             model_kwargs["quantization_config"] = BitsAndBytesConfig(
                 load_in_8bit=True,
             )
-        else:
-            if self.config.device != "cpu":
-                model_kwargs["torch_dtype"] = torch.float16
+        elif self.config.device != "cpu":
+            model_kwargs["torch_dtype"] = torch.float16
 
         model = AutoModelForCausalLM.from_pretrained(
             self.config.model_name,
@@ -587,7 +591,7 @@ PROVIDERS = {
 }
 
 
-def create_llm(config: Optional[LLMConfig] = None) -> LLMProvider:
+def create_llm(config: LLMConfig | None = None) -> LLMProvider:
     """
     Create an LLM provider from config.
 

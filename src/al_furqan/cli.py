@@ -19,18 +19,17 @@ import json
 import logging
 from pathlib import Path
 
-from al_furqan.config import AppConfig, load_config, generate_default_config
-from al_furqan.providers.llm_layer import create_llm, LLMProvider
+from al_furqan import setup_logging
+from al_furqan.config import AppConfig, generate_default_config, load_config
 from al_furqan.core.reasoning_engine import ReasoningEngine
-from al_furqan.store.es_verdict_store import ESVerdictStore as VerdictStore
 from al_furqan.kb.es.client import create_es_client
+from al_furqan.providers.llm_layer import LLMProvider, create_llm
 from al_furqan.review.human_review import (
     HumanReview,
     display_verdict,
     run_review_session,
 )
-
-from al_furqan import setup_logging
+from al_furqan.store.es_verdict_store import ESVerdictStore as VerdictStore
 
 setup_logging()
 logger = logging.getLogger(__name__)

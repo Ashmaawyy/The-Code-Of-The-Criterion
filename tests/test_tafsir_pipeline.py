@@ -5,10 +5,13 @@
 import os
 
 import pytest
-from al_furqan.engine.tafsir.pipeline import TafsirPipeline, PipelineResult
+
+from al_furqan.engine.tafsir.pipeline import PipelineResult, TafsirPipeline
 from al_furqan.kb.tafsir.query_analyzer import QueryType
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "review", "proposed_edges.db")
+DB_PATH = os.path.join(
+    os.path.dirname(__file__), "..", "data", "review", "proposed_edges.db"
+)
 
 
 def mock_llm_no_tools(_messages, _tools=None):
@@ -25,13 +28,15 @@ def mock_llm_with_tool_call(messages, _tools=None):
     if len(messages) <= 2:
         return {
             "content": "",
-            "tool_calls": [{
-                "id": "call_1",
-                "function": {
-                    "name": "search_kb_by_verse",
-                    "arguments": '{"verse_ref": "6:5"}'
+            "tool_calls": [
+                {
+                    "id": "call_1",
+                    "function": {
+                        "name": "search_kb_by_verse",
+                        "arguments": '{"verse_ref": "6:5"}',
+                    },
                 }
-            }],
+            ],
         }
     # Second call: answer with tool results
     return {
@@ -66,7 +71,9 @@ def pipeline_with_tools():
     """Execute pipeline_with_tools."""
     if not os.path.exists(DB_PATH):
         pytest.skip("proposed_edges.db not found")
-    return TafsirPipeline(DB_PATH, mock_llm_with_tool_call, model_name="mock-with-tools")
+    return TafsirPipeline(
+        DB_PATH, mock_llm_with_tool_call, model_name="mock-with-tools"
+    )
 
 
 @pytest.fixture
@@ -79,6 +86,7 @@ def pipeline_inline():
 
 class TestPipelineBasic:
     """TestPipelineBasic class."""
+
     def test_returns_result(self, pipeline_no_tools):
         """Test returns_result."""
         result = pipeline_no_tools.run("ما تفسير الآية 6:5؟")
@@ -107,6 +115,7 @@ class TestPipelineBasic:
 
 class TestPipelineWithTools:
     """TestPipelineWithTools class."""
+
     def test_tool_calls_executed(self, pipeline_with_tools):
         """Test tool_calls_executed."""
         result = pipeline_with_tools.run("ما تفسير الآية 6:5؟")
@@ -131,6 +140,7 @@ class TestPipelineWithTools:
 
 class TestPipelineInlineTools:
     """TestPipelineInlineTools class."""
+
     def test_inline_tool_detection(self, pipeline_inline):
         """Test inline_tool_detection."""
         result = pipeline_inline.run("ما تفسير الآية 6:5؟")
@@ -145,6 +155,7 @@ class TestPipelineInlineTools:
 # pylint: disable=too-few-public-methods
 class TestPipelineSummary:
     """TestPipelineSummary class."""
+
     def test_summary_format(self, pipeline_no_tools):
         """Test summary_format."""
         result = pipeline_no_tools.run("ما تفسير الآية 6:5؟")
@@ -157,6 +168,7 @@ class TestPipelineSummary:
 
 class TestPipelineEdgeCases:
     """TestPipelineEdgeCases class."""
+
     def test_empty_question(self, pipeline_no_tools):
         """Test empty_question."""
         result = pipeline_no_tools.run("")

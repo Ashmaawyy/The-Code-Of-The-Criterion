@@ -12,26 +12,23 @@ Results:
 
 import time
 from dataclasses import dataclass, field
-from typing import Optional
 
-from z3 import Solver, sat, unsat
-
-from z3 import Const
+from z3 import Const, Solver, sat, unsat
 
 from al_furqan.engine.symbolic.formal_axioms import (
-    load_all_axioms,
-    Entity,
-    Framework,
-    Exists_fn,
-    HasPurpose,
-    HasVerifiedSource,
-    IsInternallyConsistent,
-    FreeFromHumanMediation,
     AcknowledgesTranscendence,
     Aligned,
+    Entity,
+    Exists_fn,
+    Framework,
+    FreeFromHumanMediation,
     Functional,
-    IsContingent,
+    HasPurpose,
     HasTranscendentSource,
+    HasVerifiedSource,
+    IsContingent,
+    IsInternallyConsistent,
+    load_all_axioms,
 )
 from al_furqan.engine.symbolic.predicate_extractor import PredicateExtractor
 
@@ -40,7 +37,7 @@ from al_furqan.engine.symbolic.predicate_extractor import PredicateExtractor
 class VerificationResult:
     """Result of a Z3 verification check."""
 
-    consistent: Optional[bool]  # True=sat, False=unsat, None=unknown
+    consistent: bool | None  # True=sat, False=unsat, None=unknown
     proof: str  # Human-readable proof/disproof explanation
     contradictions: list = field(default_factory=list)  # Details when unsat
     verification_time_ms: float = 0.0

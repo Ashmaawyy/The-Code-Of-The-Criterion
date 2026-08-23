@@ -2,13 +2,14 @@
 
 import json
 import os
+
 import pytest
 
 from al_furqan.kb.ingestion.transcript_chunker import (
-    chunk_transcript,
-    chunk_segments,
-    format_chunk_timestamp,
     TranscriptChunk,
+    chunk_segments,
+    chunk_transcript,
+    format_chunk_timestamp,
 )
 
 
@@ -17,11 +18,13 @@ def _make_segments(n_segments, words_per_segment=10):
     segments = []
     for i in range(n_segments):
         words = " ".join(f"word{i}_{j}" for j in range(words_per_segment))
-        segments.append({
-            "start": float(i * 2),
-            "end": float(i * 2 + 2),
-            "text": words,
-        })
+        segments.append(
+            {
+                "start": float(i * 2),
+                "end": float(i * 2 + 2),
+                "text": words,
+            }
+        )
     return segments
 
 
@@ -140,15 +143,23 @@ class TestFormatTimestamp:
     def test_format(self):
         """Test format."""
         chunk = TranscriptChunk(
-            chunk_index=0, text="test", start_time=65.0, end_time=130.0,
-            segment_indices=[0], word_count=1,
+            chunk_index=0,
+            text="test",
+            start_time=65.0,
+            end_time=130.0,
+            segment_indices=[0],
+            word_count=1,
         )
         assert format_chunk_timestamp(chunk) == "01:05 - 02:10"
 
     def test_format_zero(self):
         """Test format_zero."""
         chunk = TranscriptChunk(
-            chunk_index=0, text="test", start_time=0.0, end_time=59.0,
-            segment_indices=[0], word_count=1,
+            chunk_index=0,
+            text="test",
+            start_time=0.0,
+            end_time=59.0,
+            segment_indices=[0],
+            word_count=1,
         )
         assert format_chunk_timestamp(chunk) == "00:00 - 00:59"

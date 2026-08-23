@@ -17,23 +17,23 @@ import time
 import pytest
 
 from al_furqan.core.reasoning_engine import (
-    SystemType,
     GateResult,
     GateScore,
-    Verdict,
     ReasoningEngine,
-    build_scan_prompt,
-    build_mirror_prompt,
-    build_verdict_prompt,
+    SystemType,
+    Verdict,
     build_correction_prompt,
+    build_mirror_prompt,
+    build_scan_prompt,
+    build_verdict_prompt,
 )
 from tests.conftest import (
-    make_mock_llm,
-    MOCK_SCAN_RESPONSE,
-    MOCK_MIRROR_RESPONSE,
-    MOCK_VERDICT_RESPONSE,
     MOCK_CORRECTION_SOUND,
     MOCK_CORRECTION_WITH_FIX,
+    MOCK_MIRROR_RESPONSE,
+    MOCK_SCAN_RESPONSE,
+    MOCK_VERDICT_RESPONSE,
+    make_mock_llm,
 )
 
 logger = logging.getLogger("test_reasoning_engine")
@@ -43,12 +43,22 @@ logger = logging.getLogger("test_reasoning_engine")
 # Data Structures
 # ---------------------------------------------------------------------------
 
+
 class TestSystemType:
     """TestSystemType class."""
+
     def test_all_values(self):
         """Test all_values."""
-        expected = {"economic", "social", "spiritual", "political",
-                    "legal", "technological", "environmental", "mixed"}
+        expected = {
+            "economic",
+            "social",
+            "spiritual",
+            "political",
+            "legal",
+            "technological",
+            "environmental",
+            "mixed",
+        }
         actual = {e.value for e in SystemType}
         logger.info("Checking SystemType enum values")
         logger.debug("Expected: %s", sorted(expected))
@@ -77,10 +87,13 @@ class TestSystemType:
 # pylint: disable=too-few-public-methods
 class TestGateResult:
     """TestGateResult class."""
+
     def test_values(self):
         """Test values."""
         logger.info("Checking GateResult enum values")
-        logger.debug("SURVIVE=%s, FAIL=%s", GateResult.SURVIVE.value, GateResult.FAIL.value)
+        logger.debug(
+            "SURVIVE=%s, FAIL=%s", GateResult.SURVIVE.value, GateResult.FAIL.value
+        )
         assert GateResult.SURVIVE.value == "Survive"
         assert GateResult.FAIL.value == "Fail"
         logger.info("GateResult values verified")
@@ -88,6 +101,7 @@ class TestGateResult:
 
 class TestGateScore:
     """TestGateScore class."""
+
     def test_to_dict(self):
         """Test to_dict."""
         logger.info("Serializing GateScore (Source-Integrity, 85, Survive)")
@@ -114,12 +128,18 @@ class TestGateScore:
 
 class TestVerdict:
     """TestVerdict class."""
+
     def test_to_dict(self, sample_verdict):
         """Test to_dict."""
         logger.info("Serializing sample_verdict to dict")
         d = sample_verdict.to_dict()
-        logger.debug("question=%s, primary_system=%s, total_score=%s, gate_count=%d",
-                      d["question"], d["primary_system"], d["total_score"], len(d["gate_scores"]))
+        logger.debug(
+            "question=%s, primary_system=%s, total_score=%s, gate_count=%d",
+            d["question"],
+            d["primary_system"],
+            d["total_score"],
+            len(d["gate_scores"]),
+        )
         assert d["question"] == "Is interest-based lending just?"
         assert d["primary_system"] == "economic"
         assert d["total_score"] == 85
@@ -145,10 +165,18 @@ class TestVerdict:
         logger.info("Testing Verdict serialization → deserialization roundtrip")
         d = sample_verdict.to_dict()
         rebuilt = Verdict.from_dict(d)
-        logger.debug("Original: question=%s, score=%d, passes=%d",
-                      sample_verdict.question, sample_verdict.total_score, sample_verdict.passes)
-        logger.debug("Rebuilt:  question=%s, score=%d, passes=%d",
-                      rebuilt.question, rebuilt.total_score, rebuilt.passes)
+        logger.debug(
+            "Original: question=%s, score=%d, passes=%d",
+            sample_verdict.question,
+            sample_verdict.total_score,
+            sample_verdict.passes,
+        )
+        logger.debug(
+            "Rebuilt:  question=%s, score=%d, passes=%d",
+            rebuilt.question,
+            rebuilt.total_score,
+            rebuilt.passes,
+        )
         assert rebuilt.question == sample_verdict.question
         assert rebuilt.primary_system == sample_verdict.primary_system
         assert rebuilt.total_score == sample_verdict.total_score
@@ -167,8 +195,11 @@ class TestVerdict:
         v = Verdict.from_dict({})
         logger.debug(
             "question='%s', system=%s, score=%d, gates=%d, origin=%s",
-            v.question, v.primary_system, v.total_score,
-            len(v.gate_scores), v.origin_gate,
+            v.question,
+            v.primary_system,
+            v.total_score,
+            len(v.gate_scores),
+            v.origin_gate,
         )
         assert v.question == ""
         assert v.primary_system == SystemType.MIXED
@@ -189,7 +220,9 @@ class TestVerdict:
         """Test from_dict_string_score."""
         logger.info("Building Verdict with string total_score='85'")
         v = Verdict.from_dict({"total_score": "85"})
-        logger.debug("total_score=%d, type=%s", v.total_score, type(v.total_score).__name__)
+        logger.debug(
+            "total_score=%d, type=%s", v.total_score, type(v.total_score).__name__
+        )
         assert v.total_score == 85
         assert isinstance(v.total_score, int)
         logger.info("String score correctly cast to int")
@@ -199,13 +232,25 @@ class TestVerdict:
         logger.info("Testing auto-timestamp on Verdict creation")
         before = time.time()
         v = Verdict(
-            question="test", primary_system=SystemType.MIXED,
-            friction_points=[], gate_scores=[], origin_gate=GateResult.FAIL,
-            consequences_short_term=[], consequences_long_term=[],
-            revised_reasoning="", final_judgment="", total_score=0, passes=0,
+            question="test",
+            primary_system=SystemType.MIXED,
+            friction_points=[],
+            gate_scores=[],
+            origin_gate=GateResult.FAIL,
+            consequences_short_term=[],
+            consequences_long_term=[],
+            revised_reasoning="",
+            final_judgment="",
+            total_score=0,
+            passes=0,
         )
         after = time.time()
-        logger.debug("before=%.3f, verdict.timestamp=%.3f, after=%.3f", before, v.timestamp, after)
+        logger.debug(
+            "before=%.3f, verdict.timestamp=%.3f, after=%.3f",
+            before,
+            v.timestamp,
+            after,
+        )
         assert before <= v.timestamp <= after
         logger.info("Auto-timestamp within expected window")
 
@@ -214,8 +259,10 @@ class TestVerdict:
 # Prompt Builders
 # ---------------------------------------------------------------------------
 
+
 class TestPromptBuilders:
     """TestPromptBuilders class."""
+
     def test_scan_prompt_contains_question(self):
         """Test scan_prompt_contains_question."""
         logger.info("Building scan prompt for 'Is democracy effective?'")
@@ -239,7 +286,9 @@ class TestPromptBuilders:
         """Test scan_prompt_without_context."""
         logger.info("Building scan prompt with empty context")
         prompt = build_scan_prompt("test question", context="")
-        logger.debug("Context section absent: %s", "Relevant prior verdicts" not in prompt)
+        logger.debug(
+            "Context section absent: %s", "Relevant prior verdicts" not in prompt
+        )
         assert "Relevant prior verdicts" not in prompt
         logger.info("Scan prompt omits context section when context is empty")
 
@@ -281,8 +330,10 @@ class TestPromptBuilders:
 # JSON Parsing
 # ---------------------------------------------------------------------------
 
+
 class TestJSONParsing:
     """TestJSONParsing class."""
+
     def setup_method(self):
         """Execute setup_method."""
         # pylint: disable=attribute-defined-outside-init
@@ -346,14 +397,19 @@ class TestJSONParsing:
 # Engine Pipeline
 # ---------------------------------------------------------------------------
 
+
 class TestReasoningEnginePipeline:
     """TestReasoningEnginePipeline class."""
+
     def test_scan(self, engine):
         """Test scan."""
         logger.info("Running engine.scan('Is interest-based lending just?')")
         result = engine.scan("Is interest-based lending just?")
-        logger.debug("Scan result: primary_system=%s, friction_points=%s",
-                      result["primary_system"], result["friction_points"])
+        logger.debug(
+            "Scan result: primary_system=%s, friction_points=%s",
+            result["primary_system"],
+            result["friction_points"],
+        )
         assert result["primary_system"] == "economic"
         assert len(result["friction_points"]) == 2
         logger.info(
@@ -367,9 +423,11 @@ class TestReasoningEnginePipeline:
         llm = make_mock_llm([MOCK_MIRROR_RESPONSE])
         engine = ReasoningEngine(llm)
         result = engine.mirror("test", {"primary_system": "economic"})
-        logger.debug("Mirror result — gate_1 score=%d, gate_4 result=%s",
-                      result["gate_1_source_integrity"]["score"],
-                      result["gate_4_origin_aware"]["result"])
+        logger.debug(
+            "Mirror result — gate_1 score=%d, gate_4 result=%s",
+            result["gate_1_source_integrity"]["score"],
+            result["gate_4_origin_aware"]["result"],
+        )
         assert result["gate_1_source_integrity"]["score"] == 85
         assert result["gate_4_origin_aware"]["result"] == "Survive"
         logger.info("Mirror returned correct gate scores")
@@ -380,8 +438,11 @@ class TestReasoningEnginePipeline:
         llm = make_mock_llm([MOCK_VERDICT_RESPONSE])
         engine = ReasoningEngine(llm)
         result = engine.verdict("test", {}, {})
-        logger.debug("Verdict result — total_score=%d, reasoning='%s'",
-                      result["total_score"], result["revised_reasoning"][:50])
+        logger.debug(
+            "Verdict result — total_score=%d, reasoning='%s'",
+            result["total_score"],
+            result["revised_reasoning"][:50],
+        )
         assert result["total_score"] == 85
         assert "debt traps" in result["revised_reasoning"]
         logger.info("Verdict returned expected score and reasoning")
@@ -392,8 +453,11 @@ class TestReasoningEnginePipeline:
         llm = make_mock_llm([MOCK_CORRECTION_SOUND])
         engine = ReasoningEngine(llm)
         result = engine.self_correct("test", {"total_score": 85}, 1)
-        logger.debug("Correction result — is_sound=%s, corrected_verdict=%s",
-                      result["is_sound"], result["corrected_verdict"])
+        logger.debug(
+            "Correction result — is_sound=%s, corrected_verdict=%s",
+            result["is_sound"],
+            result["corrected_verdict"],
+        )
         assert result["is_sound"] is True
         assert result["corrected_verdict"] is None
         logger.info("Sound verdict correctly identified — no correction needed")
@@ -404,9 +468,12 @@ class TestReasoningEnginePipeline:
         llm = make_mock_llm([MOCK_CORRECTION_WITH_FIX])
         engine = ReasoningEngine(llm)
         result = engine.self_correct("test", {"total_score": 85}, 1)
-        logger.debug("Correction result — is_sound=%s, new_score=%d, contradictions=%s",
-                      result["is_sound"], result["corrected_verdict"]["total_score"],
-                      result["contradictions_found"])
+        logger.debug(
+            "Correction result — is_sound=%s, new_score=%d, contradictions=%s",
+            result["is_sound"],
+            result["corrected_verdict"]["total_score"],
+            result["contradictions_found"],
+        )
         assert result["is_sound"] is False
         assert result["corrected_verdict"]["total_score"] == 90
         logger.info("Correction applied: score changed from 85 → 90")
@@ -415,9 +482,14 @@ class TestReasoningEnginePipeline:
         """Test full_evaluate."""
         logger.info("Running full engine.evaluate('Is interest-based lending just?')")
         verdict = engine.evaluate("Is interest-based lending just?")
-        logger.debug("Verdict: system=%s, score=%d, passes=%d, gates=%d, origin=%s",
-                      verdict.primary_system.value, verdict.total_score, verdict.passes,
-                      len(verdict.gate_scores), verdict.origin_gate.value)
+        logger.debug(
+            "Verdict: system=%s, score=%d, passes=%d, gates=%d, origin=%s",
+            verdict.primary_system.value,
+            verdict.total_score,
+            verdict.passes,
+            len(verdict.gate_scores),
+            verdict.origin_gate.value,
+        )
         assert isinstance(verdict, Verdict)
         assert verdict.primary_system == SystemType.ECONOMIC
         assert verdict.total_score == 85
@@ -440,11 +512,14 @@ class TestReasoningEnginePipeline:
         verdict = engine.evaluate("test")
         logger.debug(
             "Verdict after correction: score=%d, passes=%d",
-            verdict.total_score, verdict.passes,
+            verdict.total_score,
+            verdict.passes,
         )
         assert verdict.total_score == 90  # corrected score
         assert verdict.passes == 2
-        logger.info("Evaluation with correction: score 85→90 over %d passes", verdict.passes)
+        logger.info(
+            "Evaluation with correction: score 85→90 over %d passes", verdict.passes
+        )
 
     def test_evaluate_with_context(self, engine):
         """Test evaluate_with_context."""
@@ -458,15 +533,20 @@ class TestReasoningEnginePipeline:
         """Test max_correction_passes."""
         logger.info("Testing MAX_CORRECTION_PASSES enforcement (limit=3)")
         # LLM always returns corrections, never sound
-        never_sound = json.dumps({
-            "contradictions_found": ["always wrong"],
-            "is_sound": False,
-            "corrected_verdict": {
-                "consequences_short_term": [], "consequences_long_term": [],
-                "actors_and_mechanisms": "", "revised_reasoning": "",
-                "final_judgment": "", "total_score": 50,
-            },
-        })
+        never_sound = json.dumps(
+            {
+                "contradictions_found": ["always wrong"],
+                "is_sound": False,
+                "corrected_verdict": {
+                    "consequences_short_term": [],
+                    "consequences_long_term": [],
+                    "actors_and_mechanisms": "",
+                    "revised_reasoning": "",
+                    "final_judgment": "",
+                    "total_score": 50,
+                },
+            }
+        )
         responses = [MOCK_SCAN_RESPONSE, MOCK_MIRROR_RESPONSE, MOCK_VERDICT_RESPONSE]
         responses += [never_sound] * 10  # more than MAX_CORRECTION_PASSES
         engine = ReasoningEngine(make_mock_llm(responses))
@@ -483,10 +563,18 @@ class TestReasoningEnginePipeline:
         mirror = json.loads(MOCK_MIRROR_RESPONSE)
         vdict = json.loads(MOCK_VERDICT_RESPONSE)
         verdict = engine._build_verdict_object(  # pylint: disable=protected-access
-            "test", scan, mirror, vdict, 2,
+            "test",
+            scan,
+            mirror,
+            vdict,
+            2,
         )
-        logger.debug("Built verdict: question=%s, system=%s, passes=%d",
-                      verdict.question, verdict.primary_system.value, verdict.passes)
+        logger.debug(
+            "Built verdict: question=%s, system=%s, passes=%d",
+            verdict.question,
+            verdict.primary_system.value,
+            verdict.passes,
+        )
         assert verdict.question == "test"
         assert verdict.passes == 2
         assert verdict.primary_system == SystemType.ECONOMIC
@@ -499,9 +587,15 @@ class TestReasoningEnginePipeline:
         mirror = json.loads(MOCK_MIRROR_RESPONSE)
         vdict = json.loads(MOCK_VERDICT_RESPONSE)
         verdict = engine._build_verdict_object(  # pylint: disable=protected-access
-            "test", scan, mirror, vdict, 1,
+            "test",
+            scan,
+            mirror,
+            vdict,
+            1,
         )
-        logger.debug("Resolved system: %s (expected MIXED)", verdict.primary_system.value)
+        logger.debug(
+            "Resolved system: %s (expected MIXED)", verdict.primary_system.value
+        )
         assert verdict.primary_system == SystemType.MIXED
         logger.info("Unknown system type gracefully defaults to MIXED")
 
@@ -512,9 +606,15 @@ class TestReasoningEnginePipeline:
         mirror = json.loads(MOCK_MIRROR_RESPONSE)
         vdict = json.loads(MOCK_VERDICT_RESPONSE)
         verdict = engine._build_verdict_object(  # pylint: disable=protected-access
-            "test", scan, mirror, vdict, 1,
+            "test",
+            scan,
+            mirror,
+            vdict,
+            1,
         )
-        logger.debug("Resolved system: %s (expected MIXED)", verdict.primary_system.value)
+        logger.debug(
+            "Resolved system: %s (expected MIXED)", verdict.primary_system.value
+        )
         assert verdict.primary_system == SystemType.MIXED
         logger.info("None system type gracefully defaults to MIXED")
 

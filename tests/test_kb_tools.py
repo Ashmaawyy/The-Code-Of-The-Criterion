@@ -1,12 +1,16 @@
 """Tests for the KB Tools."""
 
-import pytest
 import os  # pylint: disable=wrong-import-order
+
+import pytest
+
 from al_furqan.kb.tafsir.kb_tools import TafsirKBTools
 
 # pylint: disable=redefined-outer-name
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "review", "proposed_edges.db")
+DB_PATH = os.path.join(
+    os.path.dirname(__file__), "..", "data", "review", "proposed_edges.db"
+)
 
 
 @pytest.fixture
@@ -19,6 +23,7 @@ def kb():
 
 class TestSearchByVerse:
     """TestSearchByVerse class."""
+
     def test_search_central_verse_6_1(self, kb):
         """Test search_central_verse_6_1."""
         results = kb.search_by_verse("6:1")
@@ -47,6 +52,7 @@ class TestSearchByVerse:
 
 class TestSearchByTopic:
     """TestSearchByTopic class."""
+
     def test_search_badr(self, kb):
         """Test search_badr."""
         results = kb.search_by_topic("بدر")
@@ -70,6 +76,7 @@ class TestSearchByTopic:
 
 class TestSearchByRelation:
     """TestSearchByRelation class."""
+
     def test_linked_hadith(self, kb):
         """Test linked_hadith."""
         results = kb.search_by_relation("6:5", "LINKED_HADITH")
@@ -91,6 +98,7 @@ class TestSearchByRelation:
 
 class TestGetVerseContext:
     """TestGetVerseContext class."""
+
     def test_context_around_6_5(self, kb):
         """Test context_around_6_5."""
         ctx = kb.get_verse_context("6:5", verse_range=2)
@@ -107,6 +115,7 @@ class TestGetVerseContext:
 # pylint: disable=too-few-public-methods
 class TestGetStats:
     """TestGetStats class."""
+
     def test_stats(self, kb):
         """Test stats."""
         stats = kb.get_stats()
@@ -118,6 +127,7 @@ class TestGetStats:
 
 class TestToolDefinitions:
     """TestToolDefinitions class."""
+
     def test_tool_definitions_format(self):
         """Test tool_definitions_format."""
         tools = TafsirKBTools.get_tool_definitions()
@@ -142,6 +152,7 @@ class TestToolDefinitions:
 # pylint: disable=too-few-public-methods
 class TestKBEntryFormat:
     """TestKBEntryFormat class."""
+
     def test_format_for_llm(self, kb):
         """Test format_for_llm."""
         results = kb.search_by_verse("6:5")

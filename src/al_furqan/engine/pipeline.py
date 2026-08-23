@@ -8,23 +8,23 @@ Implements Scan → Mirror → Verdict → Self-Correction pipeline.
 import json
 import logging
 import re
-from typing import Callable
+from collections.abc import Callable
 
 from al_furqan.engine.models import (
-    SystemType,
+    DualPerspectiveVerdict,
     GateResult,
     GateScore,
-    Verdict,
-    DualPerspectiveVerdict,
     InformationalResponse,
+    SystemType,
+    Verdict,
 )
 from al_furqan.engine.prompts import (
-    build_scan_prompt,
-    build_mirror_prompt,
-    build_verdict_prompt,
     build_correction_prompt,
-    build_intent_detection_prompt,
     build_informational_prompt,
+    build_intent_detection_prompt,
+    build_mirror_prompt,
+    build_scan_prompt,
+    build_verdict_prompt,
     sanitize_input,
 )
 
@@ -205,7 +205,9 @@ class EvaluationPipeline:
             friction_points=scan_result.get("friction_points", []),
             gate_scores=tri_axial_scores,
             origin_gate=origin_gate.result if origin_gate else GateResult.FAIL,
-            preservation_gate=preservation_gate.result if preservation_gate else GateResult.FAIL,
+            preservation_gate=preservation_gate.result
+            if preservation_gate
+            else GateResult.FAIL,
             consequences_short_term=verdict_result.get("consequences_short_term", []),
             consequences_long_term=verdict_result.get("consequences_long_term", []),
             revised_reasoning=verdict_result.get("revised_reasoning", ""),

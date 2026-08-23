@@ -2,21 +2,21 @@
 
 from z3 import Const, Not
 
-from al_furqan.engine.symbolic.verifier import SymbolicVerifier, VerificationResult
 from al_furqan.engine.symbolic.formal_axioms import (
-    Entity,
-    Framework,
-    Exists_fn,
-    HasPurpose,
-    HasCausalNetwork,
     Aligned,
-    Functional,
-    IsContingent,
     CanSelfGround,
+    Entity,
+    Exists_fn,
+    Framework,
+    Functional,
+    HasCausalNetwork,
     HasMoralDebts,
+    HasPurpose,
     HumanJusticeSufficient,
+    IsContingent,
     RequiresFinalCourt,
 )
+from al_furqan.engine.symbolic.verifier import SymbolicVerifier, VerificationResult
 
 
 class TestSymbolicVerifier:

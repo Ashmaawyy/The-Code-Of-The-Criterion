@@ -7,11 +7,10 @@ replacing both the JSON file store and ChromaDB vector store.
 
 import logging
 import uuid
-from typing import Optional
 
 from elasticsearch import Elasticsearch, NotFoundError
 
-from al_furqan.core.reasoning_engine import Verdict, SystemType
+from al_furqan.core.reasoning_engine import SystemType, Verdict
 
 logger = logging.getLogger(__name__)
 
@@ -94,7 +93,7 @@ class ESVerdictStore:
         self,
         question: str,
         n_results: int = DEFAULT_N_RESULTS,
-        system_filter: Optional[SystemType] = None,
+        system_filter: SystemType | None = None,
     ) -> list[dict]:
         """Retrieve relevant past verdicts for a question.
 
@@ -105,8 +104,9 @@ class ESVerdictStore:
             return self._retrieve_semantic(question, n_results, system_filter)
         return self._retrieve_text(question, n_results, system_filter)
 
-    def _retrieve_semantic(self, question: str, n_results: int,
-                           system_filter: Optional[SystemType]) -> list[dict]:
+    def _retrieve_semantic(
+        self, question: str, n_results: int, system_filter: SystemType | None
+    ) -> list[dict]:
         """Retrieve using knn vector similarity."""
         embedding = self._embed_fn(question)
 
@@ -126,8 +126,9 @@ class ESVerdictStore:
         resp = self._es.search(index=self._index, body=body)
         return self._hits_to_results(resp)
 
-    def _retrieve_text(self, question: str, n_results: int,
-                       system_filter: Optional[SystemType]) -> list[dict]:
+    def _retrieve_text(
+        self, question: str, n_results: int, system_filter: SystemType | None
+    ) -> list[dict]:
         """Fallback: retrieve using text similarity."""
         must = [{"match": {"question": question}}]
         filters = [{"terms": {"status": ["approved", "corrected"]}}]
@@ -145,23 +146,25 @@ class ESVerdictStore:
         results = []
         for hit in resp["hits"]["hits"]:
             src = hit["_source"]
-            results.append({
-                "id": hit["_id"],
-                "document": (
-                    f"Question: {src.get('question', '')}\n"
-                    f"System: {src.get('primary_system', '')}\n"
-                    f"Reasoning: {src.get('revised_reasoning', '')}\n"
-                    f"Judgment: {src.get('final_judgment', '')}"
-                ),
-                "metadata": {
-                    "primary_system": src.get("primary_system", ""),
-                    "origin_gate": src.get("origin_gate", ""),
-                    "total_score": src.get("total_score", 0),
-                    "status": src.get("status", ""),
-                    "timestamp": src.get("timestamp", 0),
-                },
-                "distance": 1.0 - hit.get("_score", 0),
-            })
+            results.append(
+                {
+                    "id": hit["_id"],
+                    "document": (
+                        f"Question: {src.get('question', '')}\n"
+                        f"System: {src.get('primary_system', '')}\n"
+                        f"Reasoning: {src.get('revised_reasoning', '')}\n"
+                        f"Judgment: {src.get('final_judgment', '')}"
+                    ),
+                    "metadata": {
+                        "primary_system": src.get("primary_system", ""),
+                        "origin_gate": src.get("origin_gate", ""),
+                        "total_score": src.get("total_score", 0),
+                        "status": src.get("status", ""),
+                        "timestamp": src.get("timestamp", 0),
+                    },
+                    "distance": 1.0 - hit.get("_score", 0),
+                }
+            )
         return results
 
     def retrieve_as_context(
@@ -183,7 +186,7 @@ class ESVerdictStore:
             parts.append("")
         return "\n".join(parts)
 
-    def get_verdict_by_id(self, verdict_id: str) -> Optional[dict]:
+    def get_verdict_by_id(self, verdict_id: str) -> dict | None:
         """Load a verdict by ID."""
         try:
             doc = self._es.get(index=self._index, id=verdict_id)
@@ -195,7 +198,7 @@ class ESVerdictStore:
         self,
         verdict_id: str,
         new_status: str,
-        corrected_verdict: Optional[Verdict] = None,
+        corrected_verdict: Verdict | None = None,
     ) -> bool:
         """Update a verdict's status."""
         try:
@@ -206,13 +209,15 @@ class ESVerdictStore:
         if corrected_verdict:
             self.store(corrected_verdict, status="corrected")
             self._es.update(
-                index=self._index, id=verdict_id,
+                index=self._index,
+                id=verdict_id,
                 body={"doc": {"status": "superseded"}},
                 refresh="wait_for",
             )
         elif new_status == "rejected":
             self._es.update(
-                index=self._index, id=verdict_id,
+                index=self._index,
+                id=verdict_id,
                 body={"doc": {"status": "rejected"}},
                 refresh="wait_for",
             )
@@ -230,7 +235,8 @@ class ESVerdictStore:
                     update_doc["embedding"] = self._embed_fn(text)
 
             self._es.update(
-                index=self._index, id=verdict_id,
+                index=self._index,
+                id=verdict_id,
                 body={"doc": update_doc},
                 refresh="wait_for",
             )

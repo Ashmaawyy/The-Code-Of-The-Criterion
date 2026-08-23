@@ -24,6 +24,7 @@ from al_furqan.engine.models import (
 )
 from al_furqan.engine.pipeline import EvaluationPipeline
 from al_furqan.engine.prompts import (
+    MAX_QUESTION_LENGTH,
     build_correction_prompt,
     build_informational_prompt,
     build_intent_detection_prompt,
@@ -31,7 +32,6 @@ from al_furqan.engine.prompts import (
     build_scan_prompt,
     build_verdict_prompt,
     sanitize_input,
-    MAX_QUESTION_LENGTH,
 )
 
 __all__ = [

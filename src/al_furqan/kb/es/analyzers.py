@@ -22,13 +22,13 @@ CHAR_FILTER_STRIP_DIACRITICS = {
     "type": "pattern_replace",
     "pattern": (
         "["
-        "\u0610-\u061A"   # Quranic signs above
-        "\u064B-\u065F"   # tashkeel (fatha, damma, kasra, etc.)
-        "\u0670"          # superscript alef
-        "\u06D6-\u06DC"   # small Quranic marks
-        "\u06DF-\u06E4"   # more Quranic marks
-        "\u06E7\u06E8"    # yeh barree / reversed damma
-        "\u06EA-\u06ED"   # additional marks
+        "\u0610-\u061a"  # Quranic signs above
+        "\u064b-\u065f"  # tashkeel (fatha, damma, kasra, etc.)
+        "\u0670"  # superscript alef
+        "\u06d6-\u06dc"  # small Quranic marks
+        "\u06df-\u06e4"  # more Quranic marks
+        "\u06e7\u06e8"  # yeh barree / reversed damma
+        "\u06ea-\u06ed"  # additional marks
         "]"
     ),
     "replacement": "",
@@ -37,19 +37,19 @@ CHAR_FILTER_STRIP_DIACRITICS = {
 CHAR_FILTER_NORMALIZE_ALEF = {
     "type": "pattern_replace",
     "pattern": "[\u0625\u0623\u0622\u0671]",  # إ أ آ ٱ
-    "replacement": "\u0627",                    # → ا
+    "replacement": "\u0627",  # → ا
 }
 
 CHAR_FILTER_NORMALIZE_TAA_MARBOUTA = {
     "type": "pattern_replace",
-    "pattern": "\u0629",   # ة
+    "pattern": "\u0629",  # ة
     "replacement": "\u0647",  # → ه
 }
 
 CHAR_FILTER_NORMALIZE_ALEF_MAQSURA = {
     "type": "pattern_replace",
-    "pattern": "\u0649",   # ى
-    "replacement": "\u064A",  # → ي
+    "pattern": "\u0649",  # ى
+    "replacement": "\u064a",  # → ي
 }
 
 CHAR_FILTER_STRIP_TATWEEL = {
@@ -60,7 +60,7 @@ CHAR_FILTER_STRIP_TATWEEL = {
 
 CHAR_FILTER_STRIP_DECORATIONS = {
     "type": "pattern_replace",
-    "pattern": "[\uFD3F\uFD3E\u06DD\uFDFA\uFDFB\uFE70-\uFEFF﴿﴾۝۞]",
+    "pattern": "[\ufd3f\ufd3e\u06dd\ufdfa\ufdfb\ufe70-\ufeff﴿﴾۝۞]",
     "replacement": "",
 }
 

@@ -28,12 +28,17 @@ from elasticsearch.helpers import bulk
 
 from al_furqan import setup_logging
 from al_furqan.kb.es.client import create_es_client
+from al_furqan.tokenizer.morphology import analyze_verse, analyze_word
 from al_furqan.tokenizer.schema import (
-    WordToken, RootToken, SemanticToken, VerseTokens,
+    RootToken,
+    SemanticToken,
+    VerseTokens,
+    WordToken,
 )
-from al_furqan.tokenizer.morphology import analyze_word, analyze_verse
 from al_furqan.tokenizer.semantics import (
-    analyze_semantics, analyze_verse_logic, analyze_verse_transitions,
+    analyze_semantics,
+    analyze_verse_logic,
+    analyze_verse_transitions,
 )
 
 logger = logging.getLogger(__name__)
@@ -42,7 +47,7 @@ logger = logging.getLogger(__name__)
 # Tokenize a single verse
 # ---------------------------------------------------------------------------
 
-_WORD_SPLIT = re.compile(r'\s+')
+_WORD_SPLIT = re.compile(r"\s+")
 
 
 def tokenize_verse(
@@ -83,26 +88,30 @@ def tokenize_verse(
     for i, word in enumerate(words):
         # --- Level 1: Word ---
         morph = morph_results[i] if i < len(morph_results) else analyze_word(word)
-        word_tokens.append(WordToken(
-            position=i,
-            surface=word,
-            surface_clean=morph.surface_clean,
-            is_stop_word=morph.is_stop_word,
-        ))
+        word_tokens.append(
+            WordToken(
+                position=i,
+                surface=word,
+                surface_clean=morph.surface_clean,
+                is_stop_word=morph.is_stop_word,
+            )
+        )
 
         # --- Level 2A: Root ---
-        root_tokens.append(RootToken(
-            position=i,
-            surface=word,
-            root=morph.root,
-            root_letters=morph.root_letters,
-            pattern=morph.pattern,
-            pos=morph.pos,
-            verb_form="NONE",
-            prefixes=morph.prefixes,
-            suffixes=morph.suffixes,
-            lemma=morph.surface_clean,
-        ))
+        root_tokens.append(
+            RootToken(
+                position=i,
+                surface=word,
+                root=morph.root,
+                root_letters=morph.root_letters,
+                pattern=morph.pattern,
+                pos=morph.pos,
+                verb_form="NONE",
+                prefixes=morph.prefixes,
+                suffixes=morph.suffixes,
+                lemma=morph.surface_clean,
+            )
+        )
         if morph.root:
             seen_roots.add(morph.root)
 
@@ -114,7 +123,9 @@ def tokenize_verse(
 
     # --- Level 3: Transition (idea flow between words) ---
     transition_tokens = analyze_verse_transitions(
-        morph_results, semantic_tokens, logic_tokens,
+        morph_results,
+        semantic_tokens,
+        logic_tokens,
     )
 
     return VerseTokens(
@@ -232,6 +243,7 @@ TOKEN_INDEX_DEFINITION = {
 # Bulk encoding pipeline
 # ---------------------------------------------------------------------------
 
+
 def encode_from_es(
     es: Elasticsearch,
     source_index: str = "furqan_quran",
@@ -266,7 +278,11 @@ def encode_from_es(
     batch_size = 500
     resp = es.search(
         index=source_index,
-        body={"query": query, "sort": [{"surah": "asc"}, {"ayah": "asc"}], "size": batch_size},
+        body={
+            "query": query,
+            "sort": [{"surah": "asc"}, {"ayah": "asc"}],
+            "size": batch_size,
+        },
         scroll="5m",
     )
     scroll_id = resp["_scroll_id"]
@@ -291,11 +307,13 @@ def encode_from_es(
                 page=src.get("page", 0),
                 position_in_mushaf=global_position,
             )
-            actions.append({
-                "_index": target_index,
-                "_id": vt.verse_key,
-                "_source": vt.to_dict(),
-            })
+            actions.append(
+                {
+                    "_index": target_index,
+                    "_id": vt.verse_key,
+                    "_source": vt.to_dict(),
+                }
+            )
             global_position += 1
 
         # Flush batch
@@ -319,23 +337,33 @@ def encode_from_es(
 # CLI
 # ---------------------------------------------------------------------------
 
+
 def main():
     setup_logging()
 
     parser = argparse.ArgumentParser(
-        description="Multi-level Quran tokenizer — reads from ES, writes tokens to ES")
-    parser.add_argument("--surah", type=int, default=None,
-                        help="Encode only this surah number")
-    parser.add_argument("--verse", default=None,
-                        help="Encode a single verse (format: surah:ayah)")
-    parser.add_argument("--source-index", default="furqan_quran",
-                        help="Source ES index with raw verses (default: furqan_quran)")
-    parser.add_argument("--target-index", default="furqan_quran_tokens",
-                        help="Target ES index for tokenized output")
-    parser.add_argument("--es-url", default=None,
-                        help="Elasticsearch URL")
-    parser.add_argument("--dry-run", action="store_true",
-                        help="Preview without indexing")
+        description="Multi-level Quran tokenizer — reads from ES, writes tokens to ES"
+    )
+    parser.add_argument(
+        "--surah", type=int, default=None, help="Encode only this surah number"
+    )
+    parser.add_argument(
+        "--verse", default=None, help="Encode a single verse (format: surah:ayah)"
+    )
+    parser.add_argument(
+        "--source-index",
+        default="furqan_quran",
+        help="Source ES index with raw verses (default: furqan_quran)",
+    )
+    parser.add_argument(
+        "--target-index",
+        default="furqan_quran_tokens",
+        help="Target ES index for tokenized output",
+    )
+    parser.add_argument("--es-url", default=None, help="Elasticsearch URL")
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Preview without indexing"
+    )
     args = parser.parse_args()
 
     hosts = [args.es_url] if args.es_url else None
@@ -356,38 +384,65 @@ def main():
             return
 
         vt = tokenize_verse(
-            surah=verse["surah"], ayah=verse["ayah"],
-            text_ar=verse["text_ar"], text_en=verse.get("text_en", ""),
-            juz=verse.get("juz", 0), page=verse.get("page", 0),
+            surah=verse["surah"],
+            ayah=verse["ayah"],
+            text_ar=verse["text_ar"],
+            text_en=verse.get("text_en", ""),
+            juz=verse.get("juz", 0),
+            page=verse.get("page", 0),
         )
 
         logger.info("Verse %s: %s", vt.verse_key, vt.text_ar[:60])
-        logger.info("Words: %d | Unique roots: %d | Certainty: %.1f",
-                    vt.word_count, vt.unique_roots, vt.certainty)
+        logger.info(
+            "Words: %d | Unique roots: %d | Certainty: %.1f",
+            vt.word_count,
+            vt.unique_roots,
+            vt.certainty,
+        )
 
         for i, (wt, rt, st, lt, tt) in enumerate(
-            zip(vt.word_tokens, vt.root_tokens, vt.semantic_tokens,
-                vt.logic_tokens, vt.transition_tokens)
+            zip(
+                vt.word_tokens,
+                vt.root_tokens,
+                vt.semantic_tokens,
+                vt.logic_tokens,
+                vt.transition_tokens,
+            )
         ):
             logger.info(
                 "  [%d] %s | root=%s pos=%s | sem=%s logic=%s(%s) | "
                 "transition=%s src=%s→tgt=%s",
-                i, wt.surface, rt.root, rt.pos,
-                st.semantic_field, lt.operator, lt.role_in_argument,
-                tt.transition_type, tt.source_idea, tt.target_idea,
+                i,
+                wt.surface,
+                rt.root,
+                rt.pos,
+                st.semantic_field,
+                lt.operator,
+                lt.role_in_argument,
+                tt.transition_type,
+                tt.source_idea,
+                tt.target_idea,
             )
 
         if not args.dry_run:
             if not es.indices.exists(index=args.target_index):
                 es.indices.create(index=args.target_index, body=TOKEN_INDEX_DEFINITION)
-            es.index(index=args.target_index, id=vt.verse_key,
-                    body=vt.to_dict(), refresh="wait_for")
+            es.index(
+                index=args.target_index,
+                id=vt.verse_key,
+                body=vt.to_dict(),
+                refresh="wait_for",
+            )
             logger.info("Indexed to %s/%s", args.target_index, vt.verse_key)
 
     else:
-        encode_from_es(es, source_index=args.source_index,
-                      target_index=args.target_index,
-                      surah_filter=args.surah, dry_run=args.dry_run)
+        encode_from_es(
+            es,
+            source_index=args.source_index,
+            target_index=args.target_index,
+            surah_filter=args.surah,
+            dry_run=args.dry_run,
+        )
 
     elapsed = time.monotonic() - start
     logger.info("Done in %.1fs", elapsed)

@@ -8,9 +8,8 @@ Based on: "Chain of Thought Monitorability: A New and Fragile
 Opportunity for AI Safety" (Korbak et al., 2025)
 """
 
-from dataclasses import dataclass
-from typing import Optional
 import logging
+from dataclasses import dataclass
 
 logger = logging.getLogger("al_furqan.core.cot")
 
@@ -22,8 +21,8 @@ class ReasoningStep:
     step_number: int
     thought: str  # What the model is thinking
     observation: str  # What it observes/finds
-    axiom_reference: Optional[str] = None  # Which axiom this relates to
-    conclusion: Optional[str] = None  # Only on final step
+    axiom_reference: str | None = None  # Which axiom this relates to
+    conclusion: str | None = None  # Only on final step
 
     def to_dict(self) -> dict:
         """Execute to_dict."""

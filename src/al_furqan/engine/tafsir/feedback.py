@@ -12,9 +12,8 @@ import json
 import os
 import time
 import uuid
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from enum import Enum
-from typing import Optional
 
 from al_furqan.paths import DATA_TAFSIR_FEEDBACK
 
@@ -93,12 +92,12 @@ class TafsirFeedbackStore:
 
         return feedback.feedback_id
 
-    def get(self, feedback_id: str) -> Optional[TafsirFeedback]:
+    def get(self, feedback_id: str) -> TafsirFeedback | None:
         """Get a feedback entry by ID."""
         path = self._path(feedback_id)
         if not os.path.exists(path):
             return None
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
         return TafsirFeedback(**data)
 
@@ -108,7 +107,7 @@ class TafsirFeedbackStore:
         for fname in sorted(os.listdir(self.storage_dir)):
             if fname.endswith(".json"):
                 path = os.path.join(self.storage_dir, fname)
-                with open(path, "r", encoding="utf-8") as f:
+                with open(path, encoding="utf-8") as f:
                     data = json.load(f)
                 entries.append(TafsirFeedback(**data))
         return entries

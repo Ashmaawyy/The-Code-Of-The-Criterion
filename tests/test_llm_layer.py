@@ -18,13 +18,13 @@ import time
 import pytest
 
 from al_furqan.providers.llm_layer import (
-    LLMConfig,
+    PROVIDERS,
     LLMCallLog,
+    LLMConfig,
     LLMProvider,
     OllamaProvider,
-    TransformersProvider,
     OpenAICompatibleProvider,
-    PROVIDERS,
+    TransformersProvider,
     create_llm,
     create_llm_from_dict,
 )
@@ -36,16 +36,27 @@ logger = logging.getLogger("test_llm_layer")
 # LLMConfig
 # ---------------------------------------------------------------------------
 
+
 class TestLLMConfig:
     """TestLLMConfig class."""
+
     def test_defaults(self):
         """Test defaults."""
         logger.info("Creating LLMConfig with all defaults")
         config = LLMConfig()
-        logger.debug("provider=%s, model_name=%s, temperature=%s, max_tokens=%d",
-                      config.provider, config.model_name, config.temperature, config.max_tokens)
-        logger.debug("base_url=%s, device=%s, quantization=%s",
-                      config.base_url, config.device, config.quantization)
+        logger.debug(
+            "provider=%s, model_name=%s, temperature=%s, max_tokens=%d",
+            config.provider,
+            config.model_name,
+            config.temperature,
+            config.max_tokens,
+        )
+        logger.debug(
+            "base_url=%s, device=%s, quantization=%s",
+            config.base_url,
+            config.device,
+            config.quantization,
+        )
         assert config.provider == "ollama"
         assert config.model_name == "mistral"
         assert config.temperature == 0.1
@@ -57,15 +68,22 @@ class TestLLMConfig:
 
     def test_custom_values(self):
         """Test custom_values."""
-        logger.info("Creating LLMConfig with custom values (transformers, llama3, 4bit)")
+        logger.info(
+            "Creating LLMConfig with custom values (transformers, llama3, 4bit)"
+        )
         config = LLMConfig(
             provider="transformers",
             model_name="meta-llama/Llama-3.1-8B",
             temperature=0.5,
             quantization="4bit",
         )
-        logger.debug("provider=%s, model_name=%s, temperature=%s, quantization=%s",
-                      config.provider, config.model_name, config.temperature, config.quantization)
+        logger.debug(
+            "provider=%s, model_name=%s, temperature=%s, quantization=%s",
+            config.provider,
+            config.model_name,
+            config.temperature,
+            config.quantization,
+        )
         assert config.provider == "transformers"
         assert config.model_name == "meta-llama/Llama-3.1-8B"
         assert config.temperature == 0.5
@@ -77,8 +95,10 @@ class TestLLMConfig:
 # LLMCallLog
 # ---------------------------------------------------------------------------
 
+
 class TestLLMCallLog:
     """TestLLMCallLog class."""
+
     def test_to_dict(self):
         """Test to_dict."""
         logger.info("Creating LLMCallLog with known values")
@@ -104,7 +124,9 @@ class TestLLMCallLog:
         before = time.time()
         log = LLMCallLog(100, 50, 0.5, "model", "provider")
         after = time.time()
-        logger.debug("before=%.3f, log.timestamp=%.3f, after=%.3f", before, log.timestamp, after)
+        logger.debug(
+            "before=%.3f, log.timestamp=%.3f, after=%.3f", before, log.timestamp, after
+        )
         assert before <= log.timestamp <= after
         logger.info("Auto-timestamp falls within expected window")
 
@@ -112,6 +134,7 @@ class TestLLMCallLog:
 # ---------------------------------------------------------------------------
 # LLMProvider Base Class
 # ---------------------------------------------------------------------------
+
 
 class MockProvider(LLMProvider):
     """Concrete test provider that returns a fixed string."""
@@ -122,6 +145,7 @@ class MockProvider(LLMProvider):
 
 class TestLLMProviderBase:
     """TestLLMProviderBase class."""
+
     def test_callable_interface(self):
         """Test callable_interface."""
         logger.info("Testing LLMProvider __call__ interface via MockProvider")
@@ -140,8 +164,11 @@ class TestLLMProviderBase:
         provider("first call")
         provider("second call")
         logger.debug("call_log length=%d", len(provider.call_log))
-        logger.debug("Call 1: prompt_length=%d, Call 2: prompt_length=%d",
-                      provider.call_log[0].prompt_length, provider.call_log[1].prompt_length)
+        logger.debug(
+            "Call 1: prompt_length=%d, Call 2: prompt_length=%d",
+            provider.call_log[0].prompt_length,
+            provider.call_log[1].prompt_length,
+        )
         assert len(provider.call_log) == 2
         assert provider.call_log[0].prompt_length == len("first call")
         assert provider.call_log[1].prompt_length == len("second call")
@@ -179,21 +206,28 @@ class TestLLMProviderBase:
         stats = provider.get_stats()
         logger.debug("Stats after 3 calls: %s", stats)
         assert stats["total_calls"] == 3
-        assert stats["total_prompt_chars"] == len("call 1") + len("call 2") + len("call 3")
+        assert stats["total_prompt_chars"] == len("call 1") + len("call 2") + len(
+            "call 3"
+        )
         assert stats["model"] == "mistral"
         assert stats["provider"] == "ollama"
         assert "avg_duration_seconds" in stats
         assert "total_duration_seconds" in stats
-        logger.info("Stats correct: %d calls, %d total prompt chars",
-                     stats["total_calls"], stats["total_prompt_chars"])
+        logger.info(
+            "Stats correct: %d calls, %d total prompt chars",
+            stats["total_calls"],
+            stats["total_prompt_chars"],
+        )
 
 
 # ---------------------------------------------------------------------------
 # Factory Functions
 # ---------------------------------------------------------------------------
 
+
 class TestFactory:
     """TestFactory class."""
+
     def test_create_llm_ollama(self):
         """Test create_llm_ollama."""
         logger.info("Creating LLM with provider='ollama'")
@@ -242,8 +276,12 @@ class TestFactory:
         d = {"provider": "ollama", "model_name": "llama3.1", "temperature": 0.3}
         logger.info("Creating LLM from dict: %s", d)
         provider = create_llm_from_dict(d)
-        logger.debug("Returned type=%s, model=%s, temp=%s",
-                      type(provider).__name__, provider.config.model_name, provider.config.temperature)  # pylint: disable=line-too-long
+        logger.debug(
+            "Returned type=%s, model=%s, temp=%s",
+            type(provider).__name__,
+            provider.config.model_name,
+            provider.config.temperature,
+        )  # pylint: disable=line-too-long
         assert isinstance(provider, OllamaProvider)
         assert provider.config.model_name == "llama3.1"
         assert provider.config.temperature == 0.3
@@ -254,7 +292,9 @@ class TestFactory:
         d = {"provider": "ollama", "unknown_key": "value"}
         logger.info("Creating LLM from dict with extra key 'unknown_key'")
         provider = create_llm_from_dict(d)
-        logger.debug("Returned type: %s (extra keys silently ignored)", type(provider).__name__)
+        logger.debug(
+            "Returned type: %s (extra keys silently ignored)", type(provider).__name__
+        )
         assert isinstance(provider, OllamaProvider)
         logger.info("Extra dict keys ignored correctly")
 
@@ -271,8 +311,10 @@ class TestFactory:
 # Provider Registration
 # ---------------------------------------------------------------------------
 
+
 class TestProviderRegistry:
     """TestProviderRegistry class."""
+
     def test_all_providers_registered(self):
         """Test all_providers_registered."""
         logger.info("Checking PROVIDERS registry contains all 3 providers")
@@ -288,6 +330,11 @@ class TestProviderRegistry:
         logger.info("Verifying all registered providers are LLMProvider subclasses")
         for name, cls in PROVIDERS.items():
             is_subclass = issubclass(cls, LLMProvider)
-            logger.debug("  %s → %s (is LLMProvider subclass: %s)", name, cls.__name__, is_subclass)
+            logger.debug(
+                "  %s → %s (is LLMProvider subclass: %s)",
+                name,
+                cls.__name__,
+                is_subclass,
+            )
             assert is_subclass, f"{name} is not an LLMProvider subclass"
         logger.info("All providers are valid LLMProvider subclasses")

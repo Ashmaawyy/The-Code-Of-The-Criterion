@@ -1,6 +1,5 @@
 """Tests for the PredicateExtractor."""
 
-
 from al_furqan.engine.symbolic.predicate_extractor import PredicateExtractor
 
 

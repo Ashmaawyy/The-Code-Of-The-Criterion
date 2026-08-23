@@ -1,9 +1,9 @@
 """Tests for ChainExecutor — with mock LLM."""
 
 from al_furqan.engine.chains.executor import ChainExecutor
+from al_furqan.engine.gates.origin_aware import OriginAwareGate
 from al_furqan.engine.gates.source_integrity import SourceIntegrityGate
 from al_furqan.engine.gates.structural_consistency import StructuralConsistencyGate
-from al_furqan.engine.gates.origin_aware import OriginAwareGate
 
 
 class TestChainExecutor:
@@ -27,6 +27,7 @@ class TestChainExecutor:
 
     def test_execute_chain_returns_dict_with_q_keys(self):
         """Results keyed as q0, q1, q2, etc."""
+
         def mock_llm(_prompt: str) -> str:
             return "extracted fact"
 
@@ -57,6 +58,7 @@ class TestChainExecutor:
 
     def test_execute_all_gates(self):
         """Execute chains for multiple gates."""
+
         def mock_llm(_prompt: str) -> str:
             return "fact"
 
@@ -70,6 +72,7 @@ class TestChainExecutor:
 
     def test_execute_chain_with_empty_context(self):
         """Works with no additional context."""
+
         def mock_llm(_prompt: str) -> str:
             return "extracted"
 

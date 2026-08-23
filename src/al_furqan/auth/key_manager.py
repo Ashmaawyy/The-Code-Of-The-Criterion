@@ -10,7 +10,6 @@ import os
 import secrets
 import time
 from pathlib import Path
-from typing import Optional
 
 import bcrypt
 
@@ -26,7 +25,7 @@ KEY_RANDOM_LENGTH = 32  # characters of random hex
 class KeyManager:
     """Manages API key lifecycle: creation, validation, revocation, rotation."""
 
-    def __init__(self, storage_path: Optional[str] = None):
+    def __init__(self, storage_path: str | None = None):
         if storage_path:
             self.storage_path = Path(storage_path).expanduser()
         else:
@@ -44,7 +43,7 @@ class KeyManager:
             self._keys = {}
             return
         try:
-            with open(self.storage_path, "r", encoding="utf-8") as f:
+            with open(self.storage_path, encoding="utf-8") as f:
                 raw = json.load(f)
             self._keys = {k: APIKey.from_dict(v) for k, v in raw.items()}
             logger.info(
@@ -131,7 +130,7 @@ class KeyManager:
         logger.info("Created API key '%s' (role=%s) → %s", name, role, key_id)
         return raw_key, api_key
 
-    def validate_key(self, raw_key: str) -> Optional[APIKey]:
+    def validate_key(self, raw_key: str) -> APIKey | None:
         """
         Validate a raw API key. Returns the APIKey if valid and active, else None.
         Also updates last_used timestamp.
@@ -157,7 +156,7 @@ class KeyManager:
         logger.info("Revoked API key: %s", key_id)
         return True
 
-    def rotate_key(self, key_id: str) -> Optional[tuple[str, APIKey]]:
+    def rotate_key(self, key_id: str) -> tuple[str, APIKey] | None:
         """
         Rotate a key: revoke the old one, create a new one with the same name/role.
         Returns (new_raw_key, new_api_key) or None if key_id not found.
@@ -182,6 +181,6 @@ class KeyManager:
         """List all keys (active and inactive)."""
         return list(self._keys.values())
 
-    def get_key(self, key_id: str) -> Optional[APIKey]:
+    def get_key(self, key_id: str) -> APIKey | None:
         """Get a key by its key_id."""
         return self._keys.get(key_id)

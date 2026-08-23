@@ -10,10 +10,10 @@ from dataclasses import dataclass, field
 
 from elasticsearch import Elasticsearch, NotFoundError
 
-
 # ---------------------------------------------------------------------------
 # HumanFeedback dataclass (canonical location)
 # ---------------------------------------------------------------------------
+
 
 @dataclass
 class HumanFeedback:
@@ -46,6 +46,7 @@ class HumanFeedback:
             notes=d.get("notes", ""),
             timestamp=d.get("timestamp", 0.0),
         )
+
 
 logger = logging.getLogger(__name__)
 

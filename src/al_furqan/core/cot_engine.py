@@ -1,12 +1,13 @@
 """COT-Enabled Reasoning Engine for Al-Furqan."""
 
-from typing import Callable
-from al_furqan.core.reasoning_engine import ReasoningEngine, Verdict
+from collections.abc import Callable
+
 from al_furqan.core.cot import COTMonitorResult
 from al_furqan.core.cot_prompts import (
     build_cot_mirror_prompt,
     build_cot_monitor_prompt,
 )
+from al_furqan.core.reasoning_engine import ReasoningEngine, Verdict
 
 
 class COTReasoningEngine(ReasoningEngine):

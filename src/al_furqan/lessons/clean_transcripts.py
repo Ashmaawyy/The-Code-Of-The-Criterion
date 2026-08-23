@@ -15,7 +15,10 @@ import sys
 from pathlib import Path
 
 from al_furqan.lessons.text_utils import (
-    CHAPTER_PATTERN, is_blank, is_timestamp, to_arabic_ordinal,
+    CHAPTER_PATTERN,
+    is_blank,
+    is_timestamp,
+    to_arabic_ordinal,
 )
 
 logger = logging.getLogger(__name__)
@@ -23,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 def parse_txt_file(filepath: Path) -> dict:
     """Parse a transcript txt file into structured data."""
-    with open(filepath, 'r', encoding='utf-8') as f:
+    with open(filepath, encoding="utf-8") as f:
         raw_lines = f.readlines()
 
     chapters = []
@@ -43,11 +46,13 @@ def parse_txt_file(filepath: Path) -> dict:
             if content_lines:
                 text = merge_content_lines(content_lines)
                 if text:
-                    chapters.append({
-                        "chapter_number": current_chapter_num,
-                        "title": current_chapter_title,
-                        "content": text
-                    })
+                    chapters.append(
+                        {
+                            "chapter_number": current_chapter_num,
+                            "title": current_chapter_title,
+                            "content": text,
+                        }
+                    )
 
             current_chapter_num = int(m.group(1))
             current_chapter_title = m.group(2).strip()
@@ -66,21 +71,20 @@ def parse_txt_file(filepath: Path) -> dict:
     if content_lines:
         text = merge_content_lines(content_lines)
         if text:
-            chapters.append({
-                "chapter_number": current_chapter_num,
-                "title": current_chapter_title,
-                "content": text
-            })
+            chapters.append(
+                {
+                    "chapter_number": current_chapter_num,
+                    "title": current_chapter_title,
+                    "content": text,
+                }
+            )
 
     # If no explicit chapters and only one block, mark it
     if not has_explicit_chapters and len(chapters) == 1:
         chapters[0]["chapter_number"] = 1
         chapters[0]["title"] = "مقدمة"
 
-    return {
-        "has_explicit_chapters": has_explicit_chapters,
-        "chapters": chapters
-    }
+    return {"has_explicit_chapters": has_explicit_chapters, "chapters": chapters}
 
 
 def merge_content_lines(lines: list[str]) -> str:
@@ -90,14 +94,14 @@ def merge_content_lines(lines: list[str]) -> str:
     # Join all lines with space (they're fragments of continuous speech)
     text = " ".join(lines)
     # Clean up multiple spaces
-    text = re.sub(r'\s+', ' ', text).strip()
+    text = re.sub(r"\s+", " ", text).strip()
     return text
 
 
 def build_line_mapping(filepath: Path) -> dict:
     """Build a mapping from original file line numbers (1-indexed) to
     content-line indices (0-indexed), skipping timestamp lines."""
-    with open(filepath, 'r', encoding='utf-8') as f:
+    with open(filepath, encoding="utf-8") as f:
         raw_lines = f.readlines()
 
     mapping = {}  # orig_line_num -> content_line_idx
@@ -105,15 +109,20 @@ def build_line_mapping(filepath: Path) -> dict:
     for i, line in enumerate(raw_lines):
         orig_line_num = i + 1  # 1-indexed
         stripped = line.strip()
-        if is_blank(stripped) or is_timestamp(stripped) or CHAPTER_PATTERN.match(stripped):
+        if (
+            is_blank(stripped)
+            or is_timestamp(stripped)
+            or CHAPTER_PATTERN.match(stripped)
+        ):
             continue
         mapping[orig_line_num] = content_idx
         content_idx += 1
     return mapping
 
 
-def find_nearest_content_idx(orig_line: int, line_map: dict,
-                             max_search: int = 30) -> int:
+def find_nearest_content_idx(
+    orig_line: int, line_map: dict, max_search: int = 30
+) -> int:
     """Find the content-line index closest to the given original line number.
 
     Args:
@@ -144,8 +153,9 @@ def find_nearest_content_idx(orig_line: int, line_map: dict,
     return line_map[keys[-1]]
 
 
-def inject_chapters(chapter_markers: list[dict],
-                    all_content_lines: list[str], filepath: Path) -> dict:
+def inject_chapters(
+    chapter_markers: list[dict], all_content_lines: list[str], filepath: Path
+) -> dict:
     """Re-structure a chapter-less file using provided chapter markers.
 
     chapter_markers: list of {"line": int, "title": str} where line is 1-indexed
@@ -168,18 +178,16 @@ def inject_chapters(chapter_markers: list[dict],
         chunk = all_content_lines[start_idx:end_idx]
         text = merge_content_lines(chunk)
         if text:
-            chapters.append({
-                "chapter_number": i + 1,
-                "title": marker["title"],
-                "content": text
-            })
+            chapters.append(
+                {"chapter_number": i + 1, "title": marker["title"], "content": text}
+            )
 
     return {"has_explicit_chapters": True, "chapters": chapters}
 
 
 def extract_content_lines(filepath: Path) -> list[str]:
     """Extract only content lines (no timestamps, no chapter markers) from a file."""
-    with open(filepath, 'r', encoding='utf-8') as f:
+    with open(filepath, encoding="utf-8") as f:
         raw_lines = f.readlines()
 
     content = []
@@ -199,7 +207,7 @@ def get_lesson_number(filename: str) -> int:
 
     Case-insensitive: handles 'Lesson_01', 'LESSON_01', 'lesson_01'.
     """
-    m = re.search(r'lesson[_-]?(\d+)', filename, re.IGNORECASE)
+    m = re.search(r"lesson[_-]?(\d+)", filename, re.IGNORECASE)
     return int(m.group(1)) if m else 0
 
 
@@ -210,12 +218,11 @@ def build_json(lesson_num: int, chapters: list[dict]) -> dict:
         "surah": "الأنعام",
         "title": f"مدارسة سورة الأنعام - المجلس {to_arabic_ordinal(lesson_num)}",
         "total_chapters": len(chapters),
-        "chapters": chapters
+        "chapters": chapters,
     }
 
 
-def process_all(lessons_dir: Path, output_dir: Path,
-                chapters_map: dict = None):
+def process_all(lessons_dir: Path, output_dir: Path, chapters_map: dict = None):
     """Process all txt files.
 
     Args:
@@ -242,53 +249,76 @@ def process_all(lessons_dir: Path, output_dir: Path,
             logger.error("Failed to read %s: %s", txt_file.name, exc)
             continue
 
-        if not parsed["has_explicit_chapters"] and chapters_map and lesson_num in chapters_map:
+        if (
+            not parsed["has_explicit_chapters"]
+            and chapters_map
+            and lesson_num in chapters_map
+        ):
             # Use provided chapter markers
             content_lines = extract_content_lines(txt_file)
             markers = chapters_map[lesson_num]
             parsed = inject_chapters(markers, content_lines, txt_file)
-            logger.info("Injected %d chapters from provided data", len(parsed['chapters']))
+            logger.info(
+                "Injected %d chapters from provided data", len(parsed["chapters"])
+            )
         elif parsed["has_explicit_chapters"]:
-            logger.info("Found %d existing chapters", len(parsed['chapters']))
+            logger.info("Found %d existing chapters", len(parsed["chapters"]))
         else:
             logger.warning("No chapters found and no chapter data provided")
 
         result = build_json(lesson_num, parsed["chapters"])
 
         out_path = output_dir / f"lesson_{lesson_num:02d}_Anaam.json"
-        with open(out_path, 'w', encoding='utf-8') as f:
+        with open(out_path, "w", encoding="utf-8") as f:
             json.dump(result, f, ensure_ascii=False, indent=2)
 
         total_words = sum(len(ch["content"].split()) for ch in result["chapters"])
-        logger.info("%d chapters, ~%d words -> %s",
-                    len(result['chapters']), total_words, out_path.name)
+        logger.info(
+            "%d chapters, ~%d words -> %s",
+            len(result["chapters"]),
+            total_words,
+            out_path.name,
+        )
 
     logger.info("Done! Output in %s", output_dir)
 
 
 def main():
     """CLI entry point."""
-    from al_furqan.lessons.logging_config import setup_logging
     from al_furqan.lessons.config import PipelineConfig
+    from al_furqan.lessons.logging_config import setup_logging
+
     setup_logging()
 
     cfg = PipelineConfig()
 
     parser = argparse.ArgumentParser(
-        description="Clean YouTube transcript txt files and convert to structured JSON.")
-    parser.add_argument("--input", type=Path, default=cfg.lessons_input_dir,
-                        help="Directory containing lesson txt files")
-    parser.add_argument("--output", type=Path, default=cfg.lessons_clean_dir,
-                        help="Directory to write clean JSON files to")
-    parser.add_argument("--chapters", type=Path,
-                        default=cfg.lessons_dir / "chapter_data.json",
-                        help="Path to chapter_data.json")
+        description="Clean YouTube transcript txt files and convert to structured JSON."
+    )
+    parser.add_argument(
+        "--input",
+        type=Path,
+        default=cfg.lessons_input_dir,
+        help="Directory containing lesson txt files",
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=cfg.lessons_clean_dir,
+        help="Directory to write clean JSON files to",
+    )
+    parser.add_argument(
+        "--chapters",
+        type=Path,
+        default=cfg.lessons_dir / "chapter_data.json",
+        help="Path to chapter_data.json",
+    )
     args = parser.parse_args()
 
     chapter_data = None
     if args.chapters.exists():
         try:
-            with open(args.chapters, 'r', encoding='utf-8') as file:
+            with open(args.chapters, encoding="utf-8") as file:
                 raw = json.load(file)
             chapter_data = {int(k): v for k, v in raw.items()}
             logger.info("Loaded chapter data for %d lessons", len(chapter_data))

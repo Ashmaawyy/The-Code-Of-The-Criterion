@@ -7,6 +7,7 @@ receive already-extracted facts.
 """
 
 from abc import ABC, abstractmethod
+
 from al_furqan.engine.models import GateScore
 
 

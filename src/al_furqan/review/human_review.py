@@ -14,12 +14,11 @@ import json
 import time
 
 from al_furqan.core.reasoning_engine import (
-    Verdict,
-    GateScore,
     GateResult,
+    GateScore,
+    Verdict,
 )
 from al_furqan.store.es_verdict_store import ESVerdictStore as VerdictStore
-
 
 # ---------------------------------------------------------------------------
 # Display Helpers
@@ -354,9 +353,10 @@ class HumanReview:
                 reason = prompt_text("  Reason for rejection: ")
                 verdict_id = self.store.store(verdict, status="rejected")
                 # Append rejection reason via ES update
-                if hasattr(self.store, '_es'):
+                if hasattr(self.store, "_es"):
                     self.store._es.update(
-                        index=self.store._index, id=verdict_id,
+                        index=self.store._index,
+                        id=verdict_id,
                         body={"doc": {"rejection_reason": reason}},
                         refresh="wait_for",
                     )
@@ -379,7 +379,11 @@ class HumanReview:
         # List verdicts from ES
         resp = self.store._es.search(
             index=self.store._index,
-            body={"query": {"match_all": {}}, "sort": [{"timestamp": "desc"}], "size": 20},
+            body={
+                "query": {"match_all": {}},
+                "sort": [{"timestamp": "desc"}],
+                "size": 20,
+            },
         )
         verdict_docs = resp["hits"]["hits"]
         if not verdict_docs:

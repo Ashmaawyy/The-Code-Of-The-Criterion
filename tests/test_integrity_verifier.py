@@ -1,11 +1,11 @@
 """Tests for the Axiom Integrity Verifier (Sprint 6A)."""
 
 import pytest
-  # pylint: disable=wrong-import-order
 
+# pylint: disable=wrong-import-order
 from al_furqan.engine.security.integrity import (
-    IntegrityVerifier,
     IntegrityStatus,
+    IntegrityVerifier,
     SecurityError,
 )
 
@@ -24,7 +24,12 @@ class TestIntegrityVerifier:
         """All hashes should be 64-char hex strings (SHA-256)."""
         verifier = IntegrityVerifier()
         status = verifier.verify()
-        for h in [status.axiom_hash, status.gate_hash, status.scoring_hash, status.combined_hash]:
+        for h in [
+            status.axiom_hash,
+            status.gate_hash,
+            status.scoring_hash,
+            status.combined_hash,
+        ]:
             assert len(h) == 64
             assert all(c in "0123456789abcdef" for c in h)
 

@@ -1,7 +1,6 @@
 """Tests for security middleware — headers, body size limits, content-type validation."""
 
 
-
 class TestSecurityHeaders:
     """Test that security headers are present on all responses."""
 

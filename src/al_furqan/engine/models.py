@@ -5,11 +5,9 @@ Core data structures for the reasoning engine: SystemType, GateResult,
 GateScore, Verdict, DualPerspectiveVerdict, InformationalResponse.
 """
 
+import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional
-import time
-
 
 # ---------------------------------------------------------------------------
 # Enums
@@ -83,12 +81,12 @@ class Verdict:  # pylint: disable=too-many-instance-attributes
     passes: int  # how many self-correction passes were run
     timestamp: float = field(default_factory=time.time)
     # 3A.4 — Model metadata
-    model_provider: Optional[str] = None
-    model_name: Optional[str] = None
-    model_temperature: Optional[float] = None
-    raw_scan_response: Optional[str] = None
-    raw_mirror_response: Optional[str] = None
-    raw_verdict_response: Optional[str] = None
+    model_provider: str | None = None
+    model_name: str | None = None
+    model_temperature: float | None = None
+    raw_scan_response: str | None = None
+    raw_mirror_response: str | None = None
+    raw_verdict_response: str | None = None
 
     def to_log(self) -> str:
         """Return a human-readable string representation of the verdict."""
@@ -233,9 +231,9 @@ class DualPerspectiveVerdict:
     embedded_assumptions: list[str]
     neutralized_question: str
     system_verdict: Verdict  # The main verdict on the system
-    assumptions_verdict: Optional[
-        Verdict
-    ]  # Verdict on the question's assumptions (if any)
+    assumptions_verdict: (
+        Verdict | None
+    )  # Verdict on the question's assumptions (if any)
 
     def to_dict(self) -> dict:
         """Execute to_dict."""

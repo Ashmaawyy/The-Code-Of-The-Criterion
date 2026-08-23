@@ -13,8 +13,7 @@ Scoring:
 """
 
 from al_furqan.engine.gates.base import Gate
-from al_furqan.engine.models import GateScore, GateResult
-
+from al_furqan.engine.models import GateResult, GateScore
 
 # Deterministic score map for source types
 SOURCE_TYPE_SCORES = {

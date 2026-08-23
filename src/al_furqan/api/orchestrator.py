@@ -7,22 +7,22 @@ This is the only component that knows about all layers.
 # pylint: disable=logging-fstring-interpolation
 # pylint: disable=broad-exception-caught
 
-from dataclasses import dataclass, field
-from typing import Optional, Callable
 import hashlib
+import logging
 import time
 import uuid
-import logging
+from collections.abc import Callable
+from dataclasses import dataclass, field
 
 from al_furqan.engine.models import (
-    Verdict,
     DualPerspectiveVerdict,
+    Verdict,
 )
-from al_furqan.engine.symbolic.verifier import VerificationResult
-from al_furqan.engine.security.integrity import IntegrityVerifier
-from al_furqan.engine.security.prompt_guard import PromptGuard
-from al_furqan.engine.security.output_validator import OutputValidator
 from al_furqan.engine.security.audit import AuditLogger
+from al_furqan.engine.security.integrity import IntegrityVerifier
+from al_furqan.engine.security.output_validator import OutputValidator
+from al_furqan.engine.security.prompt_guard import PromptGuard
+from al_furqan.engine.symbolic.verifier import VerificationResult
 
 logger = logging.getLogger("al_furqan.orchestrator")
 
@@ -43,13 +43,13 @@ class EvaluationResult:  # pylint: disable=too-many-instance-attributes
     verdict: Verdict
 
     # Dual perspective (if embedded assumptions detected)
-    dual_verdict: Optional[DualPerspectiveVerdict] = None
+    dual_verdict: DualPerspectiveVerdict | None = None
 
     # KB sources used
     sources: list = field(default_factory=list)
 
     # Z3 verification
-    z3_result: Optional[VerificationResult] = None
+    z3_result: VerificationResult | None = None
 
     # Metadata
     evaluation_id: str = ""
@@ -103,7 +103,7 @@ class Orchestrator:  # pylint: disable=too-many-instance-attributes
         verdict_store=None,
         feedback_store=None,
         symbolic_verifier=None,
-        llm_fn: Optional[Callable[[str], str]] = None,
+        llm_fn: Callable[[str], str] | None = None,
     ):
         self.engine = engine_pipeline
         self.kb = kb_retriever

@@ -73,7 +73,9 @@ class ESGraphStore:
         self._es.index(index=self._index, id=edge_id, body=doc, refresh="wait_for")
         return edge_id
 
-    def get_edges_by_type(self, edge_type: str, limit: int = 200) -> list[dict[str, Any]]:
+    def get_edges_by_type(
+        self, edge_type: str, limit: int = 200
+    ) -> list[dict[str, Any]]:
         """Return all edges of a given type."""
         body = {"query": {"term": {"edge_type": edge_type}}, "size": limit}
         resp = self._es.search(index=self._index, body=body)
@@ -127,15 +129,21 @@ class ESGraphStore:
         resp = self._es.search(index=self._index, body=body)
         return [h["_source"] for h in resp["hits"]["hits"]]
 
-    def get_outgoing(self, node_id: str, edge_types: list[str] | None = None,
-                     limit: int = 100) -> list[dict]:
+    def get_outgoing(
+        self, node_id: str, edge_types: list[str] | None = None, limit: int = 100
+    ) -> list[dict]:
         """Shortcut for outgoing edges."""
-        return self.get_neighbors(node_id, edge_types=edge_types, direction="out", limit=limit)
+        return self.get_neighbors(
+            node_id, edge_types=edge_types, direction="out", limit=limit
+        )
 
-    def get_incoming(self, node_id: str, edge_types: list[str] | None = None,
-                     limit: int = 100) -> list[dict]:
+    def get_incoming(
+        self, node_id: str, edge_types: list[str] | None = None, limit: int = 100
+    ) -> list[dict]:
         """Shortcut for incoming edges."""
-        return self.get_neighbors(node_id, edge_types=edge_types, direction="in", limit=limit)
+        return self.get_neighbors(
+            node_id, edge_types=edge_types, direction="in", limit=limit
+        )
 
     # ------------------------------------------------------------------
     # Traversal (BFS, 1-2 hops)
@@ -159,8 +167,9 @@ class ESGraphStore:
         for _depth in range(max_depth):
             next_frontier = []
             for node_id in frontier:
-                edges = self.get_outgoing(node_id, edge_types=edge_types,
-                                          limit=limit_per_hop)
+                edges = self.get_outgoing(
+                    node_id, edge_types=edge_types, limit=limit_per_hop
+                )
                 for edge in edges:
                     all_edges.append(edge)
                     target = edge["target"]
@@ -188,7 +197,6 @@ class ESGraphStore:
         }
         resp = self._es.search(index=self._index, body=body)
         by_type = {
-            b["key"]: b["doc_count"]
-            for b in resp["aggregations"]["by_type"]["buckets"]
+            b["key"]: b["doc_count"] for b in resp["aggregations"]["by_type"]["buckets"]
         }
         return {"total_edges": total, "by_type": by_type}

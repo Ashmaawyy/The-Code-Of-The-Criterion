@@ -22,8 +22,8 @@ from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
 
 from al_furqan import setup_logging
-from al_furqan.kb.es.client import create_es_client
 from al_furqan.kb.es.analyzers import ANALYSIS_SETTINGS
+from al_furqan.kb.es.client import create_es_client
 
 logger = logging.getLogger(__name__)
 
@@ -67,12 +67,15 @@ TAFSIR_INDEX_DEFINITION = {
 # Surah name → number mapping
 # ---------------------------------------------------------------------------
 
+
 def _build_surah_map(quran_path: Path | None = None) -> dict[str, int]:
     """Build surah_name_ar → surah_number mapping from quran_complete.json."""
     if quran_path is None:
         quran_path = (
             Path(__file__).resolve().parent.parent.parent.parent.parent
-            / "data" / "quran" / "quran_complete.json"
+            / "data"
+            / "quran"
+            / "quran_complete.json"
         )
 
     if quran_path.exists():
@@ -171,8 +174,8 @@ def _match_ayah_number(es: Elasticsearch, surah: int, ayah_text: str) -> int:
 # Parse tafsir book metadata
 # ---------------------------------------------------------------------------
 
-_ERA_PATTERN = re.compile(r'\(ت\s*(\d+)\s*هـ\)')
-_MODERN_PATTERN = re.compile(r'\(مـ\s*(\d+)\s*م')
+_ERA_PATTERN = re.compile(r"\(ت\s*(\d+)\s*هـ\)")
+_MODERN_PATTERN = re.compile(r"\(مـ\s*(\d+)\s*م")
 
 
 def _parse_book_meta(book_name: str) -> tuple[str, str]:
@@ -195,7 +198,7 @@ def _parse_book_meta(book_name: str) -> tuple[str, str]:
     if "/" in book_name:
         after_slash = book_name.split("/")[-1].strip()
         # Remove era part
-        scholar = re.sub(r'\(.*\)', '', after_slash).strip()
+        scholar = re.sub(r"\(.*\)", "", after_slash).strip()
         # Remove leading *
         scholar = scholar.lstrip("* ").strip()
 
@@ -205,6 +208,7 @@ def _parse_book_meta(book_name: str) -> tuple[str, str]:
 # ---------------------------------------------------------------------------
 # Main ingestion
 # ---------------------------------------------------------------------------
+
 
 def ingest_tafsir(
     es: Elasticsearch,
@@ -226,7 +230,11 @@ def ingest_tafsir(
             else:
                 count = es.count(index=index)["count"]
                 if count > 0:
-                    logger.info("Index %s already has %d docs. Use --drop to recreate.", index, count)
+                    logger.info(
+                        "Index %s already has %d docs. Use --drop to recreate.",
+                        index,
+                        count,
+                    )
                     return count
 
         if not es.indices.exists(index=index):
@@ -245,12 +253,15 @@ def ingest_tafsir(
     # Load HuggingFace dataset
     logger.info("Downloading MohamedRashad/Quran-Tafseer from HuggingFace...")
     from datasets import load_dataset  # pylint: disable=import-outside-toplevel
+
     ds = load_dataset("MohamedRashad/Quran-Tafseer", split="train")
     logger.info("Downloaded %d rows", len(ds))
 
     if dry_run:
         books = set(ds["tafsir_book"])
-        logger.info("[DRY RUN] Would index %d entries from %d tafsir books", len(ds), len(books))
+        logger.info(
+            "[DRY RUN] Would index %d entries from %d tafsir books", len(ds), len(books)
+        )
         return len(ds)
 
     # Process and index in batches
@@ -287,23 +298,25 @@ def ingest_tafsir(
 
         doc_id = f"{verse_key}_{hash(row['tafsir_book']) % 100000:05d}"
 
-        actions.append({
-            "_index": index,
-            "_id": doc_id,
-            "_source": {
-                "verse_key": verse_key,
-                "surah": surah_num,
-                "ayah": ayah_num,
-                "surah_name": surah_name,
-                "revelation_type": row.get("revelation_type", ""),
-                "ayah_text": ayah_text,
-                "tafsir_book": row["tafsir_book"],
-                "tafsir_scholar": scholar,
-                "tafsir_era": era,
-                "tafsir_content": tafsir_content,
-                "content_length": len(tafsir_content),
-            },
-        })
+        actions.append(
+            {
+                "_index": index,
+                "_id": doc_id,
+                "_source": {
+                    "verse_key": verse_key,
+                    "surah": surah_num,
+                    "ayah": ayah_num,
+                    "surah_name": surah_name,
+                    "revelation_type": row.get("revelation_type", ""),
+                    "ayah_text": ayah_text,
+                    "tafsir_book": row["tafsir_book"],
+                    "tafsir_scholar": scholar,
+                    "tafsir_era": era,
+                    "tafsir_content": tafsir_content,
+                    "content_length": len(tafsir_content),
+                },
+            }
+        )
 
         # Flush batch
         if len(actions) >= batch_size:
@@ -314,8 +327,13 @@ def ingest_tafsir(
             actions = []
 
             if (i + 1) % 20000 == 0:
-                logger.info("Progress: %d/%d indexed (%d skipped, %d unmatched ayahs)",
-                            indexed, i + 1, skipped, unmatched_ayahs)
+                logger.info(
+                    "Progress: %d/%d indexed (%d skipped, %d unmatched ayahs)",
+                    indexed,
+                    i + 1,
+                    skipped,
+                    unmatched_ayahs,
+                )
 
     # Final batch
     if actions:
@@ -333,7 +351,9 @@ def ingest_tafsir(
 
     # Show stats
     stats = es.indices.stats(index=index)
-    size_mb = stats["indices"][index]["primaries"]["store"]["size_in_bytes"] / 1024 / 1024
+    size_mb = (
+        stats["indices"][index]["primaries"]["store"]["size_in_bytes"] / 1024 / 1024
+    )
     logger.info("  Index size: %.1f MB", size_mb)
 
     return indexed
@@ -343,15 +363,21 @@ def ingest_tafsir(
 # CLI
 # ---------------------------------------------------------------------------
 
+
 def main():
     setup_logging()
 
     parser = argparse.ArgumentParser(
-        description="Ingest MohamedRashad/Quran-Tafseer dataset into Elasticsearch")
+        description="Ingest MohamedRashad/Quran-Tafseer dataset into Elasticsearch"
+    )
     parser.add_argument("--es-url", default=None, help="Elasticsearch URL")
-    parser.add_argument("--index", default=TAFSIR_INDEX, help=f"Index name (default: {TAFSIR_INDEX})")
+    parser.add_argument(
+        "--index", default=TAFSIR_INDEX, help=f"Index name (default: {TAFSIR_INDEX})"
+    )
     parser.add_argument("--drop", action="store_true", help="Drop and recreate index")
-    parser.add_argument("--dry-run", action="store_true", help="Preview without indexing")
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Preview without indexing"
+    )
     parser.add_argument("--batch-size", type=int, default=2000, help="Bulk batch size")
     args = parser.parse_args()
 
@@ -359,8 +385,11 @@ def main():
     es = create_es_client(hosts=hosts)
 
     ingest_tafsir(
-        es, index=args.index, drop_existing=args.drop,
-        dry_run=args.dry_run, batch_size=args.batch_size,
+        es,
+        index=args.index,
+        drop_existing=args.drop,
+        dry_run=args.dry_run,
+        batch_size=args.batch_size,
     )
 
 

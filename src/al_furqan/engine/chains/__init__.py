@@ -1,21 +1,21 @@
 """Al-Furqan Guided Reasoning Chains."""
 
 from al_furqan.engine.chains.definitions import (
-    SOURCE_INTEGRITY_CHAIN,
-    STRUCTURAL_CONSISTENCY_CHAIN,
+    GATE_CHAINS,
     MEDIATION_ZEROING_CHAIN,
     ORIGIN_AWARE_CHAIN,
-    GATE_CHAINS,
+    SOURCE_INTEGRITY_CHAIN,
+    STRUCTURAL_CONSISTENCY_CHAIN,
 )
 from al_furqan.engine.chains.executor import ChainExecutor
 from al_furqan.engine.chains.scorer import DeterministicScorer
 
 __all__ = [
-    "SOURCE_INTEGRITY_CHAIN",
-    "STRUCTURAL_CONSISTENCY_CHAIN",
+    "GATE_CHAINS",
     "MEDIATION_ZEROING_CHAIN",
     "ORIGIN_AWARE_CHAIN",
-    "GATE_CHAINS",
+    "SOURCE_INTEGRITY_CHAIN",
+    "STRUCTURAL_CONSISTENCY_CHAIN",
     "ChainExecutor",
     "DeterministicScorer",
 ]

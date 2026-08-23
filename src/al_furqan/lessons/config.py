@@ -5,9 +5,9 @@ defined here.  CLI scripts override these via argparse; the values here
 are the fallback defaults.
 """
 
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
-import os
 
 from al_furqan.paths import DATA_ARCHIVE as _DATA_DIR
 
@@ -18,7 +18,9 @@ class PipelineConfig:
 
     # Elasticsearch
     es_url: str = field(
-        default_factory=lambda: os.environ.get("ELASTICSEARCH_URL", "http://localhost:9200")
+        default_factory=lambda: os.environ.get(
+            "ELASTICSEARCH_URL", "http://localhost:9200"
+        )
     )
     es_quran_index: str = "furqan_quran"
     es_hadith_index: str = "furqan_hadith"
@@ -66,6 +68,7 @@ def _cuda_available() -> bool:
     """Check if CUDA is available without importing torch."""
     try:
         import torch  # pylint: disable=import-outside-toplevel
+
         return torch.cuda.is_available()
     except ImportError:
         return False

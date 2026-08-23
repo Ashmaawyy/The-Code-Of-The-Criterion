@@ -60,7 +60,9 @@ class TestAuditLogger:
         """get_stats should compute correct aggregates."""
         self._log_sample("eval_s1", processing_time_ms=100.0)
         self._log_sample("eval_s2", processing_time_ms=200.0)
-        self._log_sample("eval_s3", processing_time_ms=300.0, prompt_injection_detected=True)
+        self._log_sample(
+            "eval_s3", processing_time_ms=300.0, prompt_injection_detected=True
+        )
 
         stats = self.logger.get_stats()
         assert stats["total_evaluations"] == 3

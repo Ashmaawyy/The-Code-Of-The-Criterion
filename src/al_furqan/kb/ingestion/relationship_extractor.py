@@ -8,13 +8,11 @@ and require human review before entering the KG.
 
 import json
 import re
-from typing import List
 from dataclasses import dataclass
 
+from ...providers.llm_layer import LLMConfig, LLMProvider, create_llm
 from ..ingestion.models import ProposedEdge
 from ..ingestion.transcript_chunker import TranscriptChunk, format_chunk_timestamp
-from ...providers.llm_layer import LLMProvider, LLMConfig, create_llm
-
 
 EXTRACTION_PROMPT_TEMPLATE = """You are an Islamic knowledge extraction assistant analyzing a scholarly lecture (دروس علمية) on Surah Al-Anam by Sheikh Ahmad Al-Sayed.  # pylint: disable=line-too-long
 
@@ -94,10 +92,10 @@ class ExtractionResult:
     """Result of extracting relationships from a chunk."""
 
     chunk: TranscriptChunk
-    edges: List[ProposedEdge]
-    verse_references: List[str]
-    topics: List[str]
-    hadith_references: List[str]
+    edges: list[ProposedEdge]
+    verse_references: list[str]
+    topics: list[str]
+    hadith_references: list[str]
     raw_llm_response: str
 
 
@@ -187,7 +185,7 @@ def extract_relationships(  # pylint: disable=too-many-arguments, too-many-local
     central_verse = parsed.get("central_verse", "")
 
     # Convert relationships to ProposedEdge objects
-    edges: List[ProposedEdge] = []
+    edges: list[ProposedEdge] = []
     for rel in relationships:
         if not isinstance(rel, dict):
             continue

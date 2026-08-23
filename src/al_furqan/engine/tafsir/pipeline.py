@@ -11,22 +11,22 @@ The LLM does the thinking and searching.
 import json
 import logging
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Callable
 
-from al_furqan.kb.tafsir.query_analyzer import analyze_query, QueryAnalysis
-from al_furqan.kb.tafsir.kb_tools import TafsirKBTools
-from al_furqan.kb.tafsir.tool_executor import (
-    ToolExecutor,
-    parse_tool_calls_from_response,
-)
-from al_furqan.engine.tafsir.reasoning_plan_builder import (
-    ReasoningPlanBuilder,
-    ReasoningPlan,
-)
 from al_furqan.engine.tafsir.feedback import (  # pylint: disable=unused-import
     TafsirFeedbackStore,
     create_feedback_from_result,
+)
+from al_furqan.engine.tafsir.reasoning_plan_builder import (
+    ReasoningPlan,
+    ReasoningPlanBuilder,
+)
+from al_furqan.kb.tafsir.kb_tools import TafsirKBTools
+from al_furqan.kb.tafsir.query_analyzer import QueryAnalysis, analyze_query
+from al_furqan.kb.tafsir.tool_executor import (
+    ToolExecutor,
+    parse_tool_calls_from_response,
 )
 
 logger = logging.getLogger(__name__)

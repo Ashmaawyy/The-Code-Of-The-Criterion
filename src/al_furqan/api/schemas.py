@@ -1,10 +1,9 @@
 """Al-Furqan API Schemas — Pydantic v2 models for request/response validation."""
 
-from pydantic import BaseModel, Field
-from typing import Optional  # pylint: disable=wrong-import-order
-from enum import Enum  # pylint: disable=wrong-import-order
 from datetime import datetime  # pylint: disable=wrong-import-order
+from enum import Enum  # pylint: disable=wrong-import-order
 
+from pydantic import BaseModel, Field
 
 # ──────────────────────────────────────────────
 # Enums
@@ -72,11 +71,11 @@ class EvaluateRequest(BaseModel):  # pylint: disable=too-few-public-methods
         max_length=5000,
         description="Question or framework to evaluate against Islamic principles",
     )
-    context: Optional[str] = Field(
+    context: str | None = Field(
         None,
         description="Additional context to guide the evaluation",
     )
-    options: Optional[dict] = Field(
+    options: dict | None = Field(
         default_factory=lambda: {
             "max_correction_passes": 5,
             "include_precedent": True,
@@ -110,11 +109,11 @@ class ReviewRequest(BaseModel):  # pylint: disable=too-few-public-methods
         ...,
         description="Review action to perform",
     )
-    corrections: Optional[dict] = Field(
+    corrections: dict | None = Field(
         None,
         description="Correction payload when action is 'correct'",
     )
-    notes: Optional[str] = Field(
+    notes: str | None = Field(
         None,
         description="Reviewer notes explaining the decision",
     )
@@ -183,7 +182,7 @@ class VerdictResponse(BaseModel):  # pylint: disable=too-few-public-methods
     passes: int = Field(..., description="Number of correction passes performed")
     timestamp: float = Field(..., description="Unix timestamp of verdict creation")
     status: VerdictStatusEnum = Field(..., description="Current review status")
-    criterion_test_result: Optional[str] = Field(
+    criterion_test_result: str | None = Field(
         None,
         description="Result of criterion test if applicable",
     )
@@ -208,11 +207,11 @@ class EvaluationStatusResponse(BaseModel):  # pylint: disable=too-few-public-met
         ...,
         description="Current status: 'processing', 'completed', or 'failed'",
     )
-    progress: Optional[str] = Field(
+    progress: str | None = Field(
         None,
         description="Human-readable progress indicator",
     )
-    verdict: Optional[VerdictResponse] = Field(
+    verdict: VerdictResponse | None = Field(
         None,
         description="The completed verdict (present only when status is 'completed')",
     )
@@ -237,11 +236,11 @@ class StatsResponse(BaseModel):  # pylint: disable=too-few-public-methods
     by_status: dict[str, int] = Field(
         ..., description="Verdict count grouped by status"
     )
-    by_system: Optional[dict[str, int]] = Field(
+    by_system: dict[str, int] | None = Field(
         None,
         description="Verdict count grouped by system type",
     )
-    accuracy_trend: Optional[list] = Field(
+    accuracy_trend: list | None = Field(
         None,
         description="Historical accuracy data points",
     )
@@ -260,7 +259,7 @@ class ErrorResponse(BaseModel):  # pylint: disable=too-few-public-methods
     """Standard error response body."""
 
     detail: str = Field(..., description="Human-readable error message")
-    error_code: Optional[str] = Field(
+    error_code: str | None = Field(
         None,
         description="Machine-readable error code",
     )

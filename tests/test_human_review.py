@@ -13,16 +13,15 @@ Note: Interactive CLI functions are tested by mocking builtins.input.
 import logging
 from unittest.mock import patch
 
-
-from al_furqan.core.reasoning_engine import Verdict, GateScore, GateResult, SystemType
+from al_furqan.core.reasoning_engine import GateResult, GateScore, SystemType, Verdict
 from al_furqan.review.human_review import (
-    display_verdict,
+    HumanReview,
     display_stored_verdict,
+    display_verdict,
     prompt_choice,
-    prompt_text,
     prompt_int,
     prompt_list,
-    HumanReview,
+    prompt_text,
 )
 
 logger = logging.getLogger("test_human_review")
@@ -32,8 +31,10 @@ logger = logging.getLogger("test_human_review")
 # Display Functions
 # ---------------------------------------------------------------------------
 
+
 class TestDisplayVerdict:
     """TestDisplayVerdict class."""
+
     def test_displays_question(self, sample_verdict, capsys):
         """Test displays_question."""
         logger.info("Testing display_verdict shows question text")
@@ -72,7 +73,9 @@ class TestDisplayVerdict:
 
     def test_displays_consequences(self, sample_verdict, capsys):
         """Test displays_consequences."""
-        logger.info("Testing display_verdict shows short-term and long-term consequences")
+        logger.info(
+            "Testing display_verdict shows short-term and long-term consequences"
+        )
         display_verdict(sample_verdict)
         output = capsys.readouterr().out
         assert "Increased debt" in output
@@ -98,8 +101,12 @@ class TestDisplayVerdict:
                 GateScore("Test Gate", 30, GateResult.FAIL, "Failed."),
             ],
             origin_gate=GateResult.FAIL,
-            consequences_short_term=[], consequences_long_term=[],
-            revised_reasoning="", final_judgment="", total_score=0, passes=0,
+            consequences_short_term=[],
+            consequences_long_term=[],
+            revised_reasoning="",
+            final_judgment="",
+            total_score=0,
+            passes=0,
         )
         display_verdict(v)
         output = capsys.readouterr().out
@@ -110,6 +117,7 @@ class TestDisplayVerdict:
 
 class TestDisplayStoredVerdict:  # pylint: disable=too-few-public-methods
     """TestDisplayStoredVerdict class."""
+
     def test_displays_stored_dict(self, sample_verdict, capsys):
         """Test displays_stored_dict."""
         logger.info("Testing display_stored_verdict shows ID, status, and question")
@@ -129,8 +137,10 @@ class TestDisplayStoredVerdict:  # pylint: disable=too-few-public-methods
 # Input Helpers (with mocked input)
 # ---------------------------------------------------------------------------
 
+
 class TestPromptChoice:
     """TestPromptChoice class."""
+
     @patch("builtins.input", return_value="a")
     def test_valid_choice(self, _mock_input):
         """Test valid_choice."""
@@ -143,17 +153,23 @@ class TestPromptChoice:
     @patch("builtins.input", side_effect=["x", "y", "b"])
     def test_retries_until_valid(self, mock_input):
         """Test retries_until_valid."""
-        logger.info("Testing prompt_choice retries on invalid inputs ('x', 'y') then accepts 'b'")
+        logger.info(
+            "Testing prompt_choice retries on invalid inputs ('x', 'y') then accepts 'b'"
+        )
         result = prompt_choice("Choose: ", ["a", "b"])
         logger.debug("Attempts: %d, final result='%s'", mock_input.call_count, result)
         assert result == "b"
         assert mock_input.call_count == 3
-        logger.info("Retried %d times before accepting valid input", mock_input.call_count)
+        logger.info(
+            "Retried %d times before accepting valid input", mock_input.call_count
+        )
 
     @patch("builtins.input", return_value="A")
     def test_case_insensitive(self, _mock_input):
         """Test case_insensitive."""
-        logger.info("Testing prompt_choice is case-insensitive (input='A', valid=['a','b'])")
+        logger.info(
+            "Testing prompt_choice is case-insensitive (input='A', valid=['a','b'])"
+        )
         result = prompt_choice("Choose: ", ["a", "b"])
         logger.debug("Input='A', result='%s'", result)
         assert result == "a"
@@ -162,6 +178,7 @@ class TestPromptChoice:
 
 class TestPromptText:
     """TestPromptText class."""
+
     @patch("builtins.input", return_value="hello world")
     def test_returns_text(self, _mock_input):
         """Test returns_text."""
@@ -178,7 +195,9 @@ class TestPromptText:
         result = prompt_text("Enter: ")
         logger.debug("Attempts: %d, result='%s'", mock_input.call_count, result)
         assert result == "finally"
-        logger.info("Retried %d times before accepting non-empty input", mock_input.call_count)
+        logger.info(
+            "Retried %d times before accepting non-empty input", mock_input.call_count
+        )
 
     @patch("builtins.input", return_value="")
     def test_allow_empty(self, _mock_input):
@@ -192,6 +211,7 @@ class TestPromptText:
 
 class TestPromptInt:
     """TestPromptInt class."""
+
     @patch("builtins.input", return_value="42")
     def test_returns_int(self, _mock_input):
         """Test returns_int."""
@@ -204,11 +224,16 @@ class TestPromptInt:
     @patch("builtins.input", side_effect=["abc", "150", "50"])
     def test_retries_on_invalid(self, mock_input):
         """Test retries_on_invalid."""
-        logger.info("Testing prompt_int retries on 'abc' (NaN) and '150' (out of range)")
+        logger.info(
+            "Testing prompt_int retries on 'abc' (NaN) and '150' (out of range)"
+        )
         result = prompt_int("Score: ", 0, 100)
         logger.debug("Attempts: %d, result=%d", mock_input.call_count, result)
         assert result == 50
-        logger.info("Retried %d times: rejected 'abc', '150', accepted '50'", mock_input.call_count)
+        logger.info(
+            "Retried %d times: rejected 'abc', '150', accepted '50'",
+            mock_input.call_count,
+        )
 
     @patch("builtins.input", return_value="0")
     def test_boundary_min(self, _mock_input):
@@ -231,6 +256,7 @@ class TestPromptInt:
 
 class TestPromptList:
     """TestPromptList class."""
+
     @patch("builtins.input", side_effect=["item 1", "item 2", ""])
     def test_returns_list(self, _mock_input):
         """Test returns_list."""
@@ -254,18 +280,24 @@ class TestPromptList:
 # HumanReview — Approve Flow
 # ---------------------------------------------------------------------------
 
+
 class TestHumanReviewApprove:
     """TestHumanReviewApprove class."""
+
     @patch("builtins.input", return_value="a")
     def test_approve_stores_verdict(self, _mock_input, tmp_store, sample_verdict):
         """Test approve_stores_verdict."""
         logger.info("Testing approve flow — verdict should be stored and indexed")
         review = HumanReview(tmp_store)
         verdict_id = review.review_verdict(sample_verdict)
-        logger.debug("Verdict ID: %s, chroma count: %d", verdict_id, tmp_store.collection.count())
+        logger.debug(
+            "Verdict ID: %s, chroma count: %d", verdict_id, tmp_store.collection.count()
+        )
         assert verdict_id.startswith("verdict_")
         assert tmp_store.collection.count() == 1
-        logger.info("Approved verdict stored with ID=%s, indexed in ChromaDB", verdict_id)
+        logger.info(
+            "Approved verdict stored with ID=%s, indexed in ChromaDB", verdict_id
+        )
 
     @patch("builtins.input", return_value="a")
     def test_approve_sets_status(self, _mock_input, tmp_store, sample_verdict):
@@ -283,17 +315,25 @@ class TestHumanReviewApprove:
 # HumanReview — Reject Flow
 # ---------------------------------------------------------------------------
 
+
 class TestHumanReviewReject:  # pylint: disable=too-few-public-methods
     """TestHumanReviewReject class."""
+
     @patch("builtins.input", side_effect=["r", "Reasoning is weak"])
     def test_reject_stores_with_reason(self, _mock_input, tmp_store, sample_verdict):
         """Test reject_stores_with_reason."""
-        logger.info("Testing reject flow — user rejects with reason 'Reasoning is weak'")
+        logger.info(
+            "Testing reject flow — user rejects with reason 'Reasoning is weak'"
+        )
         review = HumanReview(tmp_store)
         verdict_id = review.review_verdict(sample_verdict)
         data = tmp_store.get_verdict_by_id(verdict_id)
-        logger.debug("Status: %s, rejection_reason: '%s', chroma count: %d",
-                      data["status"], data["rejection_reason"], tmp_store.collection.count())
+        logger.debug(
+            "Status: %s, rejection_reason: '%s', chroma count: %d",
+            data["status"],
+            data["rejection_reason"],
+            tmp_store.collection.count(),
+        )
         assert data["status"] == "rejected"
         assert data["rejection_reason"] == "Reasoning is weak"
         assert tmp_store.collection.count() == 0
@@ -304,53 +344,77 @@ class TestHumanReviewReject:  # pylint: disable=too-few-public-methods
 # HumanReview — Correct Flow
 # ---------------------------------------------------------------------------
 
+
 class TestHumanReviewCorrect:
     """TestHumanReviewCorrect class."""
-    @patch("builtins.input", side_effect=[
-        "c",       # choose correct
-        "n",       # don't replace friction points
-        "n",       # don't correct gate scores
-        "n",       # don't correct origin gate
-        "n",       # don't replace short-term consequences
-        "n",       # don't replace long-term consequences
-        "n",       # don't replace reasoning
-        "n",       # don't replace judgment
-        "y",       # correct score
-        "95",      # new score
-        "y",       # confirm correction
-    ])
+
+    @patch(
+        "builtins.input",
+        side_effect=[
+            "c",  # choose correct
+            "n",  # don't replace friction points
+            "n",  # don't correct gate scores
+            "n",  # don't correct origin gate
+            "n",  # don't replace short-term consequences
+            "n",  # don't replace long-term consequences
+            "n",  # don't replace reasoning
+            "n",  # don't replace judgment
+            "y",  # correct score
+            "95",  # new score
+            "y",  # confirm correction
+        ],
+    )
     def test_correct_with_score_change(self, mock_input, tmp_store, sample_verdict):
         """Test correct_with_score_change."""
         logger.info("Testing correct flow — changing score from 85 to 95")
         review = HumanReview(tmp_store)
         verdict_id = review.review_verdict(sample_verdict)
         data = tmp_store.get_verdict_by_id(verdict_id)
-        logger.debug("Status: %s, total_score: %d, input call count: %d",
-                      data["status"], data["total_score"], mock_input.call_count)
+        logger.debug(
+            "Status: %s, total_score: %d, input call count: %d",
+            data["status"],
+            data["total_score"],
+            mock_input.call_count,
+        )
         assert data["status"] == "corrected"
         assert data["total_score"] == 95
-        logger.info("Correction flow: score changed 85→95, status='corrected', %d inputs consumed",
-                     mock_input.call_count)
+        logger.info(
+            "Correction flow: score changed 85→95, status='corrected', %d inputs consumed",
+            mock_input.call_count,
+        )
 
-    @patch("builtins.input", side_effect=[
-        "c",       # choose correct
-        "n",       # don't replace friction points
-        "n",       # don't correct gate scores
-        "n",       # don't correct origin gate
-        "n",       # don't replace short-term consequences
-        "n",       # don't replace long-term consequences
-        "n",       # don't replace reasoning
-        "n",       # don't replace judgment
-        "n",       # don't correct score
-        "n",       # decline confirmation
-        "a",       # then approve original
-    ])
-    def test_correct_then_decline_then_approve(self, mock_input, tmp_store, sample_verdict):
+    @patch(
+        "builtins.input",
+        side_effect=[
+            "c",  # choose correct
+            "n",  # don't replace friction points
+            "n",  # don't correct gate scores
+            "n",  # don't correct origin gate
+            "n",  # don't replace short-term consequences
+            "n",  # don't replace long-term consequences
+            "n",  # don't replace reasoning
+            "n",  # don't replace judgment
+            "n",  # don't correct score
+            "n",  # decline confirmation
+            "a",  # then approve original
+        ],
+    )
+    def test_correct_then_decline_then_approve(
+        self, mock_input, tmp_store, sample_verdict
+    ):
         """Test correct_then_decline_then_approve."""
-        logger.info("Testing correct flow — decline correction then fall back to approve")
+        logger.info(
+            "Testing correct flow — decline correction then fall back to approve"
+        )
         review = HumanReview(tmp_store)
         verdict_id = review.review_verdict(sample_verdict)
         data = tmp_store.get_verdict_by_id(verdict_id)
-        logger.debug("Final status: %s, input call count: %d", data["status"], mock_input.call_count)  # pylint: disable=line-too-long
+        logger.debug(
+            "Final status: %s, input call count: %d",
+            data["status"],
+            mock_input.call_count,
+        )  # pylint: disable=line-too-long
         assert data["status"] == "approved"
-        logger.info("Correction declined → approved, %d inputs consumed", mock_input.call_count)
+        logger.info(
+            "Correction declined → approved, %d inputs consumed", mock_input.call_count
+        )

@@ -1,9 +1,9 @@
 """Shared converter for turning raw verdict dicts into VerdictResponse objects."""
 
 from al_furqan.api.schemas import (
-    VerdictResponse,
-    GateScoreResponse,
     GateResultEnum,
+    GateScoreResponse,
+    VerdictResponse,
     VerdictStatusEnum,
 )
 

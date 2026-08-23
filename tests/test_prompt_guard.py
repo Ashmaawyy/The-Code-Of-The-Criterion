@@ -1,6 +1,5 @@
 """Tests for the Prompt Injection Defense (Sprint 6B)."""
 
-
 from al_furqan.engine.security.prompt_guard import PromptGuard
 
 

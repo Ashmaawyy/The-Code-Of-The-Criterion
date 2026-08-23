@@ -35,8 +35,11 @@ def create_indices(
 
     for name in targets:
         if name not in INDEX_REGISTRY:
-            logger.error("Unknown index: %s (available: %s)",
-                         name, ", ".join(INDEX_REGISTRY.keys()))
+            logger.error(
+                "Unknown index: %s (available: %s)",
+                name,
+                ", ".join(INDEX_REGISTRY.keys()),
+            )
             results[name] = False
             continue
 
@@ -114,7 +117,9 @@ def show_status(es, prefix: str = DEFAULT_PREFIX) -> None:
             stats = es.indices.stats(index=full_name)
             doc_count = stats["indices"][full_name]["primaries"]["docs"]["count"]
             size = stats["indices"][full_name]["primaries"]["store"]["size_in_bytes"]
-            logger.info("  %-20s  %6d docs  %8.1f KB", full_name, doc_count, size / 1024)
+            logger.info(
+                "  %-20s  %6d docs  %8.1f KB", full_name, doc_count, size / 1024
+            )
         else:
             logger.info("  %-20s  (not created)", full_name)
 
@@ -124,20 +129,36 @@ def main():
     setup_logging()
 
     parser = argparse.ArgumentParser(
-        description="Create Elasticsearch indices for Al-Furqan")
-    parser.add_argument("--drop", action="store_true",
-                        help="Drop and recreate existing indices")
-    parser.add_argument("--index", nargs="*", default=None,
-                        choices=list(INDEX_REGISTRY.keys()),
-                        help="Create specific indices (default: all)")
-    parser.add_argument("--test", action="store_true",
-                        help="Test the arabic_furqan analyzer after creation")
-    parser.add_argument("--status", action="store_true",
-                        help="Show index status and exit")
-    parser.add_argument("--prefix", default=DEFAULT_PREFIX,
-                        help=f"Index name prefix (default: {DEFAULT_PREFIX})")
-    parser.add_argument("--es-url", default=None,
-                        help="Elasticsearch URL (default: from env or localhost:9200)")
+        description="Create Elasticsearch indices for Al-Furqan"
+    )
+    parser.add_argument(
+        "--drop", action="store_true", help="Drop and recreate existing indices"
+    )
+    parser.add_argument(
+        "--index",
+        nargs="*",
+        default=None,
+        choices=list(INDEX_REGISTRY.keys()),
+        help="Create specific indices (default: all)",
+    )
+    parser.add_argument(
+        "--test",
+        action="store_true",
+        help="Test the arabic_furqan analyzer after creation",
+    )
+    parser.add_argument(
+        "--status", action="store_true", help="Show index status and exit"
+    )
+    parser.add_argument(
+        "--prefix",
+        default=DEFAULT_PREFIX,
+        help=f"Index name prefix (default: {DEFAULT_PREFIX})",
+    )
+    parser.add_argument(
+        "--es-url",
+        default=None,
+        help="Elasticsearch URL (default: from env or localhost:9200)",
+    )
     args = parser.parse_args()
 
     hosts = [args.es_url] if args.es_url else None
@@ -149,7 +170,10 @@ def main():
         return
 
     results = create_indices(
-        es, prefix=args.prefix, drop_existing=args.drop, only=args.index,
+        es,
+        prefix=args.prefix,
+        drop_existing=args.drop,
+        only=args.index,
     )
 
     created = sum(1 for v in results.values() if v)

@@ -9,9 +9,8 @@ which ones are relevant to the current question.
 import json
 import logging
 import re
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Callable
-
 
 logger = logging.getLogger(__name__)
 

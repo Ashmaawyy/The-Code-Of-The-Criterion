@@ -1,6 +1,7 @@
 """Tests for Gate 4: Origin Aware (الأصل) — Binary Gate."""
 
 import pytest
+
 from al_furqan.engine.gates.origin_aware import OriginAwareGate
 from al_furqan.engine.models import GateResult
 

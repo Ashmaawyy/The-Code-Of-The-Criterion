@@ -13,8 +13,7 @@ Scoring:
 """
 
 from al_furqan.engine.gates.base import Gate
-from al_furqan.engine.models import GateScore, GateResult
-
+from al_furqan.engine.models import GateResult, GateScore
 
 PRESERVATION_SCORES = {
     "preserved": 100,
@@ -66,7 +65,9 @@ class OriginPreservationGate(Gate):
             .lower()
             .strip()
         )
-        core_principles_intact = bool(chain_results.get("core_principles_intact", False))
+        core_principles_intact = bool(
+            chain_results.get("core_principles_intact", False)
+        )
         functionality_manual_aligned = bool(
             chain_results.get("functionality_manual_aligned", False)
         )

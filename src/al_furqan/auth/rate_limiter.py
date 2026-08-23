@@ -5,8 +5,8 @@ different limits for different endpoint types.
 """
 
 import logging
-import time
 import threading
+import time
 from dataclasses import dataclass, field
 
 logger = logging.getLogger("al_furqan.auth.rate_limiter")

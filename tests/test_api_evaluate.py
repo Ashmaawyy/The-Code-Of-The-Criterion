@@ -1,9 +1,9 @@
 """Tests for the evaluate endpoint with mock LLM."""
 
 
-
 class TestEvaluateEndpoint:
     """TestEvaluateEndpoint class."""
+
     def test_submit_evaluation_success(self, client_no_auth):
         """Test submit_evaluation_success."""
         resp = client_no_auth.post(
@@ -88,7 +88,7 @@ class TestEvaluateAuth:
 
     def test_evaluate_requires_evaluator_role(self, auth_client):
         """Test evaluate_requires_evaluator_role."""
-        client, admin_key, reader_key, _evaluator_key = auth_client  # pylint: disable=unused-variable
+        client, _admin_key, reader_key, _evaluator_key = auth_client  # pylint: disable=unused-variable
         # Reader cannot evaluate
         resp = client.post(
             "/api/v1/evaluate",

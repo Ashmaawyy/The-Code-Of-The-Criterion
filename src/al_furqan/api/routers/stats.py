@@ -8,10 +8,10 @@ import logging
 
 from fastapi import APIRouter, Depends, Request
 
-from al_furqan.api.dependencies import get_store, get_config
-from al_furqan.api.schemas import StatsResponse, HealthResponse
-from al_furqan.store.es_verdict_store import ESVerdictStore as VerdictStore
+from al_furqan.api.dependencies import get_config, get_store
+from al_furqan.api.schemas import HealthResponse, StatsResponse
 from al_furqan.config import AppConfig
+from al_furqan.store.es_verdict_store import ESVerdictStore as VerdictStore
 
 logger = logging.getLogger("al_furqan.api.stats")
 
@@ -35,7 +35,7 @@ def get_stats(
         try:
             import json  # pylint: disable=import-outside-toplevel
 
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 data = json.load(f)
             sys_type = data.get("primary_system", "unknown")
             by_system[sys_type] = by_system.get(sys_type, 0) + 1

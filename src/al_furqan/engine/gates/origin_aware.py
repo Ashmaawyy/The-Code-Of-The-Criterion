@@ -9,7 +9,7 @@ Does the framework satisfy the Transcendence Necessity Proof?
 """
 
 from al_furqan.engine.gates.base import Gate
-from al_furqan.engine.models import GateScore, GateResult
+from al_furqan.engine.models import GateResult, GateScore
 
 
 class OriginAwareGate(Gate):

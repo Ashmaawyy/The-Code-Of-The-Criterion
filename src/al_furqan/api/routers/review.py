@@ -8,7 +8,7 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from al_furqan.api.dependencies import get_store
-from al_furqan.api.schemas import ReviewRequest, ReviewActionEnum
+from al_furqan.api.schemas import ReviewActionEnum, ReviewRequest
 from al_furqan.core.reasoning_engine import Verdict
 from al_furqan.store.es_verdict_store import ESVerdictStore as VerdictStore
 
@@ -65,9 +65,10 @@ def submit_review(  # pylint: disable=inconsistent-return-statements
             )
 
         # Append reviewer notes via ES update
-        if body.notes and hasattr(store, '_es'):
+        if body.notes and hasattr(store, "_es"):
             store._es.update(
-                index=store._index, id=verdict_id,
+                index=store._index,
+                id=verdict_id,
                 body={"doc": {"rejection_reason": body.notes}},
                 refresh="wait_for",
             )

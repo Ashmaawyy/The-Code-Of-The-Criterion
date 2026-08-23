@@ -9,14 +9,13 @@ import json
 import re
 
 from al_furqan.engine.axioms import (
-    FRAMEWORK_PREAMBLE,
     AXIOMS,
-    GATE_DEFINITIONS,
-    SCORING_RULES,
     EVALUATION_QUESTIONS,
+    FRAMEWORK_PREAMBLE,
+    GATE_DEFINITIONS,
     OPERATIONAL_NOTES,
+    SCORING_RULES,
 )
-
 
 # ---------------------------------------------------------------------------
 # Input Sanitization
@@ -60,7 +59,7 @@ def sanitize_input(text: str) -> str:
 def build_intent_detection_prompt(question: str) -> str:
     """Phase 0: Detect question intent — system evaluation, claim judgment, or informational."""
     question = sanitize_input(question)
-    return f"""You are a question analyzer for "The Criterion" (Al-Furqan), a reasoning engine that \  # pylint: disable=line-too-long
+    return f"""You are a question analyzer for "The Criterion" (Al-Furqan), a reasoning engine that \\  # pylint: disable=line-too-long
 evaluates ideas, policies, and behaviors against immutable axioms and survival gates.
 
 Your task is to determine the intent of the following input.

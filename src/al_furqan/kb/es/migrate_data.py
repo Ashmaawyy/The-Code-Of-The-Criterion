@@ -17,7 +17,7 @@ import time
 from pathlib import Path
 
 from elasticsearch import Elasticsearch
-from elasticsearch.helpers import bulk, BulkIndexError
+from elasticsearch.helpers import BulkIndexError, bulk
 
 from al_furqan import setup_logging
 from al_furqan.kb.es.client import create_es_client
@@ -29,6 +29,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # Loaders — read JSON files and yield ES bulk actions
 # ---------------------------------------------------------------------------
+
 
 def _load_quran(data_dir: Path, prefix: str):
     """Yield bulk actions for Quran verses."""
@@ -183,6 +184,7 @@ COLLECTIONS = {
 # Bulk indexing
 # ---------------------------------------------------------------------------
 
+
 def migrate_collection(
     es: Elasticsearch,
     name: str,
@@ -193,8 +195,11 @@ def migrate_collection(
     """Migrate a single collection. Returns the number of documents indexed."""
     loader = COLLECTIONS.get(name)
     if loader is None:
-        logger.error("Unknown collection: %s (available: %s)",
-                     name, ", ".join(COLLECTIONS.keys()))
+        logger.error(
+            "Unknown collection: %s (available: %s)",
+            name,
+            ", ".join(COLLECTIONS.keys()),
+        )
         return 0
 
     index_name = f"{prefix}_{name}"
@@ -208,7 +213,9 @@ def migrate_collection(
         return 0
 
     if dry_run:
-        logger.info("[DRY RUN] Would index %d documents into %s", len(actions), index_name)
+        logger.info(
+            "[DRY RUN] Would index %d documents into %s", len(actions), index_name
+        )
         return len(actions)
 
     logger.info("Indexing %d documents into %s...", len(actions), index_name)
@@ -223,7 +230,9 @@ def migrate_collection(
             for err in errors[:5]:
                 logger.error("  %s", err)
 
-        logger.info("Indexed %d documents into %s in %.2fs", success, index_name, elapsed)
+        logger.info(
+            "Indexed %d documents into %s in %.2fs", success, index_name, elapsed
+        )
 
         # Refresh so documents are immediately searchable
         es.indices.refresh(index=index_name)
@@ -255,6 +264,7 @@ def migrate_all(
 # ---------------------------------------------------------------------------
 # Verification
 # ---------------------------------------------------------------------------
+
 
 def verify_counts(es: Elasticsearch, data_dir: Path, prefix: str) -> bool:
     """Verify that indexed document counts match source data."""
@@ -294,8 +304,9 @@ def verify_counts(es: Elasticsearch, data_dir: Path, prefix: str) -> bool:
         actual = es.count(index=index_name)["count"]
         status = "OK" if actual == expected_count else "MISMATCH"
         log_fn = logger.info if status == "OK" else logger.error
-        log_fn("  %-12s expected=%d  actual=%d  [%s]",
-               name, expected_count, actual, status)
+        log_fn(
+            "  %-12s expected=%d  actual=%d  [%s]", name, expected_count, actual, status
+        )
         if actual != expected_count:
             all_match = False
 
@@ -306,25 +317,39 @@ def verify_counts(es: Elasticsearch, data_dir: Path, prefix: str) -> bool:
 # CLI
 # ---------------------------------------------------------------------------
 
+
 def main():
     """Entry point."""
     setup_logging()
 
     parser = argparse.ArgumentParser(
-        description="Migrate static data from JSON files into Elasticsearch")
-    parser.add_argument("--collection", nargs="*", default=None,
-                        choices=list(COLLECTIONS.keys()),
-                        help="Migrate specific collections (default: all)")
-    parser.add_argument("--data-dir", type=Path, default=_DEFAULT_DATA_DIR,
-                        help=f"Path to data directory (default: {_DEFAULT_DATA_DIR})")
-    parser.add_argument("--prefix", default="furqan",
-                        help="Index name prefix (default: furqan)")
-    parser.add_argument("--es-url", default=None,
-                        help="Elasticsearch URL")
-    parser.add_argument("--dry-run", action="store_true",
-                        help="Preview what would be indexed without writing")
-    parser.add_argument("--verify", action="store_true",
-                        help="Verify document counts after migration")
+        description="Migrate static data from JSON files into Elasticsearch"
+    )
+    parser.add_argument(
+        "--collection",
+        nargs="*",
+        default=None,
+        choices=list(COLLECTIONS.keys()),
+        help="Migrate specific collections (default: all)",
+    )
+    parser.add_argument(
+        "--data-dir",
+        type=Path,
+        default=_DEFAULT_DATA_DIR,
+        help=f"Path to data directory (default: {_DEFAULT_DATA_DIR})",
+    )
+    parser.add_argument(
+        "--prefix", default="furqan", help="Index name prefix (default: furqan)"
+    )
+    parser.add_argument("--es-url", default=None, help="Elasticsearch URL")
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Preview what would be indexed without writing",
+    )
+    parser.add_argument(
+        "--verify", action="store_true", help="Verify document counts after migration"
+    )
     args = parser.parse_args()
 
     hosts = [args.es_url] if args.es_url else None

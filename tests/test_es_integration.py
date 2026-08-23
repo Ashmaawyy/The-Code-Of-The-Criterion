@@ -31,20 +31,21 @@ logger = logging.getLogger(__name__)
 
 try:
     from elasticsearch import Elasticsearch
+
     _es = Elasticsearch(["http://localhost:9200"], request_timeout=5)
     _es_available = _es.ping()
 except Exception:
     _es_available = False
 
 pytestmark = pytest.mark.skipif(
-    not _es_available,
-    reason="Elasticsearch not available on localhost:9200"
+    not _es_available, reason="Elasticsearch not available on localhost:9200"
 )
 
 
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture(scope="module")
 def es():
@@ -56,24 +57,28 @@ def es():
 @pytest.fixture(scope="module")
 def quran(es):
     from al_furqan.kb.es.collections import QuranCollection
+
     return QuranCollection(es)
 
 
 @pytest.fixture(scope="module")
 def hadith(es):
     from al_furqan.kb.es.collections import HadithCollection
+
     return HadithCollection(es)
 
 
 @pytest.fixture(scope="module")
 def graph(es):
     from al_furqan.kb.es.graph import ESGraphStore
+
     return ESGraphStore(es)
 
 
 # ---------------------------------------------------------------------------
 # 1. Analyzer validation
 # ---------------------------------------------------------------------------
+
 
 class TestArabicAnalyzer:
     """Verify the arabic_furqan analyzer matches Python normalize_arabic()."""
@@ -134,6 +139,7 @@ class TestArabicAnalyzer:
 # 2. QuranCollection tests
 # ---------------------------------------------------------------------------
 
+
 class TestQuranCollection:
     """Test ES-backed QuranCollection against known data."""
 
@@ -178,6 +184,7 @@ class TestQuranCollection:
 # 3. HadithCollection tests
 # ---------------------------------------------------------------------------
 
+
 class TestHadithCollection:
     """Test ES-backed HadithCollection."""
 
@@ -211,6 +218,7 @@ class TestHadithCollection:
 # ---------------------------------------------------------------------------
 # 4. Graph store tests
 # ---------------------------------------------------------------------------
+
 
 class TestESGraphStore:
     """Test ES-backed graph edge queries."""
@@ -258,6 +266,7 @@ class TestESGraphStore:
 # 5. Verdict store tests (uses a temporary index)
 # ---------------------------------------------------------------------------
 
+
 class TestESVerdictStore:
     """Test ES-backed verdict store round-trip."""
 
@@ -267,6 +276,7 @@ class TestESVerdictStore:
     def setup_test_index(self, es):
         """Create and tear down a test index."""
         from al_furqan.kb.es.indices import VERDICTS_INDEX
+
         if es.indices.exists(index=self.TEST_INDEX):
             es.indices.delete(index=self.TEST_INDEX)
         es.indices.create(index=self.TEST_INDEX, body=VERDICTS_INDEX)
@@ -275,6 +285,7 @@ class TestESVerdictStore:
 
     def test_store_and_retrieve(self, es, sample_verdict):
         from al_furqan.store.es_verdict_store import ESVerdictStore
+
         store = ESVerdictStore(es, index=self.TEST_INDEX)
 
         verdict_id = store.store(sample_verdict, status="approved")
@@ -288,6 +299,7 @@ class TestESVerdictStore:
 
     def test_update_status(self, es, sample_verdict):
         from al_furqan.store.es_verdict_store import ESVerdictStore
+
         store = ESVerdictStore(es, index=self.TEST_INDEX)
 
         verdict_id = store.store(sample_verdict, status="approved")
@@ -298,6 +310,7 @@ class TestESVerdictStore:
 
     def test_retrieve_as_context(self, es, sample_verdict):
         from al_furqan.store.es_verdict_store import ESVerdictStore
+
         store = ESVerdictStore(es, index=self.TEST_INDEX)
 
         store.store(sample_verdict, status="approved")
@@ -307,6 +320,7 @@ class TestESVerdictStore:
 
     def test_stats(self, es, sample_verdict):
         from al_furqan.store.es_verdict_store import ESVerdictStore
+
         store = ESVerdictStore(es, index=self.TEST_INDEX)
 
         store.store(sample_verdict, status="approved")
@@ -319,6 +333,7 @@ class TestESVerdictStore:
 # 6. Feedback store tests (uses a temporary index)
 # ---------------------------------------------------------------------------
 
+
 class TestESFeedbackStore:
     """Test ES-backed feedback store round-trip."""
 
@@ -327,6 +342,7 @@ class TestESFeedbackStore:
     @pytest.fixture(autouse=True)
     def setup_test_index(self, es):
         from al_furqan.kb.es.indices import FEEDBACK_INDEX
+
         if es.indices.exists(index=self.TEST_INDEX):
             es.indices.delete(index=self.TEST_INDEX)
         es.indices.create(index=self.TEST_INDEX, body=FEEDBACK_INDEX)
@@ -334,8 +350,7 @@ class TestESFeedbackStore:
         es.indices.delete(index=self.TEST_INDEX, ignore=[404])
 
     def test_submit_and_retrieve(self, es):
-        from al_furqan.store.es_feedback_store import ESFeedbackStore
-        from al_furqan.store.es_feedback_store import HumanFeedback
+        from al_furqan.store.es_feedback_store import ESFeedbackStore, HumanFeedback
 
         store = ESFeedbackStore(es, index=self.TEST_INDEX)
 
@@ -354,23 +369,23 @@ class TestESFeedbackStore:
         assert loaded.rating == "correct"
 
     def test_get_by_verdict(self, es):
-        from al_furqan.store.es_feedback_store import ESFeedbackStore
-        from al_furqan.store.es_feedback_store import HumanFeedback
+        from al_furqan.store.es_feedback_store import ESFeedbackStore, HumanFeedback
 
         store = ESFeedbackStore(es, index=self.TEST_INDEX)
         vid = "verdict_test_002"
 
         store.submit(HumanFeedback(verdict_id=vid, reviewer="r1", rating="correct"))
         store.submit(HumanFeedback(verdict_id=vid, reviewer="r2", rating="incorrect"))
-        store.submit(HumanFeedback(verdict_id="other_id", reviewer="r3", rating="correct"))
+        store.submit(
+            HumanFeedback(verdict_id="other_id", reviewer="r3", rating="correct")
+        )
 
         results = store.get_by_verdict(vid)
         assert len(results) == 2
         assert all(fb.verdict_id == vid for fb in results)
 
     def test_stats(self, es):
-        from al_furqan.store.es_feedback_store import ESFeedbackStore
-        from al_furqan.store.es_feedback_store import HumanFeedback
+        from al_furqan.store.es_feedback_store import ESFeedbackStore, HumanFeedback
 
         store = ESFeedbackStore(es, index=self.TEST_INDEX)
         store.submit(HumanFeedback(verdict_id="v1", reviewer="r1", rating="correct"))
@@ -386,6 +401,7 @@ class TestESFeedbackStore:
 # 7. Comparison: old Python matching vs ES phrase_match (SLOW)
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.slow
 class TestPhraseMatchComparison:
     """Compare ES phrase_match results against the Python sliding-window.
@@ -397,10 +413,13 @@ class TestPhraseMatchComparison:
     def test_taught_verses_match(self, es):
         """For each lesson chapter's taught_verses, verify ES phrase_match finds them."""
         from pathlib import Path
+
         from al_furqan.kb.es.collections import QuranCollection
 
         quran = QuranCollection(es)
-        lessons_dir = Path(__file__).parent.parent / "data" / "lessons" / "lessons_enriched_json"
+        lessons_dir = (
+            Path(__file__).parent.parent / "data" / "lessons" / "lessons_enriched_json"
+        )
 
         if not lessons_dir.exists():
             pytest.skip("Enriched lessons not found")
@@ -434,22 +453,26 @@ class TestPhraseMatchComparison:
                     if vk in es_keys:
                         total_found += 1
                     else:
-                        misses.append({
-                            "lesson": lesson["lesson_number"],
-                            "chapter": ch["chapter_number"],
-                            "verse_key": vk,
-                        })
+                        misses.append(
+                            {
+                                "lesson": lesson["lesson_number"],
+                                "chapter": ch["chapter_number"],
+                                "verse_key": vk,
+                            }
+                        )
 
         if total_expected > 0:
             recall = total_found / total_expected
             logger.info(
                 "Verse match comparison: %d/%d (%.1f%% recall), %d misses",
-                total_found, total_expected, recall * 100, len(misses),
+                total_found,
+                total_expected,
+                recall * 100,
+                len(misses),
             )
             if misses:
                 logger.warning("Misses: %s", misses[:5])
             # Allow some tolerance — ES tokenization may differ slightly
             assert recall >= 0.8, (
-                f"Recall too low: {recall:.1%}. "
-                f"First misses: {misses[:5]}"
+                f"Recall too low: {recall:.1%}. First misses: {misses[:5]}"
             )

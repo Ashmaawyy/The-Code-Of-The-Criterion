@@ -14,17 +14,17 @@ import re
 
 TIMESTAMP_PATTERNS = [
     # YouTube human-readable: "0:08", "12:30", "1:05:30"
-    re.compile(r'^\d{1,2}:\d{2}(:\d{2})?$'),
+    re.compile(r"^\d{1,2}:\d{2}(:\d{2})?$"),
     # YouTube descriptive: "8 seconds", "1 minute, 30 seconds", "2 hours, 5 minutes"
     re.compile(
-        r'^\d+\s+(?:hours?|minutes?|seconds?)'
-        r'(?:,?\s+\d+\s+(?:hours?|minutes?|seconds?))*$'
+        r"^\d+\s+(?:hours?|minutes?|seconds?)"
+        r"(?:,?\s+\d+\s+(?:hours?|minutes?|seconds?))*$"
     ),
     # SRT / VTT numeric: "00:01:23,456" or "00:01:23.456"
-    re.compile(r'^\d{2}:\d{2}:\d{2}[,.]\d{3}$'),
+    re.compile(r"^\d{2}:\d{2}:\d{2}[,.]\d{3}$"),
     # Bare seconds often seen in auto-captions: "83" — require at least
     # two digits to avoid matching simple line numbers like "1" or "2".
-    re.compile(r'^\d{2,6}$'),
+    re.compile(r"^\d{2,6}$"),
 ]
 
 # ---------------------------------------------------------------------------
@@ -33,7 +33,7 @@ TIMESTAMP_PATTERNS = [
 # Accepts "Chapter 1: Title" and common variants like
 # "chapter 1 - Title" or "CHAPTER 01: Title".
 
-CHAPTER_PATTERN = re.compile(r'^[Cc]hapter\s+(\d+)\s*[:–—\-]\s*(.+)$')
+CHAPTER_PATTERN = re.compile(r"^[Cc]hapter\s+(\d+)\s*[:–—\-]\s*(.+)$")
 
 # ---------------------------------------------------------------------------
 # Arabic diacritics / decoration removal
@@ -41,17 +41,18 @@ CHAPTER_PATTERN = re.compile(r'^[Cc]hapter\s+(\d+)\s*[:–—\-]\s*(.+)$')
 # Pre-compiled for performance — these run thousands of times during matching.
 
 _RE_DIACRITICS = re.compile(
-    r'[\u0610-\u061A\u064B-\u065F\u0670'
-    r'\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED]'
+    r"[\u0610-\u061A\u064B-\u065F\u0670"
+    r"\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED]"
 )
-_RE_ALEF_VARIANTS = re.compile(r'[إأآٱ]')
-_RE_DECORATIONS = re.compile(r'[﴿﴾۝۞\u06DD\uFD3E\uFD3F]')
-_RE_WHITESPACE = re.compile(r'\s+')
+_RE_ALEF_VARIANTS = re.compile(r"[إأآٱ]")
+_RE_DECORATIONS = re.compile(r"[﴿﴾۝۞\u06DD\uFD3E\uFD3F]")
+_RE_WHITESPACE = re.compile(r"\s+")
 
 
 # ---------------------------------------------------------------------------
 # Public helpers
 # ---------------------------------------------------------------------------
+
 
 def is_blank(line: str) -> bool:
     """Return True if the line is empty or whitespace-only."""
@@ -77,11 +78,11 @@ def normalize_arabic(text: str) -> str:
     """
     if not text:
         return ""
-    text = _RE_DIACRITICS.sub('', text)
-    text = _RE_ALEF_VARIANTS.sub('ا', text)
-    text = text.replace('ة', 'ه').replace('ى', 'ي').replace('\u0640', '')
-    text = _RE_DECORATIONS.sub('', text)
-    return _RE_WHITESPACE.sub(' ', text).strip()
+    text = _RE_DIACRITICS.sub("", text)
+    text = _RE_ALEF_VARIANTS.sub("ا", text)
+    text = text.replace("ة", "ه").replace("ى", "ي").replace("\u0640", "")
+    text = _RE_DECORATIONS.sub("", text)
+    return _RE_WHITESPACE.sub(" ", text).strip()
 
 
 def extract_words(text: str) -> list[str]:
@@ -101,20 +102,53 @@ def extract_words(text: str) -> list[str]:
 # Composition rule: ones و tens و hundreds  (right-to-left reading order)
 
 _ORDINAL_UNITS = [
-    "", "الأول", "الثاني", "الثالث", "الرابع", "الخامس",
-    "السادس", "السابع", "الثامن", "التاسع", "العاشر",
+    "",
+    "الأول",
+    "الثاني",
+    "الثالث",
+    "الرابع",
+    "الخامس",
+    "السادس",
+    "السابع",
+    "الثامن",
+    "التاسع",
+    "العاشر",
 ]
 _ORDINAL_TEENS = [
-    "", "الحادي عشر", "الثاني عشر", "الثالث عشر", "الرابع عشر",
-    "الخامس عشر", "السادس عشر", "السابع عشر", "الثامن عشر", "التاسع عشر",
+    "",
+    "الحادي عشر",
+    "الثاني عشر",
+    "الثالث عشر",
+    "الرابع عشر",
+    "الخامس عشر",
+    "السادس عشر",
+    "السابع عشر",
+    "الثامن عشر",
+    "التاسع عشر",
 ]
 _ORDINAL_TENS = [
-    "", "", "العشرون", "الثلاثون", "الأربعون", "الخمسون",
-    "الستون", "السبعون", "الثمانون", "التسعون",
+    "",
+    "",
+    "العشرون",
+    "الثلاثون",
+    "الأربعون",
+    "الخمسون",
+    "الستون",
+    "السبعون",
+    "الثمانون",
+    "التسعون",
 ]
 _ORDINAL_HUNDREDS = [
-    "", "المائة", "المائتان", "الثلاثمائة", "الأربعمائة", "الخمسمائة",
-    "الستمائة", "السبعمائة", "الثمانمائة", "التسعمائة",
+    "",
+    "المائة",
+    "المائتان",
+    "الثلاثمائة",
+    "الأربعمائة",
+    "الخمسمائة",
+    "الستمائة",
+    "السبعمائة",
+    "الثمانمائة",
+    "التسعمائة",
 ]
 
 

@@ -10,21 +10,21 @@ Takes a QueryAnalysis and builds a ReasoningPlan that includes:
 - KB tool definitions for the LLM to use
 """
 
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable, Optional
 
-from al_furqan.kb.tafsir.query_analyzer import QueryAnalysis
-from al_furqan.kb.tafsir.kb_tools import TafsirKBTools
+from al_furqan.engine.tafsir.axiom_selector import (  # pylint: disable=unused-import
+    AxiomGateSelection,
+    select_axioms_and_gates,
+)
 from al_furqan.engine.tafsir.reasoning_templates import (
     AXIOM_GUIDELINES,
     GATE_CHECKS,
     KB_USAGE_RULES,
     get_template,
 )
-from al_furqan.engine.tafsir.axiom_selector import (  # pylint: disable=unused-import
-    AxiomGateSelection,
-    select_axioms_and_gates,
-)
+from al_furqan.kb.tafsir.kb_tools import TafsirKBTools
+from al_furqan.kb.tafsir.query_analyzer import QueryAnalysis
 
 
 @dataclass
@@ -38,7 +38,7 @@ class ReasoningPlan:  # pylint: disable=too-many-instance-attributes
     reasoning_steps: list[str]
     system_prompt: str
     tool_definitions: list[dict]
-    axiom_selection: Optional[AxiomGateSelection] = None
+    axiom_selection: AxiomGateSelection | None = None
     kb_as_supplement: bool = True
 
 
@@ -62,7 +62,7 @@ class ReasoningPlanBuilder:  # pylint: disable=too-few-public-methods
     def build(
         self,
         analysis: QueryAnalysis,
-        llm_call: Optional[Callable] = None,
+        llm_call: Callable | None = None,
     ) -> ReasoningPlan:
         """
         Build a complete reasoning plan for the given query.

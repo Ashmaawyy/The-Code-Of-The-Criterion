@@ -15,13 +15,13 @@ Proofs encoded:
 """
 
 from z3 import (
+    And,
     BoolSort,
     Const,
     DeclareSort,
     ForAll,
     Function,
     Implies,
-    And,
     Not,
     Solver,
     sat,

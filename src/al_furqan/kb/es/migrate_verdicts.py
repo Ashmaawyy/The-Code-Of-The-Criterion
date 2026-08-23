@@ -17,7 +17,7 @@ import time
 from pathlib import Path
 
 from elasticsearch import Elasticsearch
-from elasticsearch.helpers import bulk, BulkIndexError
+from elasticsearch.helpers import BulkIndexError, bulk
 
 from al_furqan import setup_logging
 from al_furqan.kb.es.client import create_es_client
@@ -29,6 +29,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # Verdict loader
 # ---------------------------------------------------------------------------
+
 
 def _load_verdicts(verdicts_dir: Path, prefix: str):
     """Yield bulk actions for verdict JSON files.
@@ -64,11 +65,13 @@ def _load_verdicts(verdicts_dir: Path, prefix: str):
         # Map gate_scores from list of dicts to nested ES structure
         gate_scores = []
         for gs in data.get("gate_scores", []):
-            gate_scores.append({
-                "gate_id": gs.get("name", ""),
-                "score": gs.get("score", 0),
-                "reasoning": gs.get("reasoning", ""),
-            })
+            gate_scores.append(
+                {
+                    "gate_id": gs.get("name", ""),
+                    "score": gs.get("score", 0),
+                    "reasoning": gs.get("reasoning", ""),
+                }
+            )
 
         doc = {
             "verdict_id": verdict_id,
@@ -91,6 +94,7 @@ def _load_verdicts(verdicts_dir: Path, prefix: str):
 # ---------------------------------------------------------------------------
 # Feedback loader
 # ---------------------------------------------------------------------------
+
 
 def _load_feedback(feedback_dir: Path, prefix: str):
     """Yield bulk actions for feedback JSON files.
@@ -135,6 +139,7 @@ def _load_feedback(feedback_dir: Path, prefix: str):
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _to_epoch_millis(ts) -> int | None:
     """Convert a timestamp (float seconds or None) to epoch milliseconds for ES."""
     if ts is None:
@@ -145,16 +150,18 @@ def _to_epoch_millis(ts) -> int | None:
         return None
 
 
-def _bulk_index(es: Elasticsearch, actions: list, index_name: str,
-                dry_run: bool = False) -> int:
+def _bulk_index(
+    es: Elasticsearch, actions: list, index_name: str, dry_run: bool = False
+) -> int:
     """Bulk-index a list of actions. Returns count of indexed docs."""
     if not actions:
         logger.info("No documents to index for %s", index_name)
         return 0
 
     if dry_run:
-        logger.info("[DRY RUN] Would index %d documents into %s",
-                    len(actions), index_name)
+        logger.info(
+            "[DRY RUN] Would index %d documents into %s", len(actions), index_name
+        )
         return len(actions)
 
     logger.info("Indexing %d documents into %s...", len(actions), index_name)
@@ -169,8 +176,9 @@ def _bulk_index(es: Elasticsearch, actions: list, index_name: str,
             for err in errors[:5]:
                 logger.error("  %s", err)
 
-        logger.info("Indexed %d documents into %s in %.2fs",
-                    success, index_name, elapsed)
+        logger.info(
+            "Indexed %d documents into %s in %.2fs", success, index_name, elapsed
+        )
         es.indices.refresh(index=index_name)
         return success
 
@@ -182,6 +190,7 @@ def _bulk_index(es: Elasticsearch, actions: list, index_name: str,
 # ---------------------------------------------------------------------------
 # Main migration
 # ---------------------------------------------------------------------------
+
 
 def migrate_verdicts(
     es: Elasticsearch,
@@ -230,16 +239,18 @@ def verify_counts(
 
         if not es.indices.exists(index=index_name):
             if expected > 0:
-                logger.error("Index %s does not exist but %d source files found",
-                             index_name, expected)
+                logger.error(
+                    "Index %s does not exist but %d source files found",
+                    index_name,
+                    expected,
+                )
                 all_match = False
             continue
 
         actual = es.count(index=index_name)["count"]
         status = "OK" if actual == expected else "MISMATCH"
         log_fn = logger.info if status == "OK" else logger.error
-        log_fn("  %-20s expected=%d  actual=%d  [%s]",
-               name, expected, actual, status)
+        log_fn("  %-20s expected=%d  actual=%d  [%s]", name, expected, actual, status)
         if actual != expected:
             all_match = False
 
@@ -250,24 +261,38 @@ def verify_counts(
 # CLI
 # ---------------------------------------------------------------------------
 
+
 def main():
     """Entry point."""
     setup_logging()
 
     parser = argparse.ArgumentParser(
-        description="Migrate verdicts and feedback from JSON files into Elasticsearch")
-    parser.add_argument("--verdicts-dir", type=Path, default=None,
-                        help="Path to verdicts directory (default: from config)")
-    parser.add_argument("--feedback-dir", type=Path, default=None,
-                        help="Path to feedback directory (default: data/feedback)")
-    parser.add_argument("--prefix", default="furqan",
-                        help="Index name prefix (default: furqan)")
-    parser.add_argument("--es-url", default=None,
-                        help="Elasticsearch URL")
-    parser.add_argument("--dry-run", action="store_true",
-                        help="Preview what would be indexed without writing")
-    parser.add_argument("--verify", action="store_true",
-                        help="Verify document counts after migration")
+        description="Migrate verdicts and feedback from JSON files into Elasticsearch"
+    )
+    parser.add_argument(
+        "--verdicts-dir",
+        type=Path,
+        default=None,
+        help="Path to verdicts directory (default: from config)",
+    )
+    parser.add_argument(
+        "--feedback-dir",
+        type=Path,
+        default=None,
+        help="Path to feedback directory (default: data/feedback)",
+    )
+    parser.add_argument(
+        "--prefix", default="furqan", help="Index name prefix (default: furqan)"
+    )
+    parser.add_argument("--es-url", default=None, help="Elasticsearch URL")
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Preview what would be indexed without writing",
+    )
+    parser.add_argument(
+        "--verify", action="store_true", help="Verify document counts after migration"
+    )
     args = parser.parse_args()
 
     hosts = [args.es_url] if args.es_url else None

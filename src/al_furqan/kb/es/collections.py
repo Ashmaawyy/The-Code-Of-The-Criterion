@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
-from typing import Optional
 
 from elasticsearch import Elasticsearch, NotFoundError
 
@@ -22,9 +21,11 @@ logger = logging.getLogger(__name__)
 # Dataclasses — re-exported from the original modules for convenience
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class QuranVerse:  # pylint: disable=too-many-instance-attributes
     """A single Quran verse with metadata."""
+
     surah: int
     ayah: int
     text_ar: str
@@ -40,6 +41,7 @@ class QuranVerse:  # pylint: disable=too-many-instance-attributes
 @dataclass
 class Hadith:
     """A single hadith with metadata."""
+
     collection_name: str
     number: int
     text_ar: str
@@ -52,6 +54,7 @@ class Hadith:
 # ---------------------------------------------------------------------------
 # QuranCollection (ES)
 # ---------------------------------------------------------------------------
+
 
 class QuranCollection:
     """Elasticsearch-backed Quran verse collection.
@@ -85,7 +88,9 @@ class QuranCollection:
         resp = self._es.search(index=self._index, body=body)
         return [self._hit_to_verse(h) for h in resp["hits"]["hits"]]
 
-    def search_semantic(self, embedding: list[float], limit: int = 5) -> list[QuranVerse]:
+    def search_semantic(
+        self, embedding: list[float], limit: int = 5
+    ) -> list[QuranVerse]:
         """Search by vector similarity (knn)."""
         body = {
             "knn": {
@@ -98,7 +103,7 @@ class QuranCollection:
         resp = self._es.search(index=self._index, body=body)
         return [self._hit_to_verse(h) for h in resp["hits"]["hits"]]
 
-    def get_verse(self, surah: int, ayah: int) -> Optional[QuranVerse]:
+    def get_verse(self, surah: int, ayah: int) -> QuranVerse | None:
         """Retrieve a specific verse by surah:ayah."""
         try:
             doc = self._es.get(index=self._index, id=f"{surah}:{ayah}")
@@ -165,6 +170,7 @@ class QuranCollection:
 # HadithCollection (ES)
 # ---------------------------------------------------------------------------
 
+
 class HadithCollection:
     """Elasticsearch-backed Hadith collection."""
 
@@ -182,7 +188,7 @@ class HadithCollection:
         self,
         query: str,
         limit: int = 5,
-        grading_filter: Optional[str] = None,
+        grading_filter: str | None = None,
     ) -> list[Hadith]:
         """Search hadith by text, optionally filtering by grading."""
         must = []
@@ -217,7 +223,7 @@ class HadithCollection:
         resp = self._es.search(index=self._index, body=body)
         return [self._hit_to_hadith(h) for h in resp["hits"]["hits"]]
 
-    def get_hadith(self, collection_name: str, number: int) -> Optional[Hadith]:
+    def get_hadith(self, collection_name: str, number: int) -> Hadith | None:
         """Retrieve a specific hadith."""
         try:
             doc = self._es.get(index=self._index, id=f"{collection_name}:{number}")

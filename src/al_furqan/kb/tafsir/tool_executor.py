@@ -9,7 +9,7 @@ When the LLM calls search_kb_by_verse("6:5"), this module:
 
 import logging
 
-from al_furqan.kb.tafsir.kb_tools import TafsirKBTools, KBEntry
+from al_furqan.kb.tafsir.kb_tools import KBEntry, TafsirKBTools
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +62,7 @@ class ToolExecutor:
             self._log_call(tool_name, arguments, result, success=True)
             return result
         except Exception as e:  # pylint: disable=broad-exception-caught
-            error_msg = f"❌ خطأ في تنفيذ {tool_name}: {str(e)}"
+            error_msg = f"❌ خطأ في تنفيذ {tool_name}: {e!s}"
             logger.error(error_msg)
             self._log_call(tool_name, arguments, error_msg, success=False)
             return error_msg

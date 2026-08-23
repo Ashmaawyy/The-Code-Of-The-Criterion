@@ -1,13 +1,14 @@
 """COT-enabled prompt builders for Al-Furqan."""
 
+import json  # pylint: disable=wrong-import-order
+
 from al_furqan.core.reasoning_engine import (
-    FRAMEWORK_PREAMBLE,
     AXIOMS,
+    FRAMEWORK_PREAMBLE,
     GATE_DEFINITIONS,
     SCORING_RULES,
     sanitize_input,
 )
-import json  # pylint: disable=wrong-import-order
 
 
 def build_cot_mirror_prompt(question: str, scan_result: dict) -> str:

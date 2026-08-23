@@ -8,12 +8,10 @@ Nothing enters the Knowledge Graph until a human confirms it.
 import os
 import sqlite3
 import time
-from typing import List, Optional
 
 from al_furqan.paths import PROPOSED_EDGES_DB
 
 from .models import ProposedEdge
-
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS proposed_edges (
@@ -95,7 +93,7 @@ class ProposedEdgeStore:
         )
         self._conn.commit()
 
-    def save_batch(self, edges: List[ProposedEdge]) -> None:
+    def save_batch(self, edges: list[ProposedEdge]) -> None:
         """Save multiple edges in a single transaction."""
         placeholders = ", ".join(["?"] * len(COLUMNS))
         col_names = ", ".join(COLUMNS)
@@ -108,7 +106,7 @@ class ProposedEdgeStore:
 
     # ----- Read Operations -----
 
-    def get_by_id(self, edge_id: str) -> Optional[ProposedEdge]:
+    def get_by_id(self, edge_id: str) -> ProposedEdge | None:
         """Get a single edge by ID."""
         row = self._conn.execute(
             "SELECT * FROM proposed_edges WHERE id = ?", (edge_id,)
@@ -116,8 +114,8 @@ class ProposedEdgeStore:
         return self._row_to_edge(row) if row else None
 
     def get_pending(
-        self, lesson_id: Optional[str] = None, limit: int = 100
-    ) -> List[ProposedEdge]:
+        self, lesson_id: str | None = None, limit: int = 100
+    ) -> list[ProposedEdge]:
         """Get pending edges, optionally filtered by lesson."""
         if lesson_id:
             rows = self._conn.execute(
@@ -131,7 +129,7 @@ class ProposedEdgeStore:
             ).fetchall()
         return [self._row_to_edge(r) for r in rows]
 
-    def get_by_status(self, status: str, limit: int = 100) -> List[ProposedEdge]:
+    def get_by_status(self, status: str, limit: int = 100) -> list[ProposedEdge]:
         """Get edges by status."""
         rows = self._conn.execute(
             "SELECT * FROM proposed_edges WHERE status = ? LIMIT ?",
@@ -139,7 +137,7 @@ class ProposedEdgeStore:
         ).fetchall()
         return [self._row_to_edge(r) for r in rows]
 
-    def get_all(self, lesson_id: Optional[str] = None) -> List[ProposedEdge]:
+    def get_all(self, lesson_id: str | None = None) -> list[ProposedEdge]:
         """Get all edges, optionally filtered by lesson."""
         if lesson_id:
             rows = self._conn.execute(
@@ -164,9 +162,9 @@ class ProposedEdgeStore:
         edge_id: str,
         reviewed_by: str,
         notes: str = "",
-        source_node: Optional[str] = None,
-        target_node: Optional[str] = None,
-        edge_type: Optional[str] = None,
+        source_node: str | None = None,
+        target_node: str | None = None,
+        edge_type: str | None = None,
     ) -> bool:
         """Edit fields and confirm an edge."""
         edge = self.get_by_id(edge_id)
@@ -226,7 +224,7 @@ class ProposedEdgeStore:
 
         return stats
 
-    def get_rejection_patterns(self) -> List[dict]:
+    def get_rejection_patterns(self) -> list[dict]:
         """Analyze rejection patterns to improve future extractions."""
         rows = self._conn.execute(
             """SELECT edge_type, review_notes, COUNT(*) as cnt

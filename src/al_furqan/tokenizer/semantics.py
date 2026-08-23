@@ -20,11 +20,12 @@ Level 3: Idea transitions
 
 from __future__ import annotations
 
-from al_furqan.tokenizer.schema import (
-    SemanticToken, LogicToken, TransitionToken,
-)
 from al_furqan.tokenizer.morphology import MorphAnalysis, clean_word
-
+from al_furqan.tokenizer.schema import (
+    LogicToken,
+    SemanticToken,
+    TransitionToken,
+)
 
 # ---------------------------------------------------------------------------
 # Root → semantic field mapping
@@ -34,48 +35,97 @@ from al_furqan.tokenizer.morphology import MorphAnalysis, clean_word
 
 _ROOT_SEMANTIC_FIELD: dict[str, str] = {
     # Divinity
-    "أ-ل-ه": "divinity", "ر-ب-ب": "divinity", "ق-د-س": "divinity",
-    "س-ب-ح": "divinity", "ح-م-د": "divinity", "ع-ظ-م": "divinity",
-    "ع-ل-و": "divinity", "م-ل-ك": "divinity",
+    "أ-ل-ه": "divinity",
+    "ر-ب-ب": "divinity",
+    "ق-د-س": "divinity",
+    "س-ب-ح": "divinity",
+    "ح-م-د": "divinity",
+    "ع-ظ-م": "divinity",
+    "ع-ل-و": "divinity",
+    "م-ل-ك": "divinity",
     # Mercy
-    "ر-ح-م": "mercy", "غ-ف-ر": "mercy", "ع-ف-و": "mercy",
-    "ت-و-ب": "mercy", "ر-أ-ف": "mercy",
+    "ر-ح-م": "mercy",
+    "غ-ف-ر": "mercy",
+    "ع-ف-و": "mercy",
+    "ت-و-ب": "mercy",
+    "ر-أ-ف": "mercy",
     # Worship
-    "ع-ب-د": "worship", "ص-ل-و": "worship", "ز-ك-و": "worship",
-    "ص-و-م": "worship", "ح-ج-ج": "worship", "س-ج-د": "worship",
-    "ر-ك-ع": "worship", "ذ-ك-ر": "worship",
+    "ع-ب-د": "worship",
+    "ص-ل-و": "worship",
+    "ز-ك-و": "worship",
+    "ص-و-م": "worship",
+    "ح-ج-ج": "worship",
+    "س-ج-د": "worship",
+    "ر-ك-ع": "worship",
+    "ذ-ك-ر": "worship",
     # Belief
-    "أ-م-ن": "belief", "ك-ف-ر": "belief", "ش-ر-ك": "belief",
-    "ش-ه-د": "belief", "ي-ق-ن": "belief", "غ-ي-ب": "belief",
+    "أ-م-ن": "belief",
+    "ك-ف-ر": "belief",
+    "ش-ر-ك": "belief",
+    "ش-ه-د": "belief",
+    "ي-ق-ن": "belief",
+    "غ-ي-ب": "belief",
     # Guidance
-    "ه-د-ي": "guidance", "ض-ل-ل": "guidance", "ص-ر-ط": "guidance",
-    "ن-و-ر": "guidance", "ظ-ل-م": "guidance",
+    "ه-د-ي": "guidance",
+    "ض-ل-ل": "guidance",
+    "ص-ر-ط": "guidance",
+    "ن-و-ر": "guidance",
+    "ظ-ل-م": "guidance",
     # Knowledge
-    "ع-ل-م": "knowledge", "ف-ق-ه": "knowledge", "ع-ق-ل": "knowledge",
-    "ف-ك-ر": "knowledge", "ح-ك-م": "knowledge", "ب-ص-ر": "knowledge",
+    "ع-ل-م": "knowledge",
+    "ف-ق-ه": "knowledge",
+    "ع-ق-ل": "knowledge",
+    "ف-ك-ر": "knowledge",
+    "ح-ك-م": "knowledge",
+    "ب-ص-ر": "knowledge",
     # Justice
-    "ع-د-ل": "justice", "ق-س-ط": "justice", "ح-ق-ق": "justice",
-    "ج-ز-ي": "justice", "ع-ق-ب": "justice", "ح-س-ب": "justice",
+    "ع-د-ل": "justice",
+    "ق-س-ط": "justice",
+    "ح-ق-ق": "justice",
+    "ج-ز-ي": "justice",
+    "ع-ق-ب": "justice",
+    "ح-س-ب": "justice",
     # Creation
     # Note: خ-ل-ق maps to both "creation" (خَلَقَ verb) and "morality" (خُلُق noun);
     # diacritics-level disambiguation is not yet supported, so we use the primary domain.
-    "خ-ل-ق": "creation", "ب-د-ع": "creation", "ف-ط-ر": "creation",
-    "ج-ع-ل": "creation", "س-م-و": "creation", "أ-ر-ض": "creation",
+    "خ-ل-ق": "creation",
+    "ب-د-ع": "creation",
+    "ف-ط-ر": "creation",
+    "ج-ع-ل": "creation",
+    "س-م-و": "creation",
+    "أ-ر-ض": "creation",
     # Legislation
-    "ح-ر-م": "legislation", "ح-ل-ل": "legislation", "أ-م-ر": "legislation",
-    "ن-ه-ي": "legislation", "ف-ر-ض": "legislation", "ش-ر-ع": "legislation",
+    "ح-ر-م": "legislation",
+    "ح-ل-ل": "legislation",
+    "أ-م-ر": "legislation",
+    "ن-ه-ي": "legislation",
+    "ف-ر-ض": "legislation",
+    "ش-ر-ع": "legislation",
     # Social
-    "ن-ك-ح": "social", "ط-ل-ق": "social", "ر-ب-و": "social",
-    "ب-ي-ع": "social", "ك-ت-ب": "social",
+    "ن-ك-ح": "social",
+    "ط-ل-ق": "social",
+    "ر-ب-و": "social",
+    "ب-ي-ع": "social",
+    "ك-ت-ب": "social",
     # Eschatology
-    "ب-ع-ث": "eschatology", "ح-ش-ر": "eschatology", "ج-ن-ن": "eschatology",
-    "ن-ر-ر": "eschatology", "ع-ذ-ب": "eschatology", "ح-ي-ي": "eschatology",
-    "م-و-ت": "eschatology", "ق-ي-م": "eschatology",
+    "ب-ع-ث": "eschatology",
+    "ح-ش-ر": "eschatology",
+    "ج-ن-ن": "eschatology",
+    "ن-ر-ر": "eschatology",
+    "ع-ذ-ب": "eschatology",
+    "ح-ي-ي": "eschatology",
+    "م-و-ت": "eschatology",
+    "ق-ي-م": "eschatology",
     # Morality
-    "ص-ب-ر": "morality", "ش-ك-ر": "morality",
-    "ب-ر-ر": "morality", "ت-ق-و": "morality", "ص-د-ق": "morality",
+    "ص-ب-ر": "morality",
+    "ش-ك-ر": "morality",
+    "ب-ر-ر": "morality",
+    "ت-ق-و": "morality",
+    "ص-د-ق": "morality",
     # Narrative
-    "ق-ص-ص": "narrative", "ن-ب-أ": "narrative", "ر-س-ل": "narrative",
+    "ق-ص-ص": "narrative",
+    "ن-ب-أ": "narrative",
+    "ر-س-ل": "narrative",
     "ن-ب-و": "narrative",
 }
 
@@ -165,6 +215,7 @@ _EMPHASIS_PARTICLES = {"ان": 0.4, "ل": 0.2, "قد": 0.2, "انما": 0.5, "ل
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
+
 
 def analyze_semantics(
     morph: MorphAnalysis,
@@ -293,8 +344,7 @@ def analyze_verse_logic(
             for j in range(i + 1, min(i + 6, n)):
                 for prefix in morphs[j].prefixes:
                     if clean_word(prefix) == "ل":
-                        tokens[i].emphasis_level = min(
-                            tokens[i].emphasis_level + 0.3, 1.0)
+                        tokens[i].emphasis_level = min(tok.emphasis_level + 0.3, 1.0)
                         tokens[i].connects_to = [j]
                         break
 
@@ -349,8 +399,16 @@ def analyze_verse_transitions(
         surface = morphs[i].surface if i < len(morphs) else ""
 
         cur_field = sem.semantic_field if sem else "none"
-        prev_field = semantic_tokens[i - 1].semantic_field if i > 0 and i - 1 < len(semantic_tokens) else "none"
-        prev_operator = logic_tokens[i - 1].operator if i > 0 and i - 1 < len(logic_tokens) else "none"
+        prev_field = (
+            semantic_tokens[i - 1].semantic_field
+            if i > 0 and i - 1 < len(semantic_tokens)
+            else "none"
+        )
+        prev_operator = (
+            logic_tokens[i - 1].operator
+            if i > 0 and i - 1 < len(logic_tokens)
+            else "none"
+        )
         cur_operator = logic.operator if logic else "none"
 
         # --- Determine transition type ---
@@ -360,7 +418,9 @@ def analyze_verse_transitions(
             transition_type = "none"  # first word — no transition yet
         elif cur_operator in _QUESTION_OPERATORS:
             transition_type = "question_answer"
-        elif cur_operator in _CONTRAST_OPERATORS or prev_operator in _CONTRAST_OPERATORS:
+        elif (
+            cur_operator in _CONTRAST_OPERATORS or prev_operator in _CONTRAST_OPERATORS
+        ):
             transition_type = "contrast"
         elif cur_operator in _ESCALATION_OPERATORS:
             transition_type = "escalation"
@@ -379,7 +439,11 @@ def analyze_verse_transitions(
 
         # --- Detect callbacks (echoing an earlier idea) ---
         returns_to = -1
-        if cur_field != "none" and cur_field in seen_fields and seen_fields[cur_field] < i - 2:
+        if (
+            cur_field != "none"
+            and cur_field in seen_fields
+            and seen_fields[cur_field] < i - 2
+        ):
             returns_to = seen_fields[cur_field]
             transition_type = "callback"
 
@@ -387,15 +451,17 @@ def analyze_verse_transitions(
         if cur_field != "none" and cur_field not in seen_fields:
             seen_fields[cur_field] = i
 
-        transitions.append(TransitionToken(
-            position=i,
-            surface=surface,
-            transition_type=transition_type,
-            source_idea=prev_field if i > 0 else "",
-            target_idea=cur_field,
-            smoothness=1.0,  # Quran ground truth — always perfectly smooth
-            discourse_depth=depth,
-            returns_to=returns_to,
-        ))
+        transitions.append(
+            TransitionToken(
+                position=i,
+                surface=surface,
+                transition_type=transition_type,
+                source_idea=prev_field if i > 0 else "",
+                target_idea=cur_field,
+                smoothness=1.0,  # Quran ground truth — always perfectly smooth
+                discourse_depth=depth,
+                returns_to=returns_to,
+            )
+        )
 
     return transitions

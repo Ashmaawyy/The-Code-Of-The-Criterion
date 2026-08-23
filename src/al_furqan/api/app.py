@@ -9,17 +9,17 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from al_furqan.config import load_config
-from al_furqan.providers.llm_layer import create_llm, LLMProvider
-from al_furqan.store.es_verdict_store import ESVerdictStore as VerdictStore
-from al_furqan.kb.es.client import create_es_client
-from al_furqan.core.reasoning_engine import ReasoningEngine
+
+from al_furqan.api.routers import criterion, evaluate, review, stats, verdicts
+from al_furqan.auth.errors import ErrorCode, error_response
 from al_furqan.auth.key_manager import KeyManager
 from al_furqan.auth.middleware import APIKeyMiddleware
-from al_furqan.auth.security import SecurityHeadersMiddleware, BodySizeLimitMiddleware
-from al_furqan.auth.errors import ErrorCode, error_response
-
-from al_furqan.api.routers import evaluate, verdicts, review, criterion, stats
+from al_furqan.auth.security import BodySizeLimitMiddleware, SecurityHeadersMiddleware
+from al_furqan.config import load_config
+from al_furqan.core.reasoning_engine import ReasoningEngine
+from al_furqan.kb.es.client import create_es_client
+from al_furqan.providers.llm_layer import LLMProvider, create_llm
+from al_furqan.store.es_verdict_store import ESVerdictStore as VerdictStore
 
 logger = logging.getLogger("al_furqan.api")
 # pylint: disable=broad-exception-caught

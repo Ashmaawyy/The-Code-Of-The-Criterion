@@ -7,7 +7,6 @@ for LLM-based relationship extraction.
 
 import json
 from dataclasses import dataclass
-from typing import List
 
 
 @dataclass
@@ -18,7 +17,7 @@ class TranscriptChunk:
     text: str
     start_time: float
     end_time: float
-    segment_indices: List[int]
+    segment_indices: list[int]
     word_count: int
 
 
@@ -33,7 +32,7 @@ def chunk_transcript(
     transcript_path: str,
     chunk_size: int = 500,
     overlap: int = 50,
-) -> List[TranscriptChunk]:
+) -> list[TranscriptChunk]:
     """
     Load a Whisper transcript JSON and split into overlapping chunks.
 
@@ -45,7 +44,7 @@ def chunk_transcript(
     Returns:
         List of TranscriptChunk objects.
     """
-    with open(transcript_path, "r", encoding="utf-8") as f:
+    with open(transcript_path, encoding="utf-8") as f:
         data = json.load(f)
 
     segments = data.get("segments", [])
@@ -56,10 +55,10 @@ def chunk_transcript(
 
 
 def chunk_segments(  # pylint: disable=too-many-locals
-    segments: List[dict],
+    segments: list[dict],
     chunk_size: int = 500,
     overlap: int = 50,
-) -> List[TranscriptChunk]:
+) -> list[TranscriptChunk]:
     """
     Split segments into overlapping chunks of approximately `chunk_size` words.
 
@@ -79,7 +78,7 @@ def chunk_segments(  # pylint: disable=too-many-locals
         raise ValueError("overlap must be less than chunk_size")
 
     # Build a flat list of (word, segment_index) pairs
-    word_entries: List[tuple] = []  # (word, segment_idx)
+    word_entries: list[tuple] = []  # (word, segment_idx)
     for seg_idx, seg in enumerate(segments):
         text = seg.get("text", "").strip()
         if not text:
@@ -92,7 +91,7 @@ def chunk_segments(  # pylint: disable=too-many-locals
 
     total_words = len(word_entries)
     step = chunk_size - overlap
-    chunks: List[TranscriptChunk] = []
+    chunks: list[TranscriptChunk] = []
     chunk_idx = 0
     start_word = 0
 

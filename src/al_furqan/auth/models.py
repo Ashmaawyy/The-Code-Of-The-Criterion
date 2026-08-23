@@ -1,7 +1,7 @@
 """API Key data model for Al-Furqan authentication."""
 
-from dataclasses import dataclass, field, asdict
 import time
+from dataclasses import asdict, dataclass, field
 
 
 @dataclass

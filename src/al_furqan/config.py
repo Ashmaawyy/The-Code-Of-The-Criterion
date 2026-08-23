@@ -9,12 +9,10 @@ Config file location: config.yaml in the project root.
 
 import json
 import os
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Optional
 
 from al_furqan.providers.llm_layer import LLMConfig
-
 
 # ---------------------------------------------------------------------------
 # Paths
@@ -96,7 +94,7 @@ class StoreConfig:
 class ReviewConfig:
     """Configuration for the human review interface."""
 
-    auto_approve_threshold: Optional[int] = (
+    auto_approve_threshold: int | None = (
         None  # score above which verdicts auto-approve (None = always review)  # pylint: disable=line-too-long
     )
     show_reasoning_detail: bool = True  # show full gate reasoning in display
@@ -136,7 +134,7 @@ class AppConfig:
 # ---------------------------------------------------------------------------
 
 
-def load_config(path: Optional[Path] = None) -> AppConfig:  # pylint: disable=too-many-locals
+def load_config(path: Path | None = None) -> AppConfig:  # pylint: disable=too-many-locals
     """
     Load configuration from a YAML file.
     Falls back to defaults if the file doesn't exist.
@@ -153,7 +151,7 @@ def load_config(path: Optional[Path] = None) -> AppConfig:  # pylint: disable=to
         print("  Install with: pip install pyyaml")
         return AppConfig()
 
-    with open(config_path, "r", encoding="utf-8") as f:
+    with open(config_path, encoding="utf-8") as f:
         raw = yaml.safe_load(f) or {}
 
     # Build config from YAML sections
@@ -181,13 +179,17 @@ def load_config(path: Optional[Path] = None) -> AppConfig:  # pylint: disable=to
     )
 
     es_data = store_data.pop("elasticsearch", {})
-    es_config = ElasticsearchConfig(
-        **{
-            k: v
-            for k, v in es_data.items()
-            if k in ElasticsearchConfig.__dataclass_fields__  # pylint: disable=no-member
-        }
-    ) if es_data else ElasticsearchConfig()
+    es_config = (
+        ElasticsearchConfig(
+            **{
+                k: v
+                for k, v in es_data.items()
+                if k in ElasticsearchConfig.__dataclass_fields__  # pylint: disable=no-member
+            }
+        )
+        if es_data
+        else ElasticsearchConfig()
+    )
 
     store_config = StoreConfig(
         **{
@@ -232,7 +234,7 @@ def load_config(path: Optional[Path] = None) -> AppConfig:  # pylint: disable=to
     )
 
 
-def save_config(config: AppConfig, path: Optional[Path] = None) -> None:
+def save_config(config: AppConfig, path: Path | None = None) -> None:
     """Save configuration to a YAML file."""
     config_path = path or DEFAULT_CONFIG_PATH
 
@@ -256,7 +258,7 @@ def save_config(config: AppConfig, path: Optional[Path] = None) -> None:
         )
 
 
-def generate_default_config(path: Optional[Path] = None) -> None:
+def generate_default_config(path: Path | None = None) -> None:
     """Generate a default config file with comments for documentation."""
     config_path = path or DEFAULT_CONFIG_PATH
 

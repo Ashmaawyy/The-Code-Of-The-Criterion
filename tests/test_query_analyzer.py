@@ -1,9 +1,9 @@
 """Tests for the Query Analyzer."""
 
 from al_furqan.kb.tafsir.query_analyzer import (
-    analyze_query,
     QueryType,
     _extract_verse_refs,
+    analyze_query,
 )
 
 

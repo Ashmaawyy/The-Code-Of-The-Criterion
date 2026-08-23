@@ -5,7 +5,7 @@ machine-readable error codes and human-readable messages.
 """
 
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from fastapi.responses import JSONResponse
 
@@ -31,7 +31,7 @@ def error_response(
     status_code: int,
     code: ErrorCode,
     message: str,
-    details: Optional[dict[str, Any]] = None,
+    details: dict[str, Any] | None = None,
 ) -> JSONResponse:
     """Build a structured JSON error response.
 

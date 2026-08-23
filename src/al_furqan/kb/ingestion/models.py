@@ -5,8 +5,8 @@ ProposedEdge represents a relationship extracted by the LLM that
 awaits human review before entering the Knowledge Graph.
 """
 
-from dataclasses import dataclass, asdict
 import uuid
+from dataclasses import asdict, dataclass
 
 
 @dataclass

@@ -1,9 +1,9 @@
 """Tests for verdict CRUD endpoints."""
 
 
-
 class TestVerdictListEndpoint:
     """TestVerdictListEndpoint class."""
+
     def test_list_verdicts_empty(self, client_no_auth):
         """Test list_verdicts_empty."""
         resp = client_no_auth.get("/api/v1/verdicts")
@@ -40,6 +40,7 @@ class TestVerdictListEndpoint:
 
 class TestVerdictGetEndpoint:
     """TestVerdictGetEndpoint class."""
+
     def test_get_verdict_found(self, client_no_auth):
         """Test get_verdict_found."""
         # Create first
@@ -62,6 +63,7 @@ class TestVerdictGetEndpoint:
 
 class TestVerdictDeleteEndpoint:
     """TestVerdictDeleteEndpoint class."""
+
     def test_delete_verdict_found(self, client_no_auth):
         """Test delete_verdict_found."""
         create_resp = client_no_auth.post(
@@ -84,6 +86,7 @@ class TestVerdictDeleteEndpoint:
 
 class TestVerdictSearchEndpoint:
     """TestVerdictSearchEndpoint class."""
+
     def test_search_verdicts(self, client_no_auth):
         """Test search_verdicts."""
         # Create a verdict first

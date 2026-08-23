@@ -5,7 +5,6 @@ Validates surah:ayah format references against known verse counts.
 """
 
 import re
-from typing import List, Optional
 from dataclasses import dataclass
 
 # Ayah counts for all 114 surahs
@@ -254,11 +253,11 @@ class ValidationResult:
 
     reference: str
     valid: bool
-    error: Optional[str] = None
-    surah_number: Optional[int] = None
-    ayah_start: Optional[int] = None
-    ayah_end: Optional[int] = None
-    surah_name: Optional[str] = None
+    error: str | None = None
+    surah_number: int | None = None
+    ayah_start: int | None = None
+    ayah_end: int | None = None
+    surah_name: str | None = None
 
 
 def validate_reference(ref: str) -> ValidationResult:  # pylint: disable=too-many-return-statements
@@ -348,11 +347,11 @@ def validate_reference(ref: str) -> ValidationResult:  # pylint: disable=too-man
     )
 
 
-def validate_references(refs: List[str]) -> List[ValidationResult]:
+def validate_references(refs: list[str]) -> list[ValidationResult]:
     """Validate a list of references."""
     return [validate_reference(r) for r in refs]
 
 
-def extract_references_from_text(text: str) -> List[str]:
+def extract_references_from_text(text: str) -> list[str]:
     """Extract potential surah:ayah references from free text."""
     return _REF_PATTERN.findall(text)

@@ -24,8 +24,9 @@ from __future__ import annotations
 import json
 import logging
 import os
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Any
 
 from al_furqan.paths import ES_CACHE_DIR as CACHE_DIR
 
@@ -61,13 +62,15 @@ class ESSource:
         url = es_url or os.environ.get("ELASTICSEARCH_URL", _ES_URL_DEFAULT)
         try:
             from elasticsearch import Elasticsearch
+
             es = Elasticsearch(hosts=[url], request_timeout=5)
             if es.ping():
                 self._es = es
                 self._es_available = True
                 info = es.info()
-                logger.info("ESSource: connected to ES %s at %s",
-                            info["version"]["number"], url)
+                logger.info(
+                    "ESSource: connected to ES %s at %s", info["version"]["number"], url
+                )
             else:
                 self._warn_fallback("ES ping failed")
         except Exception as e:
@@ -77,7 +80,8 @@ class ESSource:
         if not self._warned_fallback:
             logger.warning(
                 "ESSource: %s — falling back to local cache in %s",
-                reason, self._cache_dir,
+                reason,
+                self._cache_dir,
             )
             self._warned_fallback = True
 
@@ -106,12 +110,20 @@ class ESSource:
             yield from self._cache_scroll(index)
 
     def _es_scroll(
-        self, index: str, sort: list[dict] | None, source_fields: list[str] | None,
+        self,
+        index: str,
+        sort: list[dict] | None,
+        source_fields: list[str] | None,
     ) -> Iterator[dict]:
         body: dict[str, Any] = {"query": {"match_all": {}}}
         if sort:
             body["sort"] = sort
-        kwargs: dict[str, Any] = {"index": index, "body": body, "scroll": "5m", "size": 500}
+        kwargs: dict[str, Any] = {
+            "index": index,
+            "body": body,
+            "scroll": "5m",
+            "size": 500,
+        }
         if source_fields:
             kwargs["_source"] = source_fields
 
@@ -134,7 +146,9 @@ class ESSource:
     def _cache_scroll(self, index: str) -> Iterator[dict]:
         cache_path = self._cache_dir / f"{index}.jsonl"
         if not cache_path.exists():
-            logger.error("Cache file not found: %s — run es_snapshot.py first", cache_path)
+            logger.error(
+                "Cache file not found: %s — run es_snapshot.py first", cache_path
+            )
             return
         with cache_path.open("r", encoding="utf-8") as f:
             for line in f:
@@ -245,6 +259,7 @@ class ESSource:
             logger.warning("Cannot bulk index — ES is down (actions discarded)")
             return 0
         from elasticsearch.helpers import bulk
+
         success, errors = bulk(self._es, actions, chunk_size=1000, raise_on_error=False)
         if errors:
             logger.warning("%d bulk errors", len(errors))

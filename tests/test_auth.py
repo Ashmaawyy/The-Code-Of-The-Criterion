@@ -1,13 +1,12 @@
 """Tests for API Key Authentication — valid/invalid/missing/revoked/roles."""
 
 
-
 class TestAuthMissingKey:
     """Test that protected endpoints reject requests without API keys."""
 
     def test_missing_key_returns_401(self, auth_client):
         """Test missing_key_returns_401."""
-        client, admin_key, reader_key, _evaluator_key = auth_client  # pylint: disable=unused-variable
+        client, _admin_key, _reader_key, _evaluator_key = auth_client  # pylint: disable=unused-variable
         resp = client.get("/api/v1/verdicts")
         assert resp.status_code == 401
         body = resp.json()
@@ -64,7 +63,7 @@ class TestAuthRevokedKey:  # pylint: disable=too-few-public-methods
 
     def test_revoked_key_returns_401(self, auth_client):
         """Test revoked_key_returns_401."""
-        client, admin_key, reader_key, _evaluator_key = auth_client  # pylint: disable=unused-variable
+        client, _admin_key, _reader_key, _evaluator_key = auth_client  # pylint: disable=unused-variable
 
         # Create a new key to revoke
         km = client.app.state.key_manager
@@ -87,7 +86,7 @@ class TestAuthRoles:
 
     def test_reader_can_get(self, auth_client):
         """Test reader_can_get."""
-        client, admin_key, reader_key, _evaluator_key = auth_client  # pylint: disable=unused-variable
+        client, _admin_key, reader_key, _evaluator_key = auth_client  # pylint: disable=unused-variable
         resp = client.get(
             "/api/v1/verdicts",
             headers={"X-API-Key": reader_key},
@@ -96,7 +95,7 @@ class TestAuthRoles:
 
     def test_reader_cannot_post_evaluate(self, auth_client):
         """Test reader_cannot_post_evaluate."""
-        client, admin_key, reader_key, _evaluator_key = auth_client  # pylint: disable=unused-variable
+        client, _admin_key, reader_key, _evaluator_key = auth_client  # pylint: disable=unused-variable
         resp = client.post(
             "/api/v1/evaluate",
             headers={"X-API-Key": reader_key},
@@ -107,7 +106,7 @@ class TestAuthRoles:
 
     def test_evaluator_can_post_evaluate(self, auth_client):
         """Test evaluator_can_post_evaluate."""
-        client, admin_key, reader_key, evaluator_key = auth_client  # pylint: disable=unused-variable
+        client, _admin_key, _reader_key, evaluator_key = auth_client  # pylint: disable=unused-variable
         resp = client.post(
             "/api/v1/evaluate",
             headers={"X-API-Key": evaluator_key},
@@ -118,7 +117,7 @@ class TestAuthRoles:
 
     def test_admin_can_delete(self, auth_client):
         """Test admin_can_delete."""
-        client, admin_key, reader_key, _evaluator_key = auth_client  # pylint: disable=unused-variable
+        client, admin_key, _reader_key, _evaluator_key = auth_client  # pylint: disable=unused-variable
         # Try delete (will 404 because no verdicts, but not 403)
         resp = client.delete(
             "/api/v1/verdicts/nonexistent",
@@ -128,7 +127,7 @@ class TestAuthRoles:
 
     def test_reader_cannot_delete(self, auth_client):
         """Test reader_cannot_delete."""
-        client, admin_key, reader_key, _evaluator_key = auth_client  # pylint: disable=unused-variable
+        client, _admin_key, reader_key, _evaluator_key = auth_client  # pylint: disable=unused-variable
         resp = client.delete(
             "/api/v1/verdicts/some-id",
             headers={"X-API-Key": reader_key},

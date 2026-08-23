@@ -2,17 +2,16 @@
 
 import asyncio
 from unittest.mock import MagicMock  # pylint: disable=wrong-import-order
-  # pylint: disable=wrong-import-order
 
-from al_furqan.api.orchestrator import Orchestrator, EvaluationResult, generate_eval_id
+# pylint: disable=wrong-import-order
+from al_furqan.api.orchestrator import EvaluationResult, Orchestrator, generate_eval_id
 from al_furqan.engine.models import (  # pylint: disable=unused-import
-    Verdict,
-    GateScore,
     GateResult,
+    GateScore,
     SystemType,
+    Verdict,
 )
 from al_furqan.engine.symbolic.verifier import VerificationResult
-
 
 # ── Helpers ──
 
@@ -23,9 +22,24 @@ def _make_verdict(**overrides) -> Verdict:
         primary_system=SystemType.ECONOMIC,
         friction_points=["riba", "exploitation"],
         gate_scores=[
-            GateScore(name="Source-Integrity", score=30, result=GateResult.FAIL, reasoning="No Quranic basis"),  # pylint: disable=line-too-long
-            GateScore(name="Structural-Consistency", score=25, result=GateResult.FAIL, reasoning="Contradicts"),  # pylint: disable=line-too-long
-            GateScore(name="Mediation-Zeroing", score=20, result=GateResult.FAIL, reasoning="Harmful"),  # pylint: disable=line-too-long
+            GateScore(
+                name="Source-Integrity",
+                score=30,
+                result=GateResult.FAIL,
+                reasoning="No Quranic basis",
+            ),  # pylint: disable=line-too-long
+            GateScore(
+                name="Structural-Consistency",
+                score=25,
+                result=GateResult.FAIL,
+                reasoning="Contradicts",
+            ),  # pylint: disable=line-too-long
+            GateScore(
+                name="Mediation-Zeroing",
+                score=20,
+                result=GateResult.FAIL,
+                reasoning="Harmful",
+            ),  # pylint: disable=line-too-long
         ],
         origin_gate=GateResult.FAIL,
         consequences_short_term=["debt accumulation"],
@@ -65,6 +79,7 @@ def _run(coro):
 
 class TestEvalId:
     """TestEvalId class."""
+
     def test_generate_eval_id_unique(self):
         """Test generate_eval_id_unique."""
         ids = {generate_eval_id() for _ in range(100)}
@@ -77,6 +92,7 @@ class TestEvalId:
 
 class TestOrchestratorBasic:
     """TestOrchestratorBasic class."""
+
     def test_init_minimal(self):
         """Test init_minimal."""
         engine = _make_mock_engine()
@@ -108,6 +124,7 @@ class TestOrchestratorBasic:
 
 class TestEvaluate:
     """TestEvaluate class."""
+
     def test_evaluate_basic_no_kb_no_z3(self):
         """Test evaluate_basic_no_kb_no_z3."""
         engine = _make_mock_engine()
@@ -157,7 +174,9 @@ class TestEvaluate:
         assert result.sources == ["quran:2:275"]
         # Engine should have been called with context
         call_args = engine.evaluate.call_args
-        assert "Quran 2:275" in call_args[1].get("context", call_args[0][1] if len(call_args[0]) > 1 else "")  # pylint: disable=line-too-long
+        assert "Quran 2:275" in call_args[1].get(
+            "context", call_args[0][1] if len(call_args[0]) > 1 else ""
+        )  # pylint: disable=line-too-long
 
     def test_evaluate_stores_verdict(self):
         """Test evaluate_stores_verdict."""
@@ -178,6 +197,7 @@ class TestEvaluate:
 
 class TestResponseGeneration:
     """TestResponseGeneration class."""
+
     def test_response_with_llm_fn(self):
         """Test response_with_llm_fn."""
         engine = _make_mock_engine()
@@ -220,6 +240,7 @@ class TestResponseGeneration:
 
 class TestEvaluateGrounded:  # pylint: disable=too-few-public-methods
     """TestEvaluateGrounded class."""
+
     def test_evaluate_grounded_uses_kb_and_z3(self):
         """Test evaluate_grounded_uses_kb_and_z3."""
         engine = _make_mock_engine()
@@ -243,6 +264,7 @@ class TestEvaluateGrounded:  # pylint: disable=too-few-public-methods
 
 class TestEvaluationResult:
     """TestEvaluationResult class."""
+
     def test_to_log_dict(self):
         """Test to_log_dict."""
         verdict = _make_verdict()
@@ -262,9 +284,7 @@ class TestEvaluationResult:
         """Test to_log_dict_with_z3."""
         verdict = _make_verdict()
         z3 = VerificationResult(consistent=True, proof="OK", verification_time_ms=5.0)
-        result = EvaluationResult(
-            response_text="Test", verdict=verdict, z3_result=z3
-        )
+        result = EvaluationResult(response_text="Test", verdict=verdict, z3_result=z3)
         log = result.to_log_dict()
         assert log["z3_result"]["consistent"] is True
 
@@ -287,6 +307,7 @@ class TestEvaluationResult:
 
 class TestErrorHandling:
     """TestErrorHandling class."""
+
     def test_kb_failure_doesnt_crash(self):
         """Test kb_failure_doesnt_crash."""
         engine = _make_mock_engine()
