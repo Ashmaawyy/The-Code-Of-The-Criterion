@@ -4,7 +4,7 @@
 **Project:** Al-Furqan Reasoning Engine → Universal AI Skill
 **Version:** 1.0 — Draft
 **Date:** March 21, 2026
-**Authors:** R&D/Innovation Lab
+**Authors:** Al-Furqan contributors
 **Status:** Proposed
 
 ---
@@ -640,7 +640,7 @@ mcpServers:
 # MCP config pointing to remote server
 mcpServers:
   furqan:
-    url: "https://furqan.variiance.com/mcp"
+    url: "https://github.com/Ashmaawyy/Al-Furqan"
     transport: "sse"
     headers:
       Authorization: "Bearer ${FURQAN_API_KEY}"
@@ -678,7 +678,7 @@ Local engine + remote knowledge base. Engine runs on device, KB queries go to se
 - [ ] Test with 2nd domain (legal or medical)
 
 ### Phase 4: Production (Week 7-8)
-- [ ] Deploy MCP server on Variiance infra
+- [ ] Deploy MCP server in the target runtime environment
 - [ ] Dashboard: usage stats, domain stats, verdict browser
 - [ ] SDK packages: Python, TypeScript
 - [ ] Public docs + adapter creation guide

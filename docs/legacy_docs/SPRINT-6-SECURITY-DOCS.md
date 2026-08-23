@@ -531,4 +531,4 @@ The `AXIOM_HASH` in `axioms.py` (computed by `_compute_axiom_hash()`) covers the
 ---
 
 *Al-Furqan Security Documentation — Sprint 6 — March 21, 2026*  
-*Variiance R&D — The Criterion Project*
+*Al-Furqan — The Criterion Project*

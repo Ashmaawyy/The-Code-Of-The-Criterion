@@ -8,7 +8,7 @@
 **Date:** March 22, 2026  
 **Status:** Plan Only — Execution pending data collection  
 **Author:** Arif AI + Muhammad Al-Ashmawy  
-**Classification:** Internal — Variiance R&D  
+**Classification:** Open project  
 
 ---
 
@@ -513,4 +513,4 @@ User → Engine → │ Furqan-27B (local) │ → Response → Human Review
 
 ---
 
-_Document generated: 2026-03-22 | Al-Furqan R&D_
+_Document generated: 2026-03-22 | Al-Furqan contributors_

@@ -4,7 +4,7 @@
 **Project:** Al-Furqan Memory Skill — Local Knowledge Memory for AI Agents
 **Version:** 1.0 — Draft
 **Date:** March 21, 2026
-**Authors:** R&D/Innovation Lab
+**Authors:** Al-Furqan contributors
 **Status:** Proposed
 **Companion to:** Furqan Reasoning-as-a-Skill (RaaS) v1.0
 

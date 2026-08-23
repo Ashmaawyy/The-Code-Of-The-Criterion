@@ -7,7 +7,7 @@ name = "al-furqan"
 version = "0.1.0"
 description = "Al-Furqan (The Criterion) — Axiom-anchored reasoning engine"
 readme = "README.md"
-license = {text = "MIT"}
+license = {text = "Apache-2.0"}
 requires-python = ">=3.10"
 dependencies = [
     "fastapi",

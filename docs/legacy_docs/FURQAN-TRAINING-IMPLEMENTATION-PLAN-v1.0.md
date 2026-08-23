@@ -7,7 +7,7 @@
 **Project:** Al-Furqan (الفرقان)
 **Date:** April 5, 2026
 **Companion:** [FURQAN-TRAINING-PRD-v1.0.md](FURQAN-TRAINING-PRD-v1.0.md)
-**Classification:** Internal — Variiance R&D
+**Classification:** Open project
 
 ---
 
@@ -680,7 +680,7 @@ pip install -e ".[all]"
 #    Storage: 100GB persistent volume
 
 # 2. Clone repo
-git clone https://gitlab.variiance.com/ai/al-furqan.git
+git clone https://github.com/Ashmaawyy/Al-Furqan.git
 cd al-furqan
 
 # 3. Install dependencies
@@ -767,4 +767,4 @@ To be filled after training:
 
 ---
 
-_Document generated: April 5, 2026 | Al-Furqan R&D — Variiance_
+_Document generated: April 5, 2026 | Al-Furqan contributors_

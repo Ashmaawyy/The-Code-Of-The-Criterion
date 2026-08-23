@@ -8,8 +8,8 @@
 **Version:** 3.0  
 **Date:** March 21, 2026  
 **Status:** Approved — Post-Implementation Update  
-**Repository:** https://gitlab.variiance.com/ai/al-furqan  
-**Classification:** Internal — Variiance R&D  
+**Repository:** https://github.com/Ashmaawyy/Al-Furqan  
+**Classification:** Open project  
 **Test Coverage:** 647 tests (560 engine + 31 RaaS + 56 Memory)
 
 > **Post-v3.0 updates (not yet reflected in body text):**
@@ -1851,7 +1851,7 @@ Client-side persistent memory for AI agents. All data stays on user's device.
 
 ### 18.3 Database Strategy (Ecosystem-Aligned)
 
-#### Variiance Ecosystem DB Architecture:
+#### Project Ecosystem DB Architecture:
 
 | Database | Role | Products |
 |----------|------|----------|
@@ -2181,7 +2181,7 @@ Sprint 7 (Planned)
 
 ### 23.1 What is QLP v3.0?
 
-QLP v3.0 (قلب — "Qalb/Heart") is Variiance's comprehensive vision for **Arab digital sovereignty** — a protocol for launching products that prioritize privacy, local-first architecture, and cultural alignment.
+QLP v3.0 (قلب — "Qalb/Heart") is the project vision for **Arab digital sovereignty** — a protocol for launching products that prioritize privacy, local-first architecture, and cultural alignment.
 
 ### 23.2 Al-Furqan's Role in the Ecosystem
 
@@ -2413,5 +2413,5 @@ Every architectural decision carries risk. This section documents **what could g
 _"The engine judges. The knowledge informs. Neither depends on the other."_
 
 _Al-Furqan Architecture v3.0 — March 21, 2026_  
-_Variiance R&D — The Criterion Project_  
+_Al-Furqan — The Criterion Project_  
 _647 tests. 76 source files. 5 security modules. 2 MCP skills. 1 axiom system._

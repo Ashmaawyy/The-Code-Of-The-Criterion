@@ -8,8 +8,8 @@
 **Version:** 2.0
 **Date:** March 20, 2026
 **Status:** Approved by CTO
-**Repository:** https://gitlab.variiance.com/ai/al-furqan
-**Classification:** Internal — Variiance R&D
+**Repository:** https://github.com/Ashmaawyy/Al-Furqan
+**Classification:** Open project
 
 ---
 
@@ -1344,4 +1344,4 @@ The layered architecture is **designed** for these pivots:
 _"The engine judges. The knowledge informs. Neither depends on the other."_
 
 _Al-Furqan Architecture v2.0 — March 20, 2026_
-_Variiance R&D — The Criterion Project_
+_Al-Furqan — The Criterion Project_

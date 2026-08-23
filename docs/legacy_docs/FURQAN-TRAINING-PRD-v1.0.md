@@ -9,7 +9,7 @@
 **Version:** 1.0
 **Date:** April 5, 2026
 **Author:** Muhammad Al-Ashmawy + Arif AI
-**Classification:** Internal — Variiance R&D
+**Classification:** Open project
 **Status:** Approved for Implementation
 
 ---
@@ -145,7 +145,7 @@ A fine-tuned Furqan-27B model that:
 | Attribute | Value |
 |-----------|-------|
 | **Parameters** | 32B (dense, Qwen 2.5 base) |
-| **License** | MIT |
+| **License** | Apache-2.0 |
 | **Strength** | Best reasoning in 32B class (outperforms o1-mini) |
 | **Use case** | Generate Arabic chain-of-thought traces as synthetic training data |
 
@@ -482,4 +482,4 @@ to learn reasoning architecture, not surface patterns.
 
 ---
 
-_Document generated: April 5, 2026 | Al-Furqan R&D — Variiance_
+_Document generated: April 5, 2026 | Al-Furqan contributors_

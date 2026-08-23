@@ -371,7 +371,7 @@ Remote MCP access via Server-Sent Events:
 # Client config
 mcpServers:
   furqan:
-    url: "https://furqan.variiance.com/mcp"
+    url: "https://github.com/Ashmaawyy/Al-Furqan"
     transport: "sse"
     headers:
       Authorization: "Bearer ${FURQAN_API_KEY}"
@@ -438,7 +438,7 @@ CMD ["python", "-m", "furqan_raas.api_gateway"]
 
 #### R4.2 — Kubernetes Deployment
 ```yaml
-# Helm chart for Variiance infra
+# Helm chart for the target deployment environment
 apiVersion: apps/v1
 kind: Deployment
 metadata:

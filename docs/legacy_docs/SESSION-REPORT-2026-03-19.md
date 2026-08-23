@@ -395,4 +395,4 @@ API Server: FastAPI on port 8000
 
 _Report generated: March 19, 2026 at 21:00 UTC_
 _Project: Al-Furqan — The Criterion_
-_Repository: https://gitlab.variiance.com/ai/al-furqan_
+_Repository: https://github.com/Ashmaawyy/Al-Furqan_

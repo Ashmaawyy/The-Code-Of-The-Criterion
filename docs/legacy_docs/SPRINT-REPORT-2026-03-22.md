@@ -398,4 +398,4 @@ docs/
 
 ---
 
-_Report generated: 2026-03-22 | Al-Furqan R&D Team_
+_Report generated: 2026-03-22 | Al-Furqan contributors_

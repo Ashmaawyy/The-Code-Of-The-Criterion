@@ -8,7 +8,7 @@
 **Date:** March 22, 2026  
 **Status:** Draft — Pending Review  
 **Author:** Arif AI + Muhammad Al-Ashmawy  
-**Classification:** Internal — Variiance R&D  
+**Classification:** Open project  
 
 ---
 
@@ -732,4 +732,4 @@ SQLite + DashScope API + Single Server
 
 ---
 
-_Document generated: 2026-03-22 | Al-Furqan R&D_
+_Document generated: 2026-03-22 | Al-Furqan contributors_

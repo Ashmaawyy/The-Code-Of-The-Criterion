@@ -1,7 +1,7 @@
 # Islamic Sharia Knowledge Base — Digital Sources Catalog
 
 ## Status: Research Phase (Sprint 3 Planning)
-## Author: Al-Furqan R&D Team
+## Author: Al-Furqan contributors
 ## Date: 2026-03-19
 
 ---

@@ -885,4 +885,4 @@ User Question
 ---
 
 *Al-Furqan Engine Documentation — Sprints 3-5 — March 21, 2026*
-*Variiance R&D — The Criterion Project*
+*Al-Furqan — The Criterion Project*

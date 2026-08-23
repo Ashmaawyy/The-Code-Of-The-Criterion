@@ -2,7 +2,7 @@
 ## March 21, 2026 (Saturday — عيد الفطر)
 
 **Project:** Al-Furqan (الفرقان) — Axiom-Anchored Neuro-Symbolic Reasoning Engine  
-**Repository:** https://gitlab.variiance.com/ai/al-furqan  
+**Repository:** https://github.com/Ashmaawyy/Al-Furqan  
 **Day Summary:** Massive execution day — 7 sprints completed, 2 MCP skills built, 647 total tests, full security hardening  
 **Starting state:** Sprint 2 complete (205 tests, monolithic engine)  
 **Ending state:** Sprints 3-6 complete + RaaS + Memory skills (647 tests, layered architecture)
@@ -494,5 +494,5 @@ See [Section 4](#4-architecture-documents-created) for full list.
 ---
 
 *Al-Furqan Daily Report — March 21, 2026*  
-*Variiance R&D — The Criterion Project*  
+*Al-Furqan — The Criterion Project*
 *"The engine judges. The knowledge informs. Neither depends on the other."*

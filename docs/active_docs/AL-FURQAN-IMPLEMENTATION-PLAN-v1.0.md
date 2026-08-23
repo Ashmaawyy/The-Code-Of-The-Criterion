@@ -7,7 +7,7 @@
 **Date:** March 21, 2026
 **Based On:** Architecture Document v2.0 (Approved by CTO)
 **Status:** Ready for Execution
-**Repository:** https://gitlab.variiance.com/ai/al-furqan
+**Repository:** https://github.com/Ashmaawyy/Al-Furqan
 
 > **Note:** This plan was written before the Elasticsearch migration
 > (Mar 30, 2026).  All ChromaDB/JSON storage references in the core

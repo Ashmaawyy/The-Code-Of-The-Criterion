@@ -3,11 +3,11 @@
 ### Version 1.0
 
 **Project:** Al-Furqan — Axiom-Anchored Reasoning Engine
-**Document Type:** Security Policy — Classification: CONFIDENTIAL
+**Document Type:** Security Policy
 **Version:** 1.0
 **Date:** March 21, 2026
-**Authors:** R&D/Innovation Lab — Variiance
-**Status:** Draft — Pending CTO Approval
+**Authors:** Al-Furqan contributors
+**Status:** Draft
 **Applies To:** All deployments (Cloud, On-Premise, Edge, Skill/MCP)
 
 ---
@@ -920,6 +920,6 @@ WITNESSES:           [2 required]
 
 ---
 
-*This document is CONFIDENTIAL and intended for internal Variiance use only.*
+*This document is intended for project documentation and public review.*
 *Unauthorized distribution is prohibited.*
 *Version control: All changes to this document must be approved by CTO.*

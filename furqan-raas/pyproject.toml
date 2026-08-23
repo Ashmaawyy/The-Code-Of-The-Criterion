@@ -7,7 +7,7 @@ name = "furqan-raas"
 version = "0.1.0"
 description = "Furqan Reasoning-as-a-Skill — MCP-compatible axiom-anchored reasoning server"
 readme = "README.md"
-license = {text = "MIT"}
+license = {text = "Apache-2.0"}
 requires-python = ">=3.10"
 dependencies = []
 

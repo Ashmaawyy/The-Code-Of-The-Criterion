@@ -599,4 +599,4 @@ protocol: json-rpc-2.0
 ---
 
 *Furqan Memory Documentation — March 21, 2026*  
-*Variiance R&D — The Criterion Project*
+*Al-Furqan — The Criterion Project*
